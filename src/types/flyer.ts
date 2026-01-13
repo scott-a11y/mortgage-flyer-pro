@@ -29,22 +29,28 @@ export interface BrokerContact {
   phone: string;
   email: string;
   nmls: string;
+  headshot?: string;
 }
 
 export interface CompanyContact {
+  name: string;
   phone1: string;
   phone2: string;
   email: string;
   website: string;
   nmls: string;
+  logo?: string;
 }
 
 export interface RealtorContact {
   name: string;
+  title: string;
   phone: string;
   email: string;
   brokerage: string;
   website: string;
+  headshot?: string;
+  logo?: string;
 }
 
 export interface FlyerData {
