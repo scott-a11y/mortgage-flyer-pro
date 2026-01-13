@@ -1,3 +1,4 @@
+// Flyer type definitions
 export interface RateInfo {
   thirtyYearFixed: string;
   thirtyYearFixedAPR: string;
