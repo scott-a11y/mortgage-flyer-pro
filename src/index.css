@@ -42,10 +42,14 @@
     /* Custom tokens for flyer */
     --flyer-navy: 210 100% 20%;
     --flyer-light-blue: 210 100% 40%;
-    --flyer-gold: 28 59% 31%;
+    /* Century 21 Gold - warm champagne gold from their branding */
+    --flyer-gold: 43 38% 56%;
+    --flyer-gold-dark: 43 45% 42%;
+    --flyer-charcoal: 0 0% 15%;
     --flyer-text-primary: 0 0% 20%;
     --flyer-text-secondary: 0 0% 40%;
     --flyer-bg-neutral: 0 0% 96%;
+    --flyer-bg-warm: 40 20% 97%;
     --flyer-success: 100 50% 22%;
 
     --sidebar-background: 0 0% 98%;
