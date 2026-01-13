@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { FlyerData } from "@/types/flyer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Building, User, Home } from "lucide-react";
+import { ImageUploader } from "./ImageUploader";
 
 interface ContactEditorProps {
   data: FlyerData;
@@ -35,7 +36,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
     <div className="editor-section">
       <h3 className="font-semibold text-foreground">Contact Information</h3>
       <p className="text-xs text-muted-foreground mb-4">
-        Update broker and realtor contact details.
+        Update broker, company, and realtor contact details with photos and logos.
       </p>
 
       <Accordion type="multiple" defaultValue={["broker", "realtor"]} className="w-full">
@@ -48,6 +49,13 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
+            <ImageUploader
+              label="Headshot Photo"
+              value={data.broker.headshot}
+              onChange={(url) => updateBroker("headshot", url)}
+              type="headshot"
+              placeholder="Upload a professional headshot"
+            />
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Name</Label>
@@ -104,6 +112,21 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
+            <ImageUploader
+              label="Company Logo"
+              value={data.company.logo}
+              onChange={(url) => updateCompany("logo", url)}
+              type="logo"
+              placeholder="Upload IA Loans logo"
+            />
+            <div className="space-y-2">
+              <Label className="editor-label">Company Name</Label>
+              <Input
+                value={data.company.name}
+                onChange={(e) => updateCompany("name", e.target.value)}
+                placeholder="Imagination Age Mortgage"
+              />
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Phone 1</Label>
@@ -153,8 +176,24 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
             <div className="grid grid-cols-2 gap-4">
+              <ImageUploader
+                label="Agent Headshot"
+                value={data.realtor.headshot}
+                onChange={(url) => updateRealtor("headshot", url)}
+                type="headshot"
+                placeholder="Agent photo"
+              />
+              <ImageUploader
+                label="Brokerage Logo"
+                value={data.realtor.logo}
+                onChange={(url) => updateRealtor("logo", url)}
+                type="logo"
+                placeholder="Brokerage logo"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="editor-label">Name</Label>
+                <Label className="editor-label">Agent Name</Label>
                 <Input
                   value={data.realtor.name}
                   onChange={(e) => updateRealtor("name", e.target.value)}
@@ -162,28 +201,38 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
                 />
               </div>
               <div className="space-y-2">
+                <Label className="editor-label">Title</Label>
+                <Input
+                  value={data.realtor.title}
+                  onChange={(e) => updateRealtor("title", e.target.value)}
+                  placeholder="Real Estate Professional"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
                 <Label className="editor-label">Phone</Label>
                 <Input
                   value={data.realtor.phone}
                   onChange={(e) => updateRealtor("phone", e.target.value)}
-                  placeholder="(360) 555-0000"
+                  placeholder="(425) 420-4887"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="editor-label">Email</Label>
+                <Input
+                  value={data.realtor.email}
+                  onChange={(e) => updateRealtor("email", e.target.value)}
+                  placeholder="cmzarling@gmail.com"
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="editor-label">Email</Label>
-              <Input
-                value={data.realtor.email}
-                onChange={(e) => updateRealtor("email", e.target.value)}
-                placeholder="celeste@c21nwr.com"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label className="editor-label">Brokerage</Label>
+              <Label className="editor-label">Brokerage Name</Label>
               <Input
                 value={data.realtor.brokerage}
                 onChange={(e) => updateRealtor("brokerage", e.target.value)}
-                placeholder="Century 21 Northwest Realtors"
+                placeholder="Century 21 North Homes - Kirkland"
               />
             </div>
             <div className="space-y-2">
@@ -191,7 +240,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
               <Input
                 value={data.realtor.website}
                 onChange={(e) => updateRealtor("website", e.target.value)}
-                placeholder="www.c21nwr.com"
+                placeholder="www.century21northhomes.com"
               />
             </div>
           </AccordionContent>
