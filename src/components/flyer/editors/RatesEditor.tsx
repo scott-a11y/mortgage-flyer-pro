@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { FlyerData } from "@/types/flyer";
+import { supabase } from "@/integrations/supabase/client";
+import { RefreshCw, Wifi } from "lucide-react";
+import { toast } from "sonner";
 
 interface RatesEditorProps {
   data: FlyerData;
@@ -8,6 +13,9 @@ interface RatesEditorProps {
 }
 
 export function RatesEditor({ data, onChange }: RatesEditorProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastFetch, setLastFetch] = useState<string | null>(null);
+
   const updateRate = (field: keyof FlyerData["rates"], value: string) => {
     onChange({
       ...data,
@@ -15,48 +23,142 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
     });
   };
 
+  const fetchLiveRates = async () => {
+    setIsLoading(true);
+    try {
+      const { data: response, error } = await supabase.functions.invoke('fetch-mortgage-rates');
+      
+      if (error) throw error;
+      
+      if (response?.success && response?.rates) {
+        onChange({
+          ...data,
+          rates: response.rates,
+        });
+        setLastFetch(new Date().toLocaleTimeString());
+        toast.success("Live rates updated!", {
+          description: `Source: ${response.source}`,
+        });
+      } else {
+        throw new Error(response?.error || 'Failed to fetch rates');
+      }
+    } catch (error) {
+      console.error('Error fetching live rates:', error);
+      toast.error("Failed to fetch live rates", {
+        description: "Please try again or enter rates manually.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="editor-section">
-      <h3 className="font-semibold text-foreground">Rate Information</h3>
-      <p className="text-xs text-muted-foreground mb-4">
-        Update current mortgage rates. Include the % symbol.
-      </p>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-semibold text-foreground">Rate Information</h3>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={fetchLiveRates}
+          disabled={isLoading}
+          className="gap-2"
+        >
+          {isLoading ? (
+            <RefreshCw className="h-4 w-4 animate-spin" />
+          ) : (
+            <Wifi className="h-4 w-4" />
+          )}
+          {isLoading ? "Fetching..." : "Fetch Live Rates"}
+        </Button>
+      </div>
+      
+      <div className="flex items-center gap-2 mb-4">
+        <p className="text-xs text-muted-foreground">
+          Update current mortgage rates or fetch live data.
+        </p>
+        {lastFetch && (
+          <span className="text-xs text-green-600 flex items-center gap-1">
+            <Wifi className="h-3 w-3" />
+            Updated {lastFetch}
+          </span>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label className="editor-label">30-Year Fixed</Label>
-          <Input
-            value={data.rates.thirtyYearFixed}
-            onChange={(e) => updateRate("thirtyYearFixed", e.target.value)}
-            placeholder="6.25%"
-          />
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.thirtyYearFixed}
+              onChange={(e) => updateRate("thirtyYearFixed", e.target.value)}
+              placeholder="6.75%"
+              className="flex-1"
+            />
+            <Input
+              value={data.rates.thirtyYearFixedAPR}
+              onChange={(e) => updateRate("thirtyYearFixedAPR", e.target.value)}
+              placeholder="APR"
+              className="w-20 text-xs"
+              title="APR"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">15-Year Fixed</Label>
-          <Input
-            value={data.rates.fifteenYearFixed}
-            onChange={(e) => updateRate("fifteenYearFixed", e.target.value)}
-            placeholder="5.79%"
-          />
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.fifteenYearFixed}
+              onChange={(e) => updateRate("fifteenYearFixed", e.target.value)}
+              placeholder="6.10%"
+              className="flex-1"
+            />
+            <Input
+              value={data.rates.fifteenYearFixedAPR}
+              onChange={(e) => updateRate("fifteenYearFixedAPR", e.target.value)}
+              placeholder="APR"
+              className="w-20 text-xs"
+              title="APR"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">30-Year Jumbo</Label>
-          <Input
-            value={data.rates.thirtyYearJumbo}
-            onChange={(e) => updateRate("thirtyYearJumbo", e.target.value)}
-            placeholder="6.40%"
-          />
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.thirtyYearJumbo}
+              onChange={(e) => updateRate("thirtyYearJumbo", e.target.value)}
+              placeholder="7.05%"
+              className="flex-1"
+            />
+            <Input
+              value={data.rates.thirtyYearJumboAPR}
+              onChange={(e) => updateRate("thirtyYearJumboAPR", e.target.value)}
+              placeholder="APR"
+              className="w-20 text-xs"
+              title="APR"
+            />
+          </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">5/1 ARM</Label>
-          <Input
-            value={data.rates.fiveOneArm}
-            onChange={(e) => updateRate("fiveOneArm", e.target.value)}
-            placeholder="5.72%"
-          />
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.fiveOneArm}
+              onChange={(e) => updateRate("fiveOneArm", e.target.value)}
+              placeholder="6.45%"
+              className="flex-1"
+            />
+            <Input
+              value={data.rates.fiveOneArmAPR}
+              onChange={(e) => updateRate("fiveOneArmAPR", e.target.value)}
+              placeholder="APR"
+              className="w-20 text-xs"
+              title="APR"
+            />
+          </div>
         </div>
       </div>
 
@@ -67,6 +169,13 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
           onChange={(e) => updateRate("dateGenerated", e.target.value)}
           placeholder="January 13, 2026"
         />
+      </div>
+
+      <div className="mt-4 p-3 bg-muted/50 rounded-md">
+        <p className="text-xs text-muted-foreground">
+          <strong>TILA Compliance:</strong> Rates shown are for informational purposes. 
+          APR reflects the actual yearly cost including fees. Rates subject to change without notice.
+        </p>
       </div>
     </div>
   );
