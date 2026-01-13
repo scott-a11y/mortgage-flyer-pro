@@ -56,9 +56,9 @@ export const defaultFlyerData: FlyerData = {
   },
   realtor: {
     name: "Celeste Zarling",
-    phone: "",
-    email: "celeste@c21nwr.com",
-    brokerage: "Century 21 Northwest Realtors",
-    website: "",
+    phone: "(425) 420-4887",
+    email: "cmzarling@gmail.com",
+    brokerage: "Century 21 North Homes - Kirkland",
+    website: "www.century21northhomes.com",
   },
 };
