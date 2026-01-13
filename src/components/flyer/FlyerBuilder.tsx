@@ -3,10 +3,10 @@ import { FlyerData } from "@/types/flyer";
 import { defaultFlyerData } from "@/data/defaultFlyerData";
 import { FlyerPreview } from "./FlyerPreview";
 import { EditorTabs } from "./EditorTabs";
+import { TemplateManager } from "./TemplateManager";
+import { ExportMenu } from "./ExportMenu";
 import { Button } from "@/components/ui/button";
-import { Download, RotateCcw, FileImage, FileText } from "lucide-react";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { RotateCcw, Eye } from "lucide-react";
 import { toast } from "sonner";
 
 export function FlyerBuilder() {
@@ -19,52 +19,8 @@ export function FlyerBuilder() {
     toast.success("Flyer reset to defaults");
   };
 
-  const exportToPNG = async () => {
-    if (!previewRef.current) return;
-    setIsExporting(true);
-    try {
-      const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
-      const link = document.createElement("a");
-      link.download = `mortgage-flyer-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-      toast.success("PNG downloaded successfully!");
-    } catch (error) {
-      toast.error("Failed to export PNG");
-      console.error(error);
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
-  const exportToPDF = async () => {
-    if (!previewRef.current) return;
-    setIsExporting(true);
-    try {
-      const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-      });
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "in",
-        format: "letter",
-      });
-      pdf.addImage(imgData, "PNG", 0, 0, 8.5, 11);
-      pdf.save(`mortgage-flyer-${Date.now()}.pdf`);
-      toast.success("PDF downloaded successfully!");
-    } catch (error) {
-      toast.error("Failed to export PDF");
-      console.error(error);
-    } finally {
-      setIsExporting(false);
-    }
+  const handleLoadTemplate = (data: FlyerData) => {
+    setFlyerData(data);
   };
 
   return (
@@ -82,27 +38,19 @@ export function FlyerBuilder() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <TemplateManager 
+              currentData={flyerData} 
+              onLoadTemplate={handleLoadTemplate} 
+            />
             <Button variant="outline" size="sm" onClick={handleReset}>
               <RotateCcw className="w-4 h-4 mr-1.5" />
               Reset
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={exportToPNG}
-              disabled={isExporting}
-            >
-              <FileImage className="w-4 h-4 mr-1.5" />
-              PNG
-            </Button>
-            <Button
-              size="sm"
-              onClick={exportToPDF}
-              disabled={isExporting}
-            >
-              <FileText className="w-4 h-4 mr-1.5" />
-              PDF
-            </Button>
+            <ExportMenu 
+              previewRef={previewRef} 
+              isExporting={isExporting}
+              setIsExporting={setIsExporting}
+            />
           </div>
         </div>
       </header>
@@ -120,9 +68,9 @@ export function FlyerBuilder() {
           {/* Preview Panel */}
           <div className="order-1 lg:order-2 flex flex-col items-center">
             <div className="mb-4 flex items-center gap-2">
-              <Download className="w-4 h-4 text-muted-foreground" />
+              <Eye className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">
-                Live Preview — 8.5" × 11" Letter Size
+                Live Preview — 8.5" × 11" Letter Size (TILA Compliant)
               </span>
             </div>
             <div className="overflow-auto max-w-full">

@@ -1,4 +1,4 @@
-import { FlyerData } from "@/types/flyer";
+import { FlyerData, brokerageThemes } from "@/types/flyer";
 
 const today = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -9,15 +9,19 @@ const today = new Date().toLocaleDateString('en-US', {
 export const defaultFlyerData: FlyerData = {
   rates: {
     thirtyYearFixed: "6.25%",
+    thirtyYearFixedAPR: "6.45%",
     fifteenYearFixed: "5.79%",
+    fifteenYearFixedAPR: "5.99%",
     thirtyYearJumbo: "6.40%",
+    thirtyYearJumboAPR: "6.55%",
     fiveOneArm: "5.72%",
+    fiveOneArmAPR: "6.85%",
     dateGenerated: today,
   },
   marketCopy: {
-    headline: "Sub-6% Mortgage Rates Are Here!",
-    subheading: "Take advantage of competitive rates in Oregon, Washington & Idaho",
-    marketInsight: "Current market conditions favor buyers with historically competitive rates. Lock in your rate today before the next Fed meeting.",
+    headline: "Competitive Mortgage Rates Available!",
+    subheading: "Take advantage of today's rates in Oregon, Washington & Idaho",
+    marketInsight: "Current market conditions offer opportunities for buyers. Contact us for a personalized quote and rate lock options.",
   },
   regions: [
     {
@@ -28,7 +32,7 @@ export const defaultFlyerData: FlyerData = {
     {
       name: "Washington",
       cities: "Vancouver, Seattle Metro, Tri-Cities",
-      insight: "Clark County remains hot for buyers seeking value near Portland. Seattle suburbs offer growing inventory with competitive pricing.",
+      insight: "Clark County remains active for buyers seeking value near Portland. Seattle suburbs offer growing inventory with competitive pricing.",
     },
     {
       name: "Idaho",
@@ -39,6 +43,7 @@ export const defaultFlyerData: FlyerData = {
   cta: {
     buttonText: "Start My Pre-Qualification",
     buttonUrl: "https://www.iamortgage.org/apply",
+    showQRCode: true,
   },
   broker: {
     name: "Scott Little",
@@ -67,6 +72,7 @@ export const defaultFlyerData: FlyerData = {
     headshot: "",
     logo: "",
   },
+  colorTheme: brokerageThemes[0], // Century 21 default
 };
 
 // Pre-defined region templates for different markets
@@ -80,7 +86,7 @@ export const regionTemplates = {
     {
       name: "Washington",
       cities: "Vancouver, Seattle Metro, Tri-Cities",
-      insight: "Clark County remains hot for buyers seeking value near Portland. Seattle suburbs offer growing inventory with competitive pricing.",
+      insight: "Clark County remains active for buyers seeking value near Portland. Seattle suburbs offer growing inventory with competitive pricing.",
     },
     {
       name: "Idaho",
@@ -109,7 +115,7 @@ export const regionTemplates = {
     {
       name: "Shoreline",
       cities: "Aurora, Richmond Beach, Echo Lake",
-      insight: "Light rail expansion has transformed Shoreline into a hot market. Buyers find value compared to Seattle proper with excellent transit access.",
+      insight: "Light rail expansion has transformed Shoreline into a sought-after market. Buyers find value compared to Seattle proper with excellent transit access.",
     },
     {
       name: "Lake Forest Park",
@@ -123,3 +129,13 @@ export const regionTemplates = {
     },
   ],
 } as const;
+
+// Template storage key
+export const TEMPLATE_STORAGE_KEY = "flyer-templates";
+
+export interface SavedTemplate {
+  id: string;
+  name: string;
+  data: FlyerData;
+  createdAt: string;
+}
