@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { FlyerData } from "@/types/flyer";
-import { SavedTemplate, TEMPLATE_STORAGE_KEY } from "@/data/defaultFlyerData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,8 +19,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Save, FolderOpen, Trash2, ChevronDown } from "lucide-react";
+import { Save, FolderOpen, Trash2, ChevronDown, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
+interface SavedTemplate {
+  id: string;
+  name: string;
+  data: FlyerData;
+  created_at: string;
+}
 
 interface TemplateManagerProps {
   currentData: FlyerData;
@@ -32,41 +39,74 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
   const [templates, setTemplates] = useState<SavedTemplate[]>([]);
   const [saveDialogOpen, setSaveDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
+  // Fetch templates from database
   useEffect(() => {
-    const stored = localStorage.getItem(TEMPLATE_STORAGE_KEY);
-    if (stored) {
-      try {
-        setTemplates(JSON.parse(stored));
-      } catch {
-        setTemplates([]);
-      }
-    }
+    fetchTemplates();
   }, []);
 
-  const saveTemplates = (newTemplates: SavedTemplate[]) => {
-    localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify(newTemplates));
-    setTemplates(newTemplates);
+  const fetchTemplates = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('flyer_templates')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      
+      setTemplates(data?.map(t => ({
+        id: t.id,
+        name: t.name,
+        data: t.data as unknown as FlyerData,
+        created_at: t.created_at
+      })) || []);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+      toast.error("Failed to load templates");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error("Please enter a template name");
       return;
     }
 
-    const newTemplate: SavedTemplate = {
-      id: Date.now().toString(),
-      name: templateName.trim(),
-      data: currentData,
-      createdAt: new Date().toISOString(),
-    };
+    setIsSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from('flyer_templates')
+        .insert([{
+          name: templateName.trim(),
+          data: JSON.parse(JSON.stringify(currentData))
+        }])
+        .select()
+        .single();
 
-    const updated = [...templates, newTemplate];
-    saveTemplates(updated);
-    setTemplateName("");
-    setSaveDialogOpen(false);
-    toast.success(`Template "${newTemplate.name}" saved!`);
+      if (error) throw error;
+
+      const newTemplate: SavedTemplate = {
+        id: data.id,
+        name: data.name as string,
+        data: data.data as unknown as FlyerData,
+        created_at: data.created_at
+      };
+
+      setTemplates(prev => [newTemplate, ...prev]);
+      setTemplateName("");
+      setSaveDialogOpen(false);
+      toast.success(`Template "${newTemplate.name}" saved!`);
+    } catch (error) {
+      console.error('Error saving template:', error);
+      toast.error("Failed to save template");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleLoad = (template: SavedTemplate) => {
@@ -74,10 +114,21 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
     toast.success(`Loaded template "${template.name}"`);
   };
 
-  const handleDelete = (templateId: string, templateName: string) => {
-    const updated = templates.filter(t => t.id !== templateId);
-    saveTemplates(updated);
-    toast.success(`Deleted template "${templateName}"`);
+  const handleDelete = async (templateId: string, templateName: string) => {
+    try {
+      const { error } = await supabase
+        .from('flyer_templates')
+        .delete()
+        .eq('id', templateId);
+
+      if (error) throw error;
+
+      setTemplates(prev => prev.filter(t => t.id !== templateId));
+      toast.success(`Deleted template "${templateName}"`);
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      toast.error("Failed to delete template");
+    }
   };
 
   return (
@@ -102,16 +153,21 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
               placeholder="Template name (e.g., 'Celeste - Kirkland')"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSave()}
+              onKeyDown={(e) => e.key === "Enter" && !isSaving && handleSave()}
+              disabled={isSaving}
             />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setSaveDialogOpen(false)} disabled={isSaving}>
               Cancel
             </Button>
-            <Button onClick={handleSave}>
-              <Save className="w-4 h-4 mr-1.5" />
-              Save Template
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? (
+                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-1.5" />
+              )}
+              {isSaving ? "Saving..." : "Save Template"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -129,7 +185,12 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
         <DropdownMenuContent align="end" className="w-64">
           <DropdownMenuLabel>Saved Templates</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {templates.length === 0 ? (
+          {isLoading ? (
+            <div className="px-2 py-3 text-sm text-muted-foreground text-center flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Loading...
+            </div>
+          ) : templates.length === 0 ? (
             <div className="px-2 py-3 text-sm text-muted-foreground text-center">
               No saved templates yet
             </div>
@@ -145,7 +206,7 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
                 >
                   <span className="font-medium">{template.name}</span>
                   <span className="text-xs text-muted-foreground ml-2">
-                    {new Date(template.createdAt).toLocaleDateString()}
+                    {new Date(template.created_at).toLocaleDateString()}
                   </span>
                 </button>
                 <Button
