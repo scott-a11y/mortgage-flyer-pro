@@ -186,8 +186,9 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.realtor.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>Lic# 134081</div>
+                  <div style={{ color: themeColor, fontSize: 8, fontWeight: 500 }}>{data.realtor.brokerage}</div>
                   <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.website}</div>
                 </div>
                 {data.realtor.headshot && (
                   <HeadshotImage 
