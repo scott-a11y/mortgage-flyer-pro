@@ -20,7 +20,7 @@ interface BannerDimensions {
 }
 
 const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
-  email: { width: 600, height: 300, scale: 2 },
+  email: { width: 600, height: 200, scale: 2 },
   social: { width: 1080, height: 1080, scale: 2 },
 };
 
@@ -67,7 +67,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">Email Banner</span>
-            <span className="text-xs text-muted-foreground">(600×300)</span>
+            <span className="text-xs text-muted-foreground">(600×200)</span>
           </div>
           <Button
             size="sm"
@@ -84,99 +84,92 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           </Button>
         </div>
 
-        {/* Email Banner (600x300) */}
+        {/* Email Banner (600x200) */}
         <div className="overflow-hidden rounded-lg border shadow-sm">
           <div
             ref={emailBannerRef}
             className="relative overflow-hidden"
             style={{
               width: 600,
-              height: 300,
+              height: 200,
               background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary}ee 50%, ${themeColor}22 100%)`,
             }}
           >
             {/* Decorative elements */}
             <div
-              className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-20"
+              className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20"
               style={{ background: themeColor, transform: "translate(30%, -30%)" }}
-            />
-            <div
-              className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-10"
-              style={{ background: themeColor, transform: "translate(-30%, 30%)" }}
             />
 
             {/* Content */}
-            <div className="relative z-10 h-full flex items-center justify-between p-5">
-              {/* Left side - Contacts */}
-              <div className="flex flex-col gap-2" style={{ width: 180 }}>
+            <div className="relative z-10 h-full flex items-center justify-between px-4 py-3">
+              {/* Left side - Contacts (stacked horizontally) */}
+              <div className="flex items-center gap-3" style={{ width: 200 }}>
                 {/* Broker */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {data.broker.headshot && (
                     <img
                       src={data.broker.headshot}
                       alt={data.broker.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
                       style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
                     />
                   )}
                   <div className="min-w-0">
-                    <div className="text-white font-semibold text-xs truncate">{data.broker.name}</div>
-                    <div className="text-white/60 text-[10px]">{data.broker.title}</div>
-                    <div className="text-white/80 text-[10px]">{data.broker.phone}</div>
+                    <div className="text-white font-semibold text-[10px] truncate leading-tight">{data.broker.name}</div>
+                    <div className="text-white/80 text-[9px] leading-tight">{data.broker.phone}</div>
                   </div>
                 </div>
                 {/* Realtor */}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {data.realtor.headshot && (
                     <img
                       src={data.realtor.headshot}
                       alt={data.realtor.name}
-                      className="w-12 h-12 rounded-full object-cover border-2 border-white/30"
+                      className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
                       style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
                     />
                   )}
                   <div className="min-w-0">
-                    <div className="text-white font-semibold text-xs truncate">{data.realtor.name}</div>
-                    <div className="text-white/60 text-[10px]">{data.realtor.title}</div>
-                    <div className="text-white/80 text-[10px]">{data.realtor.phone}</div>
+                    <div className="text-white font-semibold text-[10px] truncate leading-tight">{data.realtor.name}</div>
+                    <div className="text-white/80 text-[9px] leading-tight">{data.realtor.phone}</div>
                   </div>
                 </div>
               </div>
 
-              {/* Center - Rates */}
-              <div className="flex-1 px-4 space-y-2">
-                <div className="flex items-center gap-2 justify-center">
+              {/* Center - Branding & Rates */}
+              <div className="flex-1 px-3">
+                <div className="flex items-center gap-1.5 justify-center mb-1">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs"
+                    className="w-6 h-6 rounded flex items-center justify-center font-bold text-white text-[10px]"
                     style={{ background: themeColor }}
                   >
                     IA
                   </div>
-                  <div className="text-white font-semibold text-sm">IA Mortgage</div>
+                  <div className="text-white font-semibold text-xs">IA Mortgage</div>
                 </div>
-                <div className="text-white/80 text-[10px] uppercase tracking-wider text-center">Today's Rates</div>
-                <div className="flex gap-3 justify-center">
-                  <div className="bg-white/10 backdrop-blur rounded-lg px-3 py-2 text-center">
-                    <div className="text-white/70 text-[10px]">30-Yr Fixed</div>
-                    <div className="text-white font-bold text-lg">{data.rates.thirtyYearFixed}</div>
+                <div className="flex gap-2 justify-center">
+                  <div className="bg-white/10 backdrop-blur rounded px-2.5 py-1.5 text-center">
+                    <div className="text-white/70 text-[9px]">30-Yr Fixed</div>
+                    <div className="text-white font-bold text-base leading-tight">{data.rates.thirtyYearFixed}</div>
                   </div>
-                  <div className="bg-white/10 backdrop-blur rounded-lg px-3 py-2 text-center">
-                    <div className="text-white/70 text-[10px]">15-Yr Fixed</div>
-                    <div className="text-white font-bold text-lg">{data.rates.fifteenYearFixed}</div>
+                  <div className="bg-white/10 backdrop-blur rounded px-2.5 py-1.5 text-center">
+                    <div className="text-white/70 text-[9px]">15-Yr Fixed</div>
+                    <div className="text-white font-bold text-base leading-tight">{data.rates.fifteenYearFixed}</div>
                   </div>
                 </div>
-                <div className="text-white/50 text-[9px] text-center">
-                  As of {data.rates.dateGenerated} • Subject to change
+                <div className="text-white/50 text-[8px] text-center mt-1">
+                  As of {data.rates.dateGenerated} • NMLS #{data.company.nmls}
                 </div>
               </div>
 
               {/* Right side - QR Code and CTA */}
-              <div className="flex flex-col items-center gap-2">
-                <div className="bg-white p-1.5 rounded-lg shadow-lg">
-                  <QRCodeSVG value={shareUrl} size={70} level="M" />
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="bg-white p-1 rounded shadow-lg">
+                  <QRCodeSVG value={shareUrl} size={55} level="M" />
                 </div>
                 <div
-                  className="px-3 py-1.5 rounded-full text-white text-xs font-semibold shadow-lg"
+                  className="px-2 py-1 rounded-full text-white text-[10px] font-semibold shadow-lg"
                   style={{ background: themeColor }}
                 >
                   View Live Rates →
