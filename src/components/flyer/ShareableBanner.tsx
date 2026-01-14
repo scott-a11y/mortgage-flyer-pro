@@ -20,7 +20,7 @@ interface BannerDimensions {
 }
 
 const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
-  email: { width: 600, height: 200, scale: 2 },
+  email: { width: 600, height: 220, scale: 2 },
   social: { width: 1080, height: 1080, scale: 2 },
   stories: { width: 1080, height: 1920, scale: 2 },
   facebook: { width: 1640, height: 624, scale: 2 },
@@ -73,7 +73,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">Email Banner</span>
-            <span className="text-xs text-muted-foreground">(600×200)</span>
+            <span className="text-xs text-muted-foreground">(600×220)</span>
           </div>
           <Button
             size="sm"
@@ -90,69 +90,57 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           </Button>
         </div>
 
-        {/* Email Banner (600x200) - Clean 2-row layout */}
-        <div className="rounded-lg border" style={{ width: 600, overflow: 'hidden' }}>
+        {/* Email Banner (600x220) - Clean 3-row layout with footer */}
+        <div className="rounded-lg overflow-hidden" style={{ width: 600 }}>
           <div
             ref={emailBannerRef}
             style={{
               width: 600,
-              height: 200,
+              height: 220,
               background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary} 70%, ${themeColor}40 100%)`,
+              position: 'relative',
             }}
           >
-            {/* Row 1: Contacts and Branding */}
-            <div className="flex items-center justify-between px-5 pt-4 pb-2">
+            {/* Row 1: Contacts */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 8px 20px' }}>
               {/* Left - Broker */}
-              <div className="flex items-center gap-3">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {data.broker.headshot && (
                   <img
                     src={data.broker.headshot}
                     alt={data.broker.name}
-                    className="rounded-lg object-cover border-2 border-white/30"
                     style={{ 
-                      width: 48, 
-                      height: 48, 
+                      width: 44, 
+                      height: 44, 
+                      borderRadius: 8,
+                      objectFit: 'cover',
                       objectPosition: `center ${data.broker.headshotPosition ?? 15}%`
                     }}
                   />
                 )}
                 <div>
-                  <div className="text-white font-semibold text-xs leading-tight">{data.broker.name}</div>
-                  <div className="text-white/50 text-[9px] leading-tight">NMLS #{data.broker.nmls}</div>
-                  <div className="text-white/70 text-[10px] leading-tight">{data.broker.phone}</div>
-                </div>
-              </div>
-
-              {/* Center - Branding */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
-                  style={{ background: themeColor }}
-                >
-                  IA
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm leading-tight">IA Mortgage</div>
-                  <div className="text-white/50 text-[9px]">NMLS #{data.company.nmls}</div>
-                  <div className="text-white/60 text-[8px]">{data.company.website}</div>
+                  <div style={{ color: 'white', fontWeight: 600, fontSize: 11, lineHeight: 1.2 }}>{data.broker.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, lineHeight: 1.2 }}>NMLS #{data.broker.nmls}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, lineHeight: 1.2 }}>{data.broker.phone}</div>
                 </div>
               </div>
 
               {/* Right - Realtor */}
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <div className="text-white font-semibold text-xs leading-tight">{data.realtor.name}</div>
-                  <div className="text-white/50 text-[9px] leading-tight">Lic# 134081</div>
-                  <div className="text-white/70 text-[10px] leading-tight">{data.realtor.phone}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: 'white', fontWeight: 600, fontSize: 11, lineHeight: 1.2 }}>{data.realtor.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, lineHeight: 1.2 }}>Lic# 134081</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, lineHeight: 1.2 }}>{data.realtor.phone}</div>
                 </div>
                 {data.realtor.headshot && (
                   <img
                     src={data.realtor.headshot}
                     alt={data.realtor.name}
-                    className="rounded-lg object-cover border-2 border-white/30"
                     style={{ 
-                      width: 48, 
-                      height: 48, 
+                      width: 44, 
+                      height: 44, 
+                      borderRadius: 8,
+                      objectFit: 'cover',
                       objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`
                     }}
                   />
@@ -161,42 +149,105 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             </div>
 
             {/* Row 2: Rates and CTA */}
-            <div className="flex items-center justify-between px-5 pb-4 pt-2">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 20px 8px 20px' }}>
               {/* Left - Rates with APR */}
-              <div className="flex gap-3">
-                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
-                  <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Year Fixed</div>
-                  <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearFixed}</div>
-                  <div className="text-white/50 text-[8px]">{data.rates.thirtyYearFixedAPR} APR</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-Year Fixed</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.thirtyYearFixed}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.thirtyYearFixedAPR} APR</div>
                 </div>
-                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
-                  <div className="text-white/60 text-[7px] uppercase tracking-wide">15-Year Fixed</div>
-                  <div className="text-white font-bold text-lg leading-none">{data.rates.fifteenYearFixed}</div>
-                  <div className="text-white/50 text-[8px]">{data.rates.fifteenYearFixedAPR} APR</div>
+                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>15-Year Fixed</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.fifteenYearFixed}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.fifteenYearFixedAPR} APR</div>
                 </div>
-                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
-                  <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Yr Jumbo</div>
-                  <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearJumbo}</div>
-                  <div className="text-white/50 text-[8px]">{data.rates.thirtyYearJumboAPR} APR</div>
+                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-Yr Jumbo</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.thirtyYearJumbo}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.thirtyYearJumboAPR} APR</div>
                 </div>
               </div>
 
               {/* Right - QR and CTA */}
-              <div className="flex items-center gap-3">
-                <div className="bg-white p-1.5 rounded-lg">
-                  <QRCodeSVG value={shareUrl} size={50} level="M" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ background: 'white', padding: 4, borderRadius: 6 }}>
+                  <QRCodeSVG value={shareUrl} size={44} level="M" />
                 </div>
-                <div className="flex flex-col items-start gap-1">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
                   <div
-                    className="px-3 py-1.5 rounded-full text-white text-[10px] font-semibold whitespace-nowrap"
-                    style={{ background: themeColor }}
+                    style={{ 
+                      background: themeColor,
+                      padding: '5px 10px',
+                      borderRadius: 20,
+                      color: 'white',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      whiteSpace: 'nowrap'
+                    }}
                   >
                     View Live Rates →
                   </div>
-                  <div className="text-white/40 text-[8px]">
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 7 }}>
                     As of {data.rates.dateGenerated}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Row 3: Footer with IA Mortgage branding and disclaimer */}
+            <div 
+              style={{ 
+                background: `linear-gradient(90deg, ${themeColor}30 0%, ${themeColor}50 50%, ${themeColor}30 100%)`,
+                padding: '6px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+              }}
+            >
+              {/* Left - IA Branding */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div
+                  style={{ 
+                    width: 22,
+                    height: 22,
+                    borderRadius: 4,
+                    background: themeColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 700,
+                    color: 'white',
+                    fontSize: 9
+                  }}
+                >
+                  IA
+                </div>
+                <div>
+                  <div style={{ color: 'white', fontWeight: 600, fontSize: 9, lineHeight: 1.2 }}>IA Mortgage</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>NMLS #{data.company.nmls}</div>
+                </div>
+              </div>
+
+              {/* Center - Disclaimer */}
+              <div style={{ 
+                color: 'rgba(255,255,255,0.5)', 
+                fontSize: 6, 
+                textAlign: 'center',
+                maxWidth: 320,
+                lineHeight: 1.3
+              }}>
+                Rates shown are for informational purposes only and are subject to change without notice. 
+                Actual rates may vary based on creditworthiness and loan terms. Equal Housing Opportunity.
+              </div>
+
+              {/* Right - Website */}
+              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 8 }}>
+                {data.company.website}
               </div>
             </div>
           </div>
