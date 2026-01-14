@@ -96,65 +96,76 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}
           >
             {/* Content - Single row layout */}
-            <div className="relative z-10 h-full flex items-center gap-5 px-5">
-              {/* Broker */}
-              <div className="flex items-center gap-2.5">
-                {data.broker.headshot && (
-                  <img
-                    src={data.broker.headshot}
-                    alt={data.broker.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-white/40 shadow-md"
-                    style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                  />
-                )}
-                <div className="min-w-0">
-                  <div className="text-white font-semibold text-[11px] truncate leading-tight">{data.broker.name}</div>
-                  <div className="text-white/70 text-[9px] leading-tight">{data.broker.phone}</div>
+            <div className="relative z-10 h-full flex items-center gap-4 px-4">
+              {/* Contacts section */}
+              <div className="flex items-center gap-4 shrink-0">
+                {/* Broker */}
+                <div className="flex items-center gap-2">
+                  {data.broker.headshot && (
+                    <img
+                      src={data.broker.headshot}
+                      alt={data.broker.name}
+                      className="rounded-full object-cover border-2 border-white/40 shadow-md"
+                      style={{ 
+                        width: 44, 
+                        height: 44, 
+                        objectPosition: 'center top'
+                      }}
+                    />
+                  )}
+                  <div>
+                    <div className="text-white font-semibold text-[11px] leading-tight whitespace-nowrap">{data.broker.name}</div>
+                    <div className="text-white/70 text-[9px] leading-tight">{data.broker.phone}</div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Divider */}
-              <div className="w-px h-10 bg-white/20" />
+                {/* Divider */}
+                <div className="w-px h-8 bg-white/20" />
 
-              {/* Realtor */}
-              <div className="flex items-center gap-2.5">
-                {data.realtor.headshot && (
-                  <img
-                    src={data.realtor.headshot}
-                    alt={data.realtor.name}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-white/40 shadow-md"
-                    style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                  />
-                )}
-                <div className="min-w-0">
-                  <div className="text-white font-semibold text-[11px] truncate leading-tight">{data.realtor.name}</div>
-                  <div className="text-white/70 text-[9px] leading-tight">{data.realtor.phone}</div>
+                {/* Realtor */}
+                <div className="flex items-center gap-2">
+                  {data.realtor.headshot && (
+                    <img
+                      src={data.realtor.headshot}
+                      alt={data.realtor.name}
+                      className="rounded-full object-cover border-2 border-white/40 shadow-md"
+                      style={{ 
+                        width: 44, 
+                        height: 44, 
+                        objectPosition: 'center top'
+                      }}
+                    />
+                  )}
+                  <div>
+                    <div className="text-white font-semibold text-[11px] leading-tight whitespace-nowrap">{data.realtor.name}</div>
+                    <div className="text-white/70 text-[9px] leading-tight">{data.realtor.phone}</div>
+                  </div>
                 </div>
               </div>
 
               {/* Center - Branding & Rates */}
-              <div className="flex-1 flex items-center justify-center gap-4">
+              <div className="flex-1 flex items-center justify-center gap-3">
                 <div className="flex items-center gap-2">
                   <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-md"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-[10px] shadow-md"
                     style={{ background: themeColor }}
                   >
                     IA
                   </div>
                   <div>
-                    <div className="text-white font-bold text-sm leading-tight">IA Mortgage</div>
-                    <div className="text-white/50 text-[8px]">NMLS #{data.company.nmls}</div>
+                    <div className="text-white font-bold text-xs leading-tight">IA Mortgage</div>
+                    <div className="text-white/50 text-[7px]">NMLS #{data.company.nmls}</div>
                   </div>
                 </div>
 
                 <div className="flex gap-2">
-                  <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
-                    <div className="text-white/60 text-[8px] uppercase tracking-wide">30-Yr</div>
-                    <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearFixed}</div>
+                  <div className="bg-white/15 backdrop-blur rounded-lg px-2.5 py-1.5 text-center">
+                    <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Yr</div>
+                    <div className="text-white font-bold text-base leading-none">{data.rates.thirtyYearFixed}</div>
                   </div>
-                  <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
-                    <div className="text-white/60 text-[8px] uppercase tracking-wide">15-Yr</div>
-                    <div className="text-white font-bold text-lg leading-none">{data.rates.fifteenYearFixed}</div>
+                  <div className="bg-white/15 backdrop-blur rounded-lg px-2.5 py-1.5 text-center">
+                    <div className="text-white/60 text-[7px] uppercase tracking-wide">15-Yr</div>
+                    <div className="text-white font-bold text-base leading-none">{data.rates.fifteenYearFixed}</div>
                   </div>
                 </div>
               </div>
