@@ -85,18 +85,18 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Email Banner (600x200) */}
-        <div className="overflow-hidden rounded-lg border shadow-sm">
+        <div className="overflow-hidden rounded-lg border">
           <div
             ref={emailBannerRef}
-            className="relative overflow-hidden rounded-lg"
             style={{
               width: 600,
               height: 200,
+              overflow: 'hidden',
               background: `linear-gradient(90deg, ${themeSecondary} 0%, ${themeSecondary}f5 60%, ${themeColor}40 100%)`,
             }}
           >
             {/* Content - Single row layout */}
-            <div className="relative z-10 h-full flex items-center gap-3 px-4">
+            <div className="h-full flex items-center gap-3 px-4">
               {/* Contacts section */}
               <div className="flex items-center gap-3 shrink-0">
                 {/* Broker */}
@@ -105,11 +105,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     <img
                       src={data.broker.headshot}
                       alt={data.broker.name}
-                      className="rounded-full object-cover border-2 border-white/40 shadow-md"
+                      className="rounded-full object-cover border-2 border-white/40"
                       style={{ 
                         width: 44, 
                         height: 44, 
-                        objectPosition: 'center top'
+                        objectPosition: 'top'
                       }}
                     />
                   )}
@@ -128,11 +128,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     <img
                       src={data.realtor.headshot}
                       alt={data.realtor.name}
-                      className="rounded-full object-cover border-2 border-white/40 shadow-md"
+                      className="rounded-full object-cover border-2 border-white/40"
                       style={{ 
                         width: 44, 
                         height: 44, 
-                        objectPosition: 'center top'
+                        objectPosition: 'top'
                       }}
                     />
                   )}
@@ -144,10 +144,10 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Center - Branding & Rates */}
-              <div className="flex-1 flex items-center justify-center gap-3">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 flex items-center justify-center gap-3 min-w-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-[10px] shadow-md"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-[10px]"
                     style={{ background: themeColor }}
                   >
                     IA
@@ -158,7 +158,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 shrink-0">
                   <div className="bg-white/15 backdrop-blur rounded-lg px-2.5 py-1.5 text-center">
                     <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Yr</div>
                     <div className="text-white font-bold text-base leading-none">{data.rates.thirtyYearFixed}</div>
@@ -171,13 +171,13 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right side - QR Code and CTA */}
-              <div className="flex items-center gap-2 shrink-0 mr-2">
-                <div className="bg-white p-1.5 rounded-lg shadow-lg shrink-0">
-                  <QRCodeSVG value={shareUrl} size={44} level="M" />
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="bg-white p-1.5 rounded-lg shrink-0">
+                  <QRCodeSVG value={shareUrl} size={40} level="M" />
                 </div>
-                <div className="flex flex-col items-start gap-0.5">
+                <div className="flex flex-col items-start gap-0.5 pr-2">
                   <div
-                    className="px-2.5 py-1 rounded-full text-white text-[9px] font-semibold shadow-md whitespace-nowrap"
+                    className="px-2 py-1 rounded-full text-white text-[9px] font-semibold whitespace-nowrap"
                     style={{ background: themeColor }}
                   >
                     View Live Rates →
@@ -216,32 +216,32 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Social Banner (1080x1080) - Scaled down for preview */}
-        <div className="overflow-hidden rounded-lg border shadow-sm">
+        <div className="overflow-hidden rounded-lg border" style={{ width: 360, height: 360 }}>
           <div
             className="origin-top-left"
-            style={{ transform: "scale(0.333)", transformOrigin: "top left", width: 1080, height: 1080 / 3 }}
+            style={{ transform: "scale(0.333)", transformOrigin: "top left" }}
           >
             <div
               ref={socialBannerRef}
-              className="relative overflow-hidden"
               style={{
                 width: 1080,
                 height: 1080,
+                overflow: 'hidden',
                 background: `linear-gradient(180deg, ${themeSecondary} 0%, ${themeSecondary}f0 40%, ${themeColor}33 100%)`,
               }}
             >
-              {/* Decorative circles */}
+              {/* Decorative circles - contained within bounds */}
               <div
-                className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-15"
-                style={{ background: themeColor, transform: "translate(30%, -30%)" }}
+                className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-10"
+                style={{ background: themeColor, top: -100, right: -100 }}
               />
               <div
-                className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-10"
-                style={{ background: themeColor, transform: "translate(-30%, 30%)" }}
+                className="absolute w-[300px] h-[300px] rounded-full opacity-10"
+                style={{ background: themeColor, bottom: -80, left: -80 }}
               />
 
               {/* Content */}
-              <div className="relative z-10 h-full flex flex-col items-center justify-between p-10 py-8">
+              <div className="relative z-10 h-full flex flex-col items-center justify-between p-12">
                 {/* Header with branding and contacts */}
                 <div className="w-full flex items-center justify-between">
                   {/* Broker */}
@@ -250,8 +250,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       <img
                         src={data.broker.headshot}
                         alt={data.broker.name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl"
-                        style={{ objectPosition: 'center top' }}
+                        className="w-20 h-20 rounded-full object-cover border-4 border-white/30"
+                        style={{ objectPosition: 'top' }}
                       />
                     )}
                     <div>
@@ -264,7 +264,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   {/* Center - IA Branding */}
                   <div className="text-center">
                     <div
-                      className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-white text-2xl shadow-xl mx-auto"
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center font-bold text-white text-2xl mx-auto"
                       style={{ background: themeColor }}
                     >
                       IA
@@ -284,8 +284,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       <img
                         src={data.realtor.headshot}
                         alt={data.realtor.name}
-                        className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl"
-                        style={{ objectPosition: 'center top' }}
+                        className="w-20 h-20 rounded-full object-cover border-4 border-white/30"
+                        style={{ objectPosition: 'top' }}
                       />
                     )}
                   </div>
@@ -323,12 +323,12 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
 
                 {/* Footer with QR and CTA */}
                 <div className="flex items-center gap-6">
-                  <div className="bg-white p-3 rounded-2xl shadow-xl">
+                  <div className="bg-white p-3 rounded-2xl">
                     <QRCodeSVG value={shareUrl} size={100} level="M" />
                   </div>
                   <div className="text-center">
                     <div
-                      className="px-6 py-3 rounded-full text-white text-xl font-bold shadow-xl"
+                      className="px-6 py-3 rounded-full text-white text-xl font-bold"
                       style={{ background: themeColor }}
                     >
                       Scan for Live Rates
