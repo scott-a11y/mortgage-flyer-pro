@@ -165,12 +165,14 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             {/* Broker */}
             <div className="flex gap-4 items-center">
               {data.broker.headshot ? (
-                <img 
-                  src={data.broker.headshot} 
-                  alt={data.broker.name}
-                  className="w-16 h-16 object-cover"
-                  style={{ border: `1px solid ${goldAccent}` }}
-                />
+                <div className="flex-shrink-0 w-16 h-16">
+                  <img 
+                    src={data.broker.headshot} 
+                    alt={data.broker.name}
+                    className="w-16 h-16 rounded-full object-cover object-center"
+                    style={{ border: `1px solid ${goldAccent}`, aspectRatio: "1/1" }}
+                  />
+                </div>
               ) : (
                 <div 
                   className="w-16 h-16 flex items-center justify-center"
@@ -209,21 +211,23 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                 </div>
               </div>
-              {data.realtor.headshot ? (
-                <img 
-                  src={data.realtor.headshot} 
-                  alt={data.realtor.name}
-                  className="w-16 h-16 object-cover"
-                  style={{ border: `1px solid ${goldAccent}` }}
-                />
-              ) : (
-                <div 
-                  className="w-16 h-16 flex items-center justify-center"
-                  style={{ border: `1px solid ${goldAccent}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: goldAccent }} />
-                </div>
-              )}
+              <div className="flex-shrink-0 w-16 h-16">
+                {data.realtor.headshot ? (
+                  <img 
+                    src={data.realtor.headshot} 
+                    alt={data.realtor.name}
+                    className="w-16 h-16 rounded-full object-cover object-center"
+                    style={{ border: `1px solid ${goldAccent}`, aspectRatio: "1/1" }}
+                  />
+                ) : (
+                  <div 
+                    className="w-16 h-16 rounded-full flex items-center justify-center"
+                    style={{ border: `1px solid ${goldAccent}30` }}
+                  >
+                    <User className="w-6 h-6" style={{ color: goldAccent }} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

@@ -149,13 +149,13 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
           <div className="grid grid-cols-2 gap-3 h-[calc(100%-2.5rem)]">
             {/* Broker Info */}
             <div className="flex gap-2.5 border-r border-white/20 pr-3">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 w-12 h-12">
                 {data.broker.headshot ? (
                   <img 
                     src={data.broker.headshot} 
                     alt={data.broker.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                    style={{ borderColor: `${primaryColor}80`, borderWidth: 2 }}
+                    className="w-12 h-12 rounded-full object-cover object-center"
+                    style={{ borderColor: `${primaryColor}80`, borderWidth: 2, aspectRatio: "1/1" }}
                   />
                 ) : (
                   <div 
@@ -195,15 +195,14 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
             </div>
 
-            {/* Realtor Info */}
             <div className="flex gap-2.5 pl-3">
-              <div className="flex-shrink-0">
+              <div className="flex-shrink-0 w-12 h-12">
                 {data.realtor.headshot ? (
                   <img 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                    style={{ borderColor: primaryColor, borderWidth: 2 }}
+                    className="w-12 h-12 rounded-full object-cover object-center"
+                    style={{ borderColor: primaryColor, borderWidth: 2, aspectRatio: "1/1" }}
                   />
                 ) : (
                   <div 
