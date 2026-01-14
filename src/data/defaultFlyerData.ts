@@ -75,6 +75,7 @@ export const defaultFlyerData: FlyerData = {
     logo: "",
   },
   colorTheme: brokerageThemes[0], // Century 21 default
+  layout: "modern",
 };
 
 // Pre-defined region templates for different markets

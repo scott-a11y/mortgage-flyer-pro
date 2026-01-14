@@ -8,11 +8,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, FileImage, FileText, ChevronDown, Instagram, Facebook, Mail } from "lucide-react";
+import { Download, FileImage, FileText, ChevronDown, Instagram, Facebook, Mail, Linkedin, Printer, CreditCard } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
-import { ExportFormat } from "@/types/flyer";
+import { ExportFormat, exportFormats } from "@/types/flyer";
 
 interface ExportMenuProps {
   previewRef: React.RefObject<HTMLDivElement>;
@@ -20,26 +20,30 @@ interface ExportMenuProps {
   setIsExporting: (value: boolean) => void;
 }
 
-const formatConfigs: Record<ExportFormat, { icon: React.ReactNode; label: string; width: number; height: number }> = {
-  letter: { icon: <FileText className="w-4 h-4" />, label: "Letter PDF (8.5×11)", width: 612, height: 792 },
-  instagram: { icon: <Instagram className="w-4 h-4" />, label: "Instagram Story", width: 1080, height: 1920 },
-  facebook: { icon: <Facebook className="w-4 h-4" />, label: "Facebook Post", width: 1200, height: 630 },
-  "email-sig": { icon: <Mail className="w-4 h-4" />, label: "Email Signature", width: 600, height: 200 },
+const formatIcons: Record<ExportFormat, React.ReactNode> = {
+  letter: <FileText className="w-4 h-4" />,
+  "letter-hires": <Printer className="w-4 h-4" />,
+  postcard: <CreditCard className="w-4 h-4" />,
+  instagram: <Instagram className="w-4 h-4" />,
+  facebook: <Facebook className="w-4 h-4" />,
+  linkedin: <Linkedin className="w-4 h-4" />,
+  "email-sig": <Mail className="w-4 h-4" />,
 };
 
 export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMenuProps) {
-  const exportToPNG = async () => {
+  const exportToPNG = async (scale: number = 2, filename?: string) => {
     if (!previewRef.current) return;
     setIsExporting(true);
     try {
       const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
+        scale,
         useCORS: true,
         backgroundColor: "#ffffff",
+        logging: false,
       });
       const link = document.createElement("a");
-      link.download = `mortgage-flyer-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.download = filename || `mortgage-flyer-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
       toast.success("PNG downloaded successfully!");
     } catch (error) {
@@ -55,11 +59,12 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
     setIsExporting(true);
     try {
       const canvas = await html2canvas(previewRef.current, {
-        scale: 2,
+        scale: 3, // Higher quality for PDF
         useCORS: true,
         backgroundColor: "#ffffff",
+        logging: false,
       });
-      const imgData = canvas.toDataURL("image/png");
+      const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "in",
@@ -76,18 +81,43 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
     }
   };
 
+  const exportPrintReady = async () => {
+    if (!previewRef.current) return;
+    setIsExporting(true);
+    try {
+      // 300 DPI for print = scale 4 (approximately)
+      const canvas = await html2canvas(previewRef.current, {
+        scale: 4,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+      });
+      const link = document.createElement("a");
+      link.download = `mortgage-flyer-print-300dpi-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png", 1.0);
+      link.click();
+      toast.success("Print-ready PNG (300 DPI) downloaded!");
+    } catch (error) {
+      toast.error("Failed to export print-ready PNG");
+      console.error(error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const exportSocialFormat = async (format: ExportFormat) => {
     if (!previewRef.current) return;
     setIsExporting(true);
     
-    const config = formatConfigs[format];
+    const config = exportFormats.find(f => f.format === format);
+    if (!config) return;
     
     try {
-      // For social formats, we'll scale and crop the preview
       const canvas = await html2canvas(previewRef.current, {
-        scale: 3,
+        scale: config.scale,
         useCORS: true,
         backgroundColor: "#ffffff",
+        logging: false,
       });
 
       // Create a new canvas with the target dimensions
@@ -97,6 +127,7 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
       const ctx = targetCanvas.getContext("2d");
       
       if (ctx) {
+        // Use white background
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, config.width, config.height);
         
@@ -116,7 +147,7 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
 
       const link = document.createElement("a");
       link.download = `mortgage-flyer-${format}-${Date.now()}.png`;
-      link.href = targetCanvas.toDataURL("image/png");
+      link.href = targetCanvas.toDataURL("image/png", 1.0);
       link.click();
       toast.success(`${config.label} downloaded!`);
     } catch (error) {
@@ -132,37 +163,49 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
       <DropdownMenuTrigger asChild>
         <Button size="sm" disabled={isExporting}>
           <Download className="w-4 h-4 mr-1.5" />
-          Export
+          {isExporting ? "Exporting..." : "Export"}
           <ChevronDown className="w-3 h-3 ml-1" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-52">
         <DropdownMenuLabel>Print Formats</DropdownMenuLabel>
         <DropdownMenuItem onClick={exportToPDF} disabled={isExporting}>
           <FileText className="w-4 h-4 mr-2" />
           Letter PDF (8.5×11)
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={exportToPNG} disabled={isExporting}>
+        <DropdownMenuItem onClick={exportPrintReady} disabled={isExporting}>
+          <Printer className="w-4 h-4 mr-2" />
+          Print-Ready PNG (300 DPI)
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportToPNG(2)} disabled={isExporting}>
           <FileImage className="w-4 h-4 mr-2" />
           High-Res PNG
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportSocialFormat("postcard")} disabled={isExporting}>
+          <CreditCard className="w-4 h-4 mr-2" />
+          Postcard (6×4)
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Social Media</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => exportSocialFormat("instagram")} disabled={isExporting}>
           <Instagram className="w-4 h-4 mr-2" />
-          Instagram Story
+          Instagram Story (1080×1920)
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => exportSocialFormat("facebook")} disabled={isExporting}>
           <Facebook className="w-4 h-4 mr-2" />
-          Facebook Post
+          Facebook Post (1200×630)
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => exportSocialFormat("linkedin")} disabled={isExporting}>
+          <Linkedin className="w-4 h-4 mr-2" />
+          LinkedIn Post (1200×627)
         </DropdownMenuItem>
         
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Other</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => exportSocialFormat("email-sig")} disabled={isExporting}>
           <Mail className="w-4 h-4 mr-2" />
-          Email Signature
+          Email Signature (600×200)
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
