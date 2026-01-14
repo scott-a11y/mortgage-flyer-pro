@@ -27,20 +27,20 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
             background: `linear-gradient(135deg, ${secondaryColor} 0%, ${secondaryColor}ee 100%)`
           }}
         >
-          <div className="flex items-center gap-4 mb-2">
+          <div className="flex items-center gap-6 mb-2">
             {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-8 object-contain" />
+              <img src={data.company.logo} alt={data.company.name} className="h-12 max-w-[140px] object-contain" />
             ) : (
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5">
-                <span className="text-white font-bold text-sm tracking-wide">IA LOANS</span>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                <span className="text-white font-bold text-base tracking-wide">IA LOANS</span>
               </div>
             )}
-            <div className="h-5 w-px bg-white/30" />
+            <div className="h-8 w-px bg-white/30" />
             {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-8 object-contain bg-white/90 rounded px-2 py-1" />
+              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-12 max-w-[140px] object-contain bg-white/90 rounded px-3 py-1.5" />
             ) : (
-              <div className="rounded-lg px-3 py-1.5" style={{ backgroundColor: primaryColor }}>
-                <span style={{ color: secondaryColor }} className="font-bold text-xs tracking-wide">
+              <div className="rounded-lg px-4 py-2" style={{ backgroundColor: primaryColor }}>
+                <span style={{ color: secondaryColor }} className="font-bold text-sm tracking-wide">
                   {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
                 </span>
               </div>
@@ -168,12 +168,12 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
               
               <div className="flex flex-col justify-center min-w-0">
-                <div className="flex items-center gap-1.5 mb-0.5">
+                <div className="flex items-center gap-2 mb-1">
                   {data.company.logo ? (
-                    <img src={data.company.logo} alt={data.company.name} className="h-4 object-contain" />
+                    <img src={data.company.logo} alt={data.company.name} className="h-6 max-w-[80px] object-contain" />
                   ) : (
-                    <div className="bg-white/10 rounded px-1.5 py-0.5">
-                      <span className="text-white font-bold text-[8px]">IA LOANS</span>
+                    <div className="bg-white/10 rounded px-2 py-0.5">
+                      <span className="text-white font-bold text-[9px]">IA LOANS</span>
                     </div>
                   )}
                   <span className="text-white/50 text-[8px]">NMLS #{data.company.nmls}</span>
@@ -215,12 +215,12 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
 
               <div className="flex flex-col justify-center min-w-0">
-                <div className="flex items-center gap-1.5 mb-0.5">
+                <div className="flex items-center gap-2 mb-1">
                   {data.realtor.logo ? (
-                    <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-4 object-contain" />
+                    <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-6 max-w-[80px] object-contain" />
                   ) : (
-                    <div className="rounded px-1.5 py-0.5" style={{ backgroundColor: primaryColor }}>
-                      <span style={{ color: secondaryColor }} className="font-bold text-[8px]">C21</span>
+                    <div className="rounded px-2 py-0.5" style={{ backgroundColor: primaryColor }}>
+                      <span style={{ color: secondaryColor }} className="font-bold text-[9px]">C21</span>
                     </div>
                   )}
                 </div>

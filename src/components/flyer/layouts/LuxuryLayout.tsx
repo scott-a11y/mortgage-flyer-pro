@@ -34,17 +34,17 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${goldAccent}, transparent)` }} />
           </div>
           
-          <div className="flex items-center justify-center gap-8 mb-4">
+          <div className="flex items-center justify-center gap-10 mb-4">
             {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-8 object-contain invert" />
+              <img src={data.company.logo} alt={data.company.name} className="h-12 max-w-[150px] object-contain invert" />
             ) : (
-              <span className="text-white font-light text-lg tracking-[0.3em] uppercase">IA Mortgage</span>
+              <span className="text-white font-light text-xl tracking-[0.3em] uppercase">IA Mortgage</span>
             )}
-            <span style={{ color: goldAccent }} className="text-2xl">|</span>
+            <span style={{ color: goldAccent }} className="text-3xl font-extralight">|</span>
             {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-8 object-contain" />
+              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-12 max-w-[150px] object-contain" />
             ) : (
-              <span style={{ color: goldAccent }} className="font-light text-lg tracking-widest uppercase">
+              <span style={{ color: goldAccent }} className="font-light text-xl tracking-widest uppercase">
                 {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
               </span>
             )}
