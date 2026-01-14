@@ -19,21 +19,27 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          is_published: boolean | null
           name: string
+          slug: string | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           data: Json
           id?: string
+          is_published?: boolean | null
           name: string
+          slug?: string | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           data?: Json
           id?: string
+          is_published?: boolean | null
           name?: string
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []

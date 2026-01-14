@@ -5,6 +5,7 @@ import { FlyerPreview } from "./FlyerPreview";
 import { EditorTabs } from "./EditorTabs";
 import { TemplateManager } from "./TemplateManager";
 import { ExportMenu } from "./ExportMenu";
+import { ShareLinkDialog } from "./ShareLinkDialog";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -42,6 +43,7 @@ export function FlyerBuilder() {
               currentData={flyerData} 
               onLoadTemplate={handleLoadTemplate} 
             />
+            <ShareLinkDialog currentData={flyerData} />
             <Button variant="outline" size="sm" onClick={handleReset}>
               <RotateCcw className="w-4 h-4 mr-1.5" />
               Reset
