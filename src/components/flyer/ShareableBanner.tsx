@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FlyerData } from "@/types/flyer";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
-import { Download, Loader2, Mail, Share2 } from "lucide-react";
+import { Download, Loader2, Mail, Share2, Smartphone } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
 
@@ -11,7 +11,7 @@ interface ShareableBannerProps {
   shareUrl: string;
 }
 
-type BannerFormat = "email" | "social";
+type BannerFormat = "email" | "social" | "stories";
 
 interface BannerDimensions {
   width: number;
@@ -22,15 +22,17 @@ interface BannerDimensions {
 const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
   email: { width: 600, height: 200, scale: 2 },
   social: { width: 1080, height: 1080, scale: 2 },
+  stories: { width: 1080, height: 1920, scale: 2 },
 };
 
 export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
   const emailBannerRef = useRef<HTMLDivElement>(null);
   const socialBannerRef = useRef<HTMLDivElement>(null);
+  const storiesBannerRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState<BannerFormat | null>(null);
 
   const downloadBanner = async (format: BannerFormat) => {
-    const ref = format === "email" ? emailBannerRef : socialBannerRef;
+    const ref = format === "email" ? emailBannerRef : format === "social" ? socialBannerRef : storiesBannerRef;
     if (!ref.current) return;
 
     setIsDownloading(format);
@@ -47,7 +49,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
       link.href = canvas.toDataURL("image/png");
       link.click();
 
-      toast.success(`${format === "email" ? "Email" : "Social"} banner downloaded!`);
+      toast.success(`${format === "email" ? "Email" : format === "social" ? "Social" : "Stories"} banner downloaded!`);
     } catch (err) {
       console.error("Error generating banner:", err);
       toast.error("Failed to generate banner");
@@ -336,6 +338,170 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     </div>
                     <div className="text-white/40 text-base mt-3">
                       As of {data.rates.dateGenerated} • Rates subject to change
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Instagram Stories Banner Preview & Download */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Smartphone className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Instagram Stories</span>
+            <span className="text-xs text-muted-foreground">(1080×1920)</span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => downloadBanner("stories")}
+            disabled={isDownloading !== null}
+          >
+            {isDownloading === "stories" ? (
+              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-1.5" />
+            )}
+            Download
+          </Button>
+        </div>
+
+        {/* Stories Banner (1080x1920) - Scaled down for preview */}
+        <div 
+          className="rounded-lg border bg-muted/20"
+          style={{ width: 216, height: 384, overflow: 'hidden' }}
+        >
+          <div
+            style={{ 
+              transform: "scale(0.2)", 
+              transformOrigin: "top left",
+              width: 1080,
+              height: 1920,
+            }}
+          >
+            <div
+              ref={storiesBannerRef}
+              style={{
+                width: 1080,
+                height: 1920,
+                background: `linear-gradient(180deg, ${themeSecondary} 0%, ${themeSecondary}f0 50%, ${themeColor}44 100%)`,
+              }}
+            >
+              {/* Content */}
+              <div className="h-full flex flex-col items-center justify-between py-16 px-12">
+                {/* Top Branding */}
+                <div className="text-center">
+                  <div
+                    className="w-28 h-28 rounded-3xl flex items-center justify-center font-bold text-white text-5xl mx-auto"
+                    style={{ background: themeColor }}
+                  >
+                    IA
+                  </div>
+                  <div className="text-white font-bold text-4xl mt-6">IA Mortgage</div>
+                  <div className="text-white/50 text-2xl">NMLS #{data.company.nmls}</div>
+                  <div className="text-white/60 text-xl mt-2">{data.company.website}</div>
+                </div>
+
+                {/* Headline */}
+                <div className="text-center">
+                  <div className="text-white/70 text-3xl uppercase tracking-widest">
+                    Today's Rates
+                  </div>
+                  <div className="text-white font-bold text-6xl mt-4">
+                    {data.rates.dateGenerated}
+                  </div>
+                </div>
+
+                {/* Rates - Vertical Stack */}
+                <div className="w-full space-y-5">
+                  <div className="bg-white/10 rounded-3xl p-6 flex items-center justify-between">
+                    <div>
+                      <div className="text-white/60 text-xl">30-Year Fixed</div>
+                      <div className="text-white/40 text-lg">{data.rates.thirtyYearFixedAPR} APR</div>
+                    </div>
+                    <div className="text-white font-bold text-7xl">{data.rates.thirtyYearFixed}</div>
+                  </div>
+                  <div className="bg-white/10 rounded-3xl p-6 flex items-center justify-between">
+                    <div>
+                      <div className="text-white/60 text-xl">15-Year Fixed</div>
+                      <div className="text-white/40 text-lg">{data.rates.fifteenYearFixedAPR} APR</div>
+                    </div>
+                    <div className="text-white font-bold text-7xl">{data.rates.fifteenYearFixed}</div>
+                  </div>
+                  <div className="bg-white/10 rounded-3xl p-6 flex items-center justify-between">
+                    <div>
+                      <div className="text-white/60 text-xl">30-Year Jumbo</div>
+                      <div className="text-white/40 text-lg">{data.rates.thirtyYearJumboAPR} APR</div>
+                    </div>
+                    <div className="text-white font-bold text-7xl">{data.rates.thirtyYearJumbo}</div>
+                  </div>
+                  <div className="bg-white/10 rounded-3xl p-6 flex items-center justify-between">
+                    <div>
+                      <div className="text-white/60 text-xl">5/1 ARM</div>
+                      <div className="text-white/40 text-lg">{data.rates.fiveOneArmAPR} APR</div>
+                    </div>
+                    <div className="text-white font-bold text-7xl">{data.rates.fiveOneArm}</div>
+                  </div>
+                </div>
+
+                {/* Bottom - Contacts and QR */}
+                <div className="w-full">
+                  {/* Contacts Row */}
+                  <div className="flex items-center justify-between mb-8">
+                    {/* Broker */}
+                    <div className="flex items-center gap-4">
+                      {data.broker.headshot && (
+                        <img
+                          src={data.broker.headshot}
+                          alt={data.broker.name}
+                          className="w-20 h-20 rounded-2xl object-cover border-3 border-white/20"
+                          style={{ objectPosition: `center ${data.broker.headshotPosition ?? 15}%` }}
+                        />
+                      )}
+                      <div>
+                        <div className="text-white font-bold text-xl">{data.broker.name}</div>
+                        <div className="text-white/50 text-base">NMLS #{data.broker.nmls}</div>
+                        <div className="text-white/70 text-base">{data.broker.phone}</div>
+                      </div>
+                    </div>
+
+                    {/* Realtor */}
+                    <div className="flex items-center gap-4">
+                      <div className="text-right">
+                        <div className="text-white font-bold text-xl">{data.realtor.name}</div>
+                        <div className="text-white/50 text-base">Lic# 134081</div>
+                        <div className="text-white/70 text-base">{data.realtor.phone}</div>
+                      </div>
+                      {data.realtor.headshot && (
+                        <img
+                          src={data.realtor.headshot}
+                          alt={data.realtor.name}
+                          className="w-20 h-20 rounded-2xl object-cover border-3 border-white/20"
+                          style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                        />
+                      )}
+                    </div>
+                  </div>
+
+                  {/* QR and CTA */}
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="bg-white p-4 rounded-2xl">
+                      <QRCodeSVG value={shareUrl} size={100} level="M" />
+                    </div>
+                    <div className="text-center">
+                      <div
+                        className="px-8 py-4 rounded-full text-white text-2xl font-bold"
+                        style={{ background: themeColor }}
+                      >
+                        Scan for Live Rates
+                      </div>
+                      <div className="text-white/40 text-lg mt-3">
+                        Rates subject to change
+                      </div>
                     </div>
                   </div>
                 </div>
