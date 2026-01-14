@@ -221,23 +221,28 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Social Banner (1080x1080) - Scaled down for preview */}
-        <div className="overflow-hidden rounded-lg border" style={{ width: 360, height: 360 }}>
+        <div 
+          className="rounded-lg border bg-muted/20"
+          style={{ width: 360, height: 360, overflow: 'hidden' }}
+        >
           <div
-            className="origin-top-left"
-            style={{ transform: "scale(0.333)", transformOrigin: "top left" }}
+            style={{ 
+              transform: "scale(0.333)", 
+              transformOrigin: "top left",
+              width: 1080,
+              height: 1080,
+            }}
           >
             <div
               ref={socialBannerRef}
               style={{
                 width: 1080,
                 height: 1080,
-                overflow: 'hidden',
                 background: `linear-gradient(180deg, ${themeSecondary} 0%, ${themeSecondary}f0 40%, ${themeColor}33 100%)`,
-                position: 'relative',
               }}
             >
               {/* Content */}
-              <div className="relative z-10 h-full flex flex-col items-center justify-between p-12">
+              <div className="h-full flex flex-col items-center justify-between p-12">
                 {/* Header with branding and contacts */}
                 <div className="w-full flex items-center justify-between">
                   {/* Broker */}
