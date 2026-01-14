@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FlyerData } from "@/types/flyer";
 import { Button } from "@/components/ui/button";
 import { QRCodeSVG } from "qrcode.react";
-import { Download, Loader2, Mail, Share2, Smartphone } from "lucide-react";
+import { Download, Loader2, Mail, Share2, Smartphone, Facebook } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
 
@@ -11,7 +11,7 @@ interface ShareableBannerProps {
   shareUrl: string;
 }
 
-type BannerFormat = "email" | "social" | "stories";
+type BannerFormat = "email" | "social" | "stories" | "facebook";
 
 interface BannerDimensions {
   width: number;
@@ -23,16 +23,19 @@ const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
   email: { width: 600, height: 200, scale: 2 },
   social: { width: 1080, height: 1080, scale: 2 },
   stories: { width: 1080, height: 1920, scale: 2 },
+  facebook: { width: 1640, height: 624, scale: 2 },
 };
 
 export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
   const emailBannerRef = useRef<HTMLDivElement>(null);
   const socialBannerRef = useRef<HTMLDivElement>(null);
   const storiesBannerRef = useRef<HTMLDivElement>(null);
+  const facebookBannerRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState<BannerFormat | null>(null);
 
   const downloadBanner = async (format: BannerFormat) => {
-    const ref = format === "email" ? emailBannerRef : format === "social" ? socialBannerRef : storiesBannerRef;
+    const refs = { email: emailBannerRef, social: socialBannerRef, stories: storiesBannerRef, facebook: facebookBannerRef };
+    const ref = refs[format];
     if (!ref.current) return;
 
     setIsDownloading(format);
@@ -49,7 +52,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
       link.href = canvas.toDataURL("image/png");
       link.click();
 
-      toast.success(`${format === "email" ? "Email" : format === "social" ? "Social" : "Stories"} banner downloaded!`);
+      const formatLabels = { email: "Email", social: "Social", stories: "Stories", facebook: "Facebook" };
+      toast.success(`${formatLabels[format]} banner downloaded!`);
     } catch (err) {
       console.error("Error generating banner:", err);
       toast.error("Failed to generate banner");
@@ -502,6 +506,145 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       <div className="text-white/40 text-lg mt-3">
                         Rates subject to change
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Facebook Cover Banner Preview & Download */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Facebook className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm font-medium">Facebook Cover</span>
+            <span className="text-xs text-muted-foreground">(1640×624)</span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => downloadBanner("facebook")}
+            disabled={isDownloading !== null}
+          >
+            {isDownloading === "facebook" ? (
+              <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-1.5" />
+            )}
+            Download
+          </Button>
+        </div>
+
+        {/* Facebook Cover (1640x624) - Scaled down for preview */}
+        <div 
+          className="rounded-lg border bg-muted/20"
+          style={{ width: 492, height: 187, overflow: 'hidden' }}
+        >
+          <div
+            style={{ 
+              transform: "scale(0.3)", 
+              transformOrigin: "top left",
+              width: 1640,
+              height: 624,
+            }}
+          >
+            <div
+              ref={facebookBannerRef}
+              style={{
+                width: 1640,
+                height: 624,
+                background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary}f0 60%, ${themeColor}44 100%)`,
+              }}
+            >
+              {/* Content */}
+              <div className="h-full flex items-center justify-between px-16 py-10">
+                {/* Left - Contacts */}
+                <div className="flex items-center gap-8">
+                  {/* Broker */}
+                  <div className="flex items-center gap-5">
+                    {data.broker.headshot && (
+                      <img
+                        src={data.broker.headshot}
+                        alt={data.broker.name}
+                        className="w-28 h-28 rounded-2xl object-cover border-4 border-white/20"
+                        style={{ objectPosition: `center ${data.broker.headshotPosition ?? 15}%` }}
+                      />
+                    )}
+                    <div>
+                      <div className="text-white font-bold text-2xl">{data.broker.name}</div>
+                      <div className="text-white/50 text-lg">NMLS #{data.broker.nmls}</div>
+                      <div className="text-white/70 text-lg mt-1">{data.broker.phone}</div>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="w-px h-24 bg-white/20" />
+
+                  {/* Realtor */}
+                  <div className="flex items-center gap-5">
+                    {data.realtor.headshot && (
+                      <img
+                        src={data.realtor.headshot}
+                        alt={data.realtor.name}
+                        className="w-28 h-28 rounded-2xl object-cover border-4 border-white/20"
+                        style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                      />
+                    )}
+                    <div>
+                      <div className="text-white font-bold text-2xl">{data.realtor.name}</div>
+                      <div className="text-white/50 text-lg">Lic# 134081</div>
+                      <div className="text-white/70 text-lg mt-1">{data.realtor.phone}</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Center - Rates */}
+                <div className="flex gap-5">
+                  <div className="bg-white/10 rounded-2xl px-6 py-5 text-center">
+                    <div className="text-white/60 text-base">30-Year Fixed</div>
+                    <div className="text-white font-bold text-5xl mt-1">{data.rates.thirtyYearFixed}</div>
+                    <div className="text-white/50 text-base mt-1">{data.rates.thirtyYearFixedAPR} APR</div>
+                  </div>
+                  <div className="bg-white/10 rounded-2xl px-6 py-5 text-center">
+                    <div className="text-white/60 text-base">15-Year Fixed</div>
+                    <div className="text-white font-bold text-5xl mt-1">{data.rates.fifteenYearFixed}</div>
+                    <div className="text-white/50 text-base mt-1">{data.rates.fifteenYearFixedAPR} APR</div>
+                  </div>
+                  <div className="bg-white/10 rounded-2xl px-6 py-5 text-center">
+                    <div className="text-white/60 text-base">30-Yr Jumbo</div>
+                    <div className="text-white font-bold text-5xl mt-1">{data.rates.thirtyYearJumbo}</div>
+                    <div className="text-white/50 text-base mt-1">{data.rates.thirtyYearJumboAPR} APR</div>
+                  </div>
+                </div>
+
+                {/* Right - Branding & QR */}
+                <div className="flex items-center gap-8">
+                  {/* Branding */}
+                  <div className="text-center">
+                    <div
+                      className="w-20 h-20 rounded-2xl flex items-center justify-center font-bold text-white text-3xl mx-auto"
+                      style={{ background: themeColor }}
+                    >
+                      IA
+                    </div>
+                    <div className="text-white font-bold text-2xl mt-3">IA Mortgage</div>
+                    <div className="text-white/50 text-base">NMLS #{data.company.nmls}</div>
+                    <div className="text-white/60 text-sm mt-1">{data.company.website}</div>
+                  </div>
+
+                  {/* QR */}
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="bg-white p-3 rounded-xl">
+                      <QRCodeSVG value={shareUrl} size={90} level="M" />
+                    </div>
+                    <div
+                      className="px-5 py-2 rounded-full text-white text-base font-semibold"
+                      style={{ background: themeColor }}
+                    >
+                      Scan for Live Rates
                     </div>
                   </div>
                 </div>
