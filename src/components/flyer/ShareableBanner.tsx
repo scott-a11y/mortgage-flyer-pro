@@ -85,14 +85,13 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Email Banner (600x200) - Clean 2-row layout */}
-        <div className="overflow-hidden rounded-lg border">
+        <div className="rounded-lg border" style={{ width: 600, overflow: 'hidden' }}>
           <div
             ref={emailBannerRef}
             style={{
               width: 600,
               height: 200,
-              overflow: 'hidden',
-              background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary}ee 50%, ${themeColor}30 100%)`,
+              background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary} 70%, ${themeColor}40 100%)`,
             }}
           >
             {/* Row 1: Contacts and Branding */}
@@ -129,6 +128,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 <div>
                   <div className="text-white font-bold text-sm leading-tight">IA Mortgage</div>
                   <div className="text-white/50 text-[9px]">NMLS #{data.company.nmls}</div>
+                  <div className="text-white/60 text-[8px]">{data.company.website}</div>
                 </div>
               </div>
 
@@ -158,17 +158,17 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             <div className="flex items-center justify-between px-5 pb-4 pt-2">
               {/* Left - Rates with APR */}
               <div className="flex gap-3">
-                <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
+                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
                   <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Year Fixed</div>
                   <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearFixed}</div>
                   <div className="text-white/50 text-[8px]">{data.rates.thirtyYearFixedAPR} APR</div>
                 </div>
-                <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
+                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
                   <div className="text-white/60 text-[7px] uppercase tracking-wide">15-Year Fixed</div>
                   <div className="text-white font-bold text-lg leading-none">{data.rates.fifteenYearFixed}</div>
                   <div className="text-white/50 text-[8px]">{data.rates.fifteenYearFixedAPR} APR</div>
                 </div>
-                <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
+                <div className="bg-white/15 rounded-lg px-3 py-2 text-center">
                   <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Yr Jumbo</div>
                   <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearJumbo}</div>
                   <div className="text-white/50 text-[8px]">{data.rates.thirtyYearJumboAPR} APR</div>
