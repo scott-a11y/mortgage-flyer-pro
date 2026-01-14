@@ -19,37 +19,50 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
         className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col overflow-hidden"
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
-        {/* Header Section */}
+        {/* Header Section - Modern Gradient */}
         <div 
-          className="px-6 py-4 flex flex-col items-center justify-center"
+          className="px-8 py-5 flex flex-col items-center justify-center relative overflow-hidden"
           style={{ 
-            height: "14%",
-            background: `linear-gradient(135deg, ${secondaryColor} 0%, ${secondaryColor}ee 100%)`
+            height: "16%",
+            background: `linear-gradient(135deg, ${secondaryColor} 0%, #2a2a2a 50%, ${secondaryColor} 100%)`
           }}
         >
-          <div className="flex items-center gap-6 mb-2">
+          {/* Subtle accent line at top */}
+          <div 
+            className="absolute top-0 left-0 right-0 h-1"
+            style={{ background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)` }}
+          />
+          
+          {/* Co-branding logos */}
+          <div className="flex items-center gap-4 mb-3">
             {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-12 max-w-[140px] object-contain" />
+              <img src={data.company.logo} alt={data.company.name} className="h-10 max-w-[130px] object-contain brightness-0 invert opacity-95" />
             ) : (
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
-                <span className="text-white font-bold text-base tracking-wide">IA LOANS</span>
-              </div>
+              <span className="text-white/95 font-semibold text-sm tracking-[0.2em] uppercase">
+                {data.company.name || "IA Loans"}
+              </span>
             )}
-            <div className="h-8 w-px bg-white/30" />
+            
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-px bg-white/20" />
+              <span className="text-white/40 text-[10px] font-light tracking-wider uppercase">partnered with</span>
+              <div className="h-4 w-px bg-white/20" />
+            </div>
+            
             {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-12 max-w-[140px] object-contain bg-white/90 rounded px-3 py-1.5" />
+              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-10 max-w-[130px] object-contain" />
             ) : (
-              <div className="rounded-lg px-4 py-2" style={{ backgroundColor: primaryColor }}>
-                <span style={{ color: secondaryColor }} className="font-bold text-sm tracking-wide">
-                  {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
-                </span>
-              </div>
+              <span style={{ color: primaryColor }} className="font-semibold text-sm tracking-[0.15em] uppercase">
+                {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
+              </span>
             )}
           </div>
-          <h1 className="text-white text-xl font-bold text-center leading-tight">
+          
+          {/* Headline */}
+          <h1 className="text-white text-xl font-semibold text-center leading-tight tracking-wide">
             {data.marketCopy.headline}
           </h1>
-          <p className="text-white/90 text-xs text-center mt-1">
+          <p className="text-white/70 text-[11px] text-center mt-1.5 font-light tracking-wide">
             {data.marketCopy.subheading}
           </p>
         </div>
