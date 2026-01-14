@@ -36,6 +36,7 @@ export interface BrokerContact {
   email: string;
   nmls: string;
   headshot?: string;
+  headshotPosition?: number; // 0-100, vertical position for circular crop
 }
 
 export interface CompanyContact {
@@ -56,6 +57,7 @@ export interface RealtorContact {
   brokerage: string;
   website: string;
   headshot?: string;
+  headshotPosition?: number; // 0-100, vertical position for circular crop
   logo?: string;
 }
 
