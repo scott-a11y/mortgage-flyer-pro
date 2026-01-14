@@ -170,7 +170,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                     src={data.broker.headshot} 
                     alt={data.broker.name}
                     className="w-14 h-14 rounded-full object-cover"
-                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: "center top" }}
+                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: "center 25%" }}
                   />
                 </div>
               ) : (
@@ -204,7 +204,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
                     className="w-14 h-14 rounded-full object-cover"
-                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: "center top" }}
+                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: "center 25%" }}
                   />
                 ) : (
                   <div 
