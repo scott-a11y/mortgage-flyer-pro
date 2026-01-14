@@ -88,91 +88,92 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         <div className="overflow-hidden rounded-lg border shadow-sm">
           <div
             ref={emailBannerRef}
-            className="relative overflow-hidden"
+            className="relative overflow-hidden rounded-lg"
             style={{
               width: 600,
               height: 200,
-              background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary}ee 50%, ${themeColor}22 100%)`,
+              background: `linear-gradient(90deg, ${themeSecondary} 0%, ${themeSecondary}f5 60%, ${themeColor}40 100%)`,
             }}
           >
-            {/* Decorative elements */}
-            <div
-              className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-20"
-              style={{ background: themeColor, transform: "translate(30%, -30%)" }}
-            />
-
-            {/* Content */}
-            <div className="relative z-10 h-full flex items-center justify-between px-4 py-3">
-              {/* Left side - Contacts (stacked horizontally) */}
-              <div className="flex items-center gap-3" style={{ width: 200 }}>
-                {/* Broker */}
-                <div className="flex items-center gap-1.5">
-                  {data.broker.headshot && (
-                    <img
-                      src={data.broker.headshot}
-                      alt={data.broker.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
-                      style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <div className="text-white font-semibold text-[10px] truncate leading-tight">{data.broker.name}</div>
-                    <div className="text-white/80 text-[9px] leading-tight">{data.broker.phone}</div>
-                  </div>
+            {/* Content - Single row layout */}
+            <div className="relative z-10 h-full flex items-center gap-5 px-5">
+              {/* Broker */}
+              <div className="flex items-center gap-2.5">
+                {data.broker.headshot && (
+                  <img
+                    src={data.broker.headshot}
+                    alt={data.broker.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-white/40 shadow-md"
+                    style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                  />
+                )}
+                <div className="min-w-0">
+                  <div className="text-white font-semibold text-[11px] truncate leading-tight">{data.broker.name}</div>
+                  <div className="text-white/70 text-[9px] leading-tight">{data.broker.phone}</div>
                 </div>
-                {/* Realtor */}
-                <div className="flex items-center gap-1.5">
-                  {data.realtor.headshot && (
-                    <img
-                      src={data.realtor.headshot}
-                      alt={data.realtor.name}
-                      className="w-10 h-10 rounded-full object-cover border-2 border-white/30"
-                      style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <div className="text-white font-semibold text-[10px] truncate leading-tight">{data.realtor.name}</div>
-                    <div className="text-white/80 text-[9px] leading-tight">{data.realtor.phone}</div>
-                  </div>
+              </div>
+
+              {/* Divider */}
+              <div className="w-px h-10 bg-white/20" />
+
+              {/* Realtor */}
+              <div className="flex items-center gap-2.5">
+                {data.realtor.headshot && (
+                  <img
+                    src={data.realtor.headshot}
+                    alt={data.realtor.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-white/40 shadow-md"
+                    style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                  />
+                )}
+                <div className="min-w-0">
+                  <div className="text-white font-semibold text-[11px] truncate leading-tight">{data.realtor.name}</div>
+                  <div className="text-white/70 text-[9px] leading-tight">{data.realtor.phone}</div>
                 </div>
               </div>
 
               {/* Center - Branding & Rates */}
-              <div className="flex-1 px-3">
-                <div className="flex items-center gap-1.5 justify-center mb-1">
+              <div className="flex-1 flex items-center justify-center gap-4">
+                <div className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 rounded flex items-center justify-center font-bold text-white text-[10px]"
+                    className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-md"
                     style={{ background: themeColor }}
                   >
                     IA
                   </div>
-                  <div className="text-white font-semibold text-xs">IA Mortgage</div>
-                </div>
-                <div className="flex gap-2 justify-center">
-                  <div className="bg-white/10 backdrop-blur rounded px-2.5 py-1.5 text-center">
-                    <div className="text-white/70 text-[9px]">30-Yr Fixed</div>
-                    <div className="text-white font-bold text-base leading-tight">{data.rates.thirtyYearFixed}</div>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur rounded px-2.5 py-1.5 text-center">
-                    <div className="text-white/70 text-[9px]">15-Yr Fixed</div>
-                    <div className="text-white font-bold text-base leading-tight">{data.rates.fifteenYearFixed}</div>
+                  <div>
+                    <div className="text-white font-bold text-sm leading-tight">IA Mortgage</div>
+                    <div className="text-white/50 text-[8px]">NMLS #{data.company.nmls}</div>
                   </div>
                 </div>
-                <div className="text-white/50 text-[8px] text-center mt-1">
-                  As of {data.rates.dateGenerated} • NMLS #{data.company.nmls}
+
+                <div className="flex gap-2">
+                  <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
+                    <div className="text-white/60 text-[8px] uppercase tracking-wide">30-Yr</div>
+                    <div className="text-white font-bold text-lg leading-none">{data.rates.thirtyYearFixed}</div>
+                  </div>
+                  <div className="bg-white/15 backdrop-blur rounded-lg px-3 py-2 text-center">
+                    <div className="text-white/60 text-[8px] uppercase tracking-wide">15-Yr</div>
+                    <div className="text-white font-bold text-lg leading-none">{data.rates.fifteenYearFixed}</div>
+                  </div>
                 </div>
               </div>
 
               {/* Right side - QR Code and CTA */}
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="bg-white p-1 rounded shadow-lg">
-                  <QRCodeSVG value={shareUrl} size={55} level="M" />
+              <div className="flex items-center gap-3">
+                <div className="bg-white p-1.5 rounded-lg shadow-lg">
+                  <QRCodeSVG value={shareUrl} size={50} level="M" />
                 </div>
-                <div
-                  className="px-2 py-1 rounded-full text-white text-[10px] font-semibold shadow-lg"
-                  style={{ background: themeColor }}
-                >
-                  View Live Rates →
+                <div className="flex flex-col items-start gap-1">
+                  <div
+                    className="px-3 py-1.5 rounded-full text-white text-[10px] font-semibold shadow-md"
+                    style={{ background: themeColor }}
+                  >
+                    View Live Rates →
+                  </div>
+                  <div className="text-white/40 text-[7px]">
+                    As of {data.rates.dateGenerated}
+                  </div>
                 </div>
               </div>
             </div>
