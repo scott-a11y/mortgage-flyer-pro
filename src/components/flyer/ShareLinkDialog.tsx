@@ -12,9 +12,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Link2, Copy, Check, Loader2, ExternalLink } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link2, Copy, Check, Loader2, ExternalLink, Image } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ShareableBanner } from "./ShareableBanner";
 
 interface ShareLinkDialogProps {
   currentData: FlyerData;
@@ -106,14 +108,14 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
           Live Link
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Link2 className="w-5 h-5 text-primary" />
             Create Live Flyer Link
           </DialogTitle>
           <DialogDescription>
-            Generate a shareable link that always shows current rates. Perfect for emailing to realtors and clients!
+            Generate a shareable link and downloadable banners with current rates.
           </DialogDescription>
         </DialogHeader>
 
@@ -141,46 +143,71 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• Rates update automatically when viewed</li>
                 <li>• Share via email, text, or social media</li>
+                <li>• Download banners to attach to emails</li>
                 <li>• Works on any device</li>
-                <li>• No login required for viewers</li>
               </ul>
             </div>
           </div>
         ) : (
           <div className="space-y-4 py-4">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-              <p className="text-sm text-green-800 font-medium mb-2">
-                ✓ Your live flyer link is ready!
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  value={shareUrl}
-                  readOnly
-                  className="bg-white text-sm"
-                />
+            <Tabs defaultValue="link" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="link" className="gap-1.5">
+                  <Link2 className="w-4 h-4" />
+                  Share Link
+                </TabsTrigger>
+                <TabsTrigger value="banners" className="gap-1.5">
+                  <Image className="w-4 h-4" />
+                  Banners
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="link" className="space-y-4 mt-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-green-800 font-medium mb-2">
+                    ✓ Your live flyer link is ready!
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      value={shareUrl}
+                      readOnly
+                      className="bg-white text-sm"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={handleCopy}
+                      className="shrink-0"
+                    >
+                      {copied ? (
+                        <Check className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <Copy className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
                 <Button
                   variant="outline"
-                  size="icon"
-                  onClick={handleCopy}
-                  className="shrink-0"
+                  className="w-full"
+                  onClick={handleOpenLink}
                 >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-green-600" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Preview Link
                 </Button>
-              </div>
-            </div>
+              </TabsContent>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleOpenLink}
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Preview Link
-            </Button>
+              <TabsContent value="banners" className="mt-4">
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-muted-foreground">
+                    Download professional banners to attach to emails or share on social media. 
+                    Each includes a QR code linking to your live rates.
+                  </p>
+                </div>
+                <ShareableBanner data={currentData} shareUrl={shareUrl} />
+              </TabsContent>
+            </Tabs>
           </div>
         )}
 
