@@ -54,7 +54,7 @@ export const defaultFlyerData: FlyerData = {
     email: "scott@ialoans.com",
     nmls: "130371",
     headshot: scottHeadshot,
-    headshotPosition: 25, // Default to show upper portion of face
+    headshotPosition: 12, // Show face at top of image
   },
   company: {
     name: "IA Mortgage",
