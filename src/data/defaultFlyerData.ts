@@ -1,5 +1,6 @@
 import { FlyerData, brokerageThemes } from "@/types/flyer";
 import celesteHeadshot from "@/assets/celeste-zarling-headshot.jpg";
+import scottHeadshot from "@/assets/scott-little-headshot.jpg";
 
 const today = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -52,7 +53,7 @@ export const defaultFlyerData: FlyerData = {
     phone: "(360) 606-1106",
     email: "scott@ialoans.com",
     nmls: "130371",
-    headshot: "",
+    headshot: scottHeadshot,
   },
   company: {
     name: "IA Mortgage",
