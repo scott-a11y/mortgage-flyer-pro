@@ -6,7 +6,8 @@ import { RegionsEditor } from "./editors/RegionsEditor";
 import { ContactEditor } from "./editors/ContactEditor";
 import { ThemeEditor } from "./editors/ThemeEditor";
 import { LayoutSelector } from "./editors/LayoutSelector";
-import { DollarSign, FileText, MapPin, Users, Palette } from "lucide-react";
+import { ShareableBanner } from "./ShareableBanner";
+import { DollarSign, FileText, MapPin, Users, Palette, Image } from "lucide-react";
 
 interface EditorTabsProps {
   data: FlyerData;
@@ -14,9 +15,14 @@ interface EditorTabsProps {
 }
 
 export function EditorTabs({ data, onChange }: EditorTabsProps) {
+  // Generate share URL for banners
+  const shareUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/live/${encodeURIComponent(data.broker.name.toLowerCase().replace(/\s+/g, '-'))}`
+    : '';
+
   return (
     <Tabs defaultValue="rates" className="w-full">
-      <TabsList className="grid w-full grid-cols-5 mb-4">
+      <TabsList className="grid w-full grid-cols-6 mb-4">
         <TabsTrigger value="rates" className="flex items-center gap-1.5 text-xs">
           <DollarSign className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Rates</span>
@@ -36,6 +42,10 @@ export function EditorTabs({ data, onChange }: EditorTabsProps) {
         <TabsTrigger value="style" className="flex items-center gap-1.5 text-xs">
           <Palette className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Style</span>
+        </TabsTrigger>
+        <TabsTrigger value="banners" className="flex items-center gap-1.5 text-xs">
+          <Image className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">Banners</span>
         </TabsTrigger>
       </TabsList>
 
@@ -58,6 +68,17 @@ export function EditorTabs({ data, onChange }: EditorTabsProps) {
       <TabsContent value="style" className="mt-0 space-y-6">
         <LayoutSelector data={data} onChange={onChange} />
         <ThemeEditor data={data} onChange={onChange} />
+      </TabsContent>
+
+      <TabsContent value="banners" className="mt-0">
+        <div className="space-y-4">
+          <div className="text-sm text-muted-foreground">
+            Download ready-to-share banners for email signatures and social media.
+          </div>
+          <div className="overflow-x-auto">
+            <ShareableBanner data={data} shareUrl={shareUrl} />
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   );
