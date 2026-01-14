@@ -27,20 +27,20 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
             borderBottom: `3px double ${primaryColor}`
           }}
         >
-          <div className="flex items-center justify-center gap-6 mb-3">
+          <div className="flex items-center justify-center gap-8 mb-3">
             {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-10 object-contain" />
+              <img src={data.company.logo} alt={data.company.name} className="h-14 max-w-[160px] object-contain" />
             ) : (
-              <div className="px-4 py-2" style={{ backgroundColor: secondaryColor }}>
-                <span className="text-white font-bold text-sm tracking-widest">IA MORTGAGE</span>
+              <div className="px-5 py-2.5" style={{ backgroundColor: secondaryColor }}>
+                <span className="text-white font-bold text-base tracking-widest">IA MORTGAGE</span>
               </div>
             )}
-            <div className="text-2xl" style={{ color: primaryColor }}>×</div>
+            <div className="text-3xl font-light" style={{ color: primaryColor }}>×</div>
             {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-10 object-contain" />
+              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-14 max-w-[160px] object-contain" />
             ) : (
-              <div className="px-4 py-2" style={{ backgroundColor: primaryColor }}>
-                <span style={{ color: secondaryColor }} className="font-bold text-sm tracking-wide">
+              <div className="px-5 py-2.5" style={{ backgroundColor: primaryColor }}>
+                <span style={{ color: secondaryColor }} className="font-bold text-base tracking-wide">
                   {data.realtor.brokerage}
                 </span>
               </div>
