@@ -36,9 +36,16 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
           rates: response.rates,
         });
         setLastFetch(new Date().toLocaleTimeString());
-        toast.success("Live rates updated!", {
-          description: `Source: ${response.source}`,
-        });
+        
+        if (response.isSimulated) {
+          toast.info("Sample rates loaded", {
+            description: "These are simulated rates. Configure FRED API key for real Freddie Mac data.",
+          });
+        } else {
+          toast.success("Live rates updated!", {
+            description: `Source: ${response.source}`,
+          });
+        }
       } else {
         throw new Error(response?.error || 'Failed to fetch rates');
       }
