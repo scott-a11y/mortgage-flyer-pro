@@ -20,7 +20,7 @@ interface BannerDimensions {
 }
 
 const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
-  email: { width: 600, height: 220, scale: 2 },
+  email: { width: 600, height: 200, scale: 2 },
   social: { width: 1080, height: 1080, scale: 2 },
   stories: { width: 1080, height: 1920, scale: 2 },
   facebook: { width: 1640, height: 624, scale: 2 },
@@ -42,20 +42,19 @@ function HeadshotImage({
     <div style={{ 
       width: size, 
       height: size, 
-      borderRadius: size * 0.15,
+      borderRadius: size * 0.12,
       overflow: 'hidden',
       flexShrink: 0,
-      border: '3px solid rgba(255,255,255,0.25)'
+      background: 'rgba(255,255,255,0.1)'
     }}>
       <img
         src={src}
         alt={alt}
         style={{ 
           width: '100%', 
-          height: '140%', 
+          height: '100%', 
           objectFit: 'cover',
-          objectPosition: 'center top',
-          marginTop: `-${position * 0.4}%`
+          objectPosition: `center ${position}%`
         }}
       />
     </div>
@@ -109,7 +108,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm font-medium">Email Banner</span>
-            <span className="text-xs text-muted-foreground">(600×220)</span>
+            <span className="text-xs text-muted-foreground">(600×200)</span>
           </div>
           <Button
             size="sm"
@@ -126,152 +125,139 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           </Button>
         </div>
 
-        {/* Email Banner (600x220) */}
+        {/* Email Banner (600x200) - Clean horizontal layout */}
         <div className="rounded-lg overflow-hidden" style={{ width: 600 }}>
           <div
             ref={emailBannerRef}
             style={{
               width: 600,
-              height: 220,
-              background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary} 70%, ${themeColor}40 100%)`,
-              position: 'relative',
+              height: 200,
+              background: themeSecondary,
               fontFamily: 'system-ui, -apple-system, sans-serif',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            {/* Row 1: Contacts */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px 6px 20px' }}>
+            {/* Main content area */}
+            <div style={{ 
+              flex: 1, 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              padding: '16px 24px',
+            }}>
               {/* Left - Broker */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 {data.broker.headshot && (
                   <HeadshotImage 
                     src={data.broker.headshot} 
                     alt={data.broker.name} 
-                    size={52} 
+                    size={60} 
                     position={data.broker.headshotPosition ?? 15} 
                   />
                 )}
                 <div>
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: 11, lineHeight: 1.2 }}>{data.broker.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, lineHeight: 1.2 }}>NMLS #{data.broker.nmls}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, lineHeight: 1.2 }}>{data.broker.phone}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.broker.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{data.broker.nmls}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.broker.phone}</div>
+                </div>
+              </div>
+
+              {/* Center - Rates */}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>30-Yr Fixed</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.thirtyYearFixed}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.thirtyYearFixedAPR} APR</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>15-Yr Fixed</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.fifteenYearFixed}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.fifteenYearFixedAPR} APR</div>
+                </div>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Jumbo</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.thirtyYearJumbo}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.thirtyYearJumboAPR} APR</div>
                 </div>
               </div>
 
               {/* Right - Realtor */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: 11, lineHeight: 1.2 }}>{data.realtor.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, lineHeight: 1.2 }}>Lic# 134081</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, lineHeight: 1.2 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.realtor.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>Lic# 134081</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
                 </div>
                 {data.realtor.headshot && (
                   <HeadshotImage 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name} 
-                    size={52} 
+                    size={60} 
                     position={data.realtor.headshotPosition ?? 25} 
                   />
                 )}
               </div>
             </div>
 
-            {/* Row 2: Rates and CTA */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 20px 8px 20px' }}>
-              {/* Left - Rates */}
-              <div style={{ display: 'flex', gap: 8 }}>
-                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-Year Fixed</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.thirtyYearFixed}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.thirtyYearFixedAPR} APR</div>
+            {/* Footer - integrated design without harsh line */}
+            <div style={{ 
+              background: 'rgba(255,255,255,0.05)',
+              padding: '8px 24px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              {/* Left - Branding */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ 
+                  width: 24, 
+                  height: 24, 
+                  borderRadius: 5, 
+                  background: themeColor,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  color: 'white',
+                  fontSize: 10
+                }}>
+                  IA
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>15-Year Fixed</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.fifteenYearFixed}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.fifteenYearFixedAPR} APR</div>
-                </div>
-                <div style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 8, padding: '6px 10px', textAlign: 'center' }}>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7, textTransform: 'uppercase', letterSpacing: '0.5px' }}>30-Yr Jumbo</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 16, lineHeight: 1.1 }}>{data.rates.thirtyYearJumbo}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.rates.thirtyYearJumboAPR} APR</div>
+                <div>
+                  <div style={{ color: 'white', fontWeight: 600, fontSize: 10 }}>IA Mortgage</div>
+                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>NMLS #{data.company.nmls}</div>
                 </div>
               </div>
 
-              {/* Right - QR and CTA */}
+              {/* Center - QR and CTA */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ background: 'white', padding: 4, borderRadius: 6 }}>
-                  <QRCodeSVG value={shareUrl} size={44} level="M" />
+                <div style={{ background: 'white', padding: 3, borderRadius: 4 }}>
+                  <QRCodeSVG value={shareUrl} size={32} level="M" />
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3 }}>
-                  <div
-                    style={{ 
-                      background: themeColor,
-                      padding: '5px 10px',
-                      borderRadius: 20,
-                      color: 'white',
-                      fontSize: 9,
-                      fontWeight: 600,
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
+                <div>
+                  <div style={{ 
+                    background: themeColor,
+                    padding: '4px 10px',
+                    borderRadius: 12,
+                    color: 'white',
+                    fontSize: 9,
+                    fontWeight: 600
+                  }}>
                     View Live Rates →
                   </div>
-                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 7 }}>
+                  <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 7, marginTop: 2, textAlign: 'center' }}>
                     As of {data.rates.dateGenerated}
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Row 3: Footer */}
-            <div 
-              style={{ 
-                background: `linear-gradient(90deg, ${themeColor}30 0%, ${themeColor}50 50%, ${themeColor}30 100%)`,
-                padding: '6px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div
-                  style={{ 
-                    width: 22,
-                    height: 22,
-                    borderRadius: 4,
-                    background: themeColor,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    color: 'white',
-                    fontSize: 9
-                  }}
-                >
-                  IA
+              {/* Right - Disclaimer and website */}
+              <div style={{ textAlign: 'right', maxWidth: 180 }}>
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{data.company.website}</div>
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 6, lineHeight: 1.2, marginTop: 2 }}>
+                  Rates subject to change. Equal Housing Opportunity.
                 </div>
-                <div>
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: 9, lineHeight: 1.2 }}>IA Mortgage</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>NMLS #{data.company.nmls}</div>
-                </div>
-              </div>
-
-              <div style={{ 
-                color: 'rgba(255,255,255,0.5)', 
-                fontSize: 6, 
-                textAlign: 'center',
-                maxWidth: 320,
-                lineHeight: 1.3
-              }}>
-                Rates shown are for informational purposes only and are subject to change without notice. 
-                Actual rates may vary based on creditworthiness and loan terms. Equal Housing Opportunity.
-              </div>
-
-              <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 8 }}>
-                {data.company.website}
               </div>
             </div>
           </div>
