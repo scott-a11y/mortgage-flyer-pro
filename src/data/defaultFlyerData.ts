@@ -54,6 +54,7 @@ export const defaultFlyerData: FlyerData = {
     email: "scott@ialoans.com",
     nmls: "130371",
     headshot: scottHeadshot,
+    headshotPosition: 25, // Default to show upper portion of face
   },
   company: {
     name: "IA Mortgage",
@@ -72,6 +73,7 @@ export const defaultFlyerData: FlyerData = {
     brokerage: "Century 21 North Homes - Kirkland",
     website: "www.century21northhomes.com",
     headshot: celesteHeadshot,
+    headshotPosition: 25, // Default to show upper portion of face
     logo: "",
   },
   colorTheme: brokerageThemes[0], // Century 21 default

@@ -168,7 +168,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                     src={data.broker.headshot} 
                     alt={data.broker.name}
                     className="w-12 h-12 rounded-full object-cover"
-                    style={{ borderColor: `${primaryColor}80`, borderWidth: 2, aspectRatio: "1/1", objectPosition: "center 25%" }}
+                    style={{ borderColor: `${primaryColor}80`, borderWidth: 2, aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 
@@ -215,7 +215,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
                     className="w-12 h-12 rounded-full object-cover"
-                    style={{ borderColor: primaryColor, borderWidth: 2, aspectRatio: "1/1", objectPosition: "center 25%" }}
+                    style={{ borderColor: primaryColor, borderWidth: 2, aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 

@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { FlyerData } from "@/types/flyer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Building, User, Home } from "lucide-react";
@@ -11,7 +12,7 @@ interface ContactEditorProps {
 }
 
 export function ContactEditor({ data, onChange }: ContactEditorProps) {
-  const updateBroker = (field: keyof FlyerData["broker"], value: string) => {
+  const updateBroker = (field: keyof FlyerData["broker"], value: string | number) => {
     onChange({
       ...data,
       broker: { ...data.broker, [field]: value },
@@ -25,7 +26,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
     });
   };
 
-  const updateRealtor = (field: keyof FlyerData["realtor"], value: string) => {
+  const updateRealtor = (field: keyof FlyerData["realtor"], value: string | number) => {
     onChange({
       ...data,
       realtor: { ...data.realtor, [field]: value },
@@ -56,6 +57,44 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
               type="headshot"
               placeholder="Upload a professional headshot"
             />
+            
+            {/* Headshot Position Slider */}
+            {data.broker.headshot && (
+              <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
+                <Label className="editor-label flex items-center gap-2">
+                  <span>Photo Position</span>
+                  <span className="text-muted-foreground text-xs font-normal">
+                    (Adjust vertical crop)
+                  </span>
+                </Label>
+                <div className="flex items-center gap-4">
+                  {/* Preview circle */}
+                  <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50">
+                    <img 
+                      src={data.broker.headshot}
+                      alt="Position preview"
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <Slider
+                      value={[data.broker.headshotPosition ?? 25]}
+                      onValueChange={(value) => updateBroker("headshotPosition", value[0])}
+                      min={0}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <span>Top (0%)</span>
+                      <span className="font-medium">{data.broker.headshotPosition ?? 25}%</span>
+                      <span>Bottom (100%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Name</Label>
@@ -191,6 +230,44 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
                 placeholder="Brokerage logo"
               />
             </div>
+            
+            {/* Realtor Headshot Position Slider */}
+            {data.realtor.headshot && (
+              <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
+                <Label className="editor-label flex items-center gap-2">
+                  <span>Photo Position</span>
+                  <span className="text-muted-foreground text-xs font-normal">
+                    (Adjust vertical crop)
+                  </span>
+                </Label>
+                <div className="flex items-center gap-4">
+                  {/* Preview circle */}
+                  <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50">
+                    <img 
+                      src={data.realtor.headshot}
+                      alt="Position preview"
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                    />
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <Slider
+                      value={[data.realtor.headshotPosition ?? 25]}
+                      onValueChange={(value) => updateRealtor("headshotPosition", value[0])}
+                      min={0}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-[10px] text-muted-foreground">
+                      <span>Top (0%)</span>
+                      <span className="font-medium">{data.realtor.headshotPosition ?? 25}%</span>
+                      <span>Bottom (100%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Agent Name</Label>
