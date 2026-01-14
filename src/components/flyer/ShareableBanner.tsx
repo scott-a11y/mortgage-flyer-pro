@@ -102,21 +102,30 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}
           >
             {/* Row 1: Contacts */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 8px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 20px 6px 20px' }}>
               {/* Left - Broker */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 {data.broker.headshot && (
-                  <img
-                    src={data.broker.headshot}
-                    alt={data.broker.name}
-                    style={{ 
-                      width: 44, 
-                      height: 44, 
-                      borderRadius: 8,
-                      objectFit: 'cover',
-                      objectPosition: `center ${data.broker.headshotPosition ?? 15}%`
-                    }}
-                  />
+                  <div style={{ 
+                    width: 52, 
+                    height: 52, 
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    border: '2px solid rgba(255,255,255,0.2)'
+                  }}>
+                    <img
+                      src={data.broker.headshot}
+                      alt={data.broker.name}
+                      style={{ 
+                        width: '100%', 
+                        height: '150%', 
+                        objectFit: 'cover',
+                        objectPosition: 'center top',
+                        marginTop: `-${(data.broker.headshotPosition ?? 15) * 0.5}%`
+                      }}
+                    />
+                  </div>
                 )}
                 <div>
                   <div style={{ color: 'white', fontWeight: 600, fontSize: 11, lineHeight: 1.2 }}>{data.broker.name}</div>
@@ -133,17 +142,26 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, lineHeight: 1.2 }}>{data.realtor.phone}</div>
                 </div>
                 {data.realtor.headshot && (
-                  <img
-                    src={data.realtor.headshot}
-                    alt={data.realtor.name}
-                    style={{ 
-                      width: 44, 
-                      height: 44, 
-                      borderRadius: 8,
-                      objectFit: 'cover',
-                      objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`
-                    }}
-                  />
+                  <div style={{ 
+                    width: 52, 
+                    height: 52, 
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                    flexShrink: 0,
+                    border: '2px solid rgba(255,255,255,0.2)'
+                  }}>
+                    <img
+                      src={data.realtor.headshot}
+                      alt={data.realtor.name}
+                      style={{ 
+                        width: '100%', 
+                        height: '150%', 
+                        objectFit: 'cover',
+                        objectPosition: 'center top',
+                        marginTop: `-${(data.realtor.headshotPosition ?? 25) * 0.5}%`
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>
