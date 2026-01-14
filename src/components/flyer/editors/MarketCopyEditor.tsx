@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { FlyerData } from "@/types/flyer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, QrCode } from "lucide-react";
 
 interface MarketCopyEditorProps {
   data: FlyerData;
@@ -151,7 +152,7 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
       <div className="editor-section">
         <h3 className="font-semibold text-foreground">Call-to-Action</h3>
         <p className="text-xs text-muted-foreground mb-4">
-          Customize the CTA button text and link.
+          Customize the CTA button text, link, and QR code.
         </p>
 
         <div className="space-y-4">
@@ -165,11 +166,35 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
           </div>
 
           <div className="space-y-2">
-            <Label className="editor-label">Button URL</Label>
+            <Label className="editor-label">Application URL (for QR code)</Label>
             <Input
               value={data.cta.buttonUrl}
               onChange={(e) => updateCTA("buttonUrl", e.target.value)}
               placeholder="https://www.iamortgage.org/apply"
+            />
+            <p className="text-[10px] text-muted-foreground">
+              This URL will be encoded in the QR code for easy mobile access.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
+            <div className="flex items-center gap-2">
+              <QrCode className="w-4 h-4 text-muted-foreground" />
+              <div>
+                <Label className="text-sm font-medium">Show QR Code</Label>
+                <p className="text-[10px] text-muted-foreground">
+                  Display scannable QR code on the flyer
+                </p>
+              </div>
+            </div>
+            <Switch
+              checked={data.cta.showQRCode}
+              onCheckedChange={(checked) => 
+                onChange({
+                  ...data,
+                  cta: { ...data.cta, showQRCode: checked }
+                })
+              }
             />
           </div>
         </div>
