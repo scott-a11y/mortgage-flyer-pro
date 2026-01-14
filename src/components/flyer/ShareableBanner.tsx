@@ -84,7 +84,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
           </Button>
         </div>
 
-        {/* Email Banner (600x200) */}
+        {/* Email Banner (600x200) - Clean 2-row layout */}
         <div className="overflow-hidden rounded-lg border">
           <div
             ref={emailBannerRef}
@@ -92,97 +92,99 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               width: 600,
               height: 200,
               overflow: 'hidden',
-              background: `linear-gradient(90deg, ${themeSecondary} 0%, ${themeSecondary}f5 60%, ${themeColor}40 100%)`,
+              background: `linear-gradient(135deg, ${themeSecondary} 0%, ${themeSecondary}ee 50%, ${themeColor}30 100%)`,
             }}
           >
-            {/* Content - Single row layout */}
-            <div className="h-full flex items-center gap-3 px-4">
-              {/* Contacts section */}
-              <div className="flex items-center gap-3 shrink-0">
-                {/* Broker */}
-                <div className="flex items-center gap-2">
-                  {data.broker.headshot && (
-                    <img
-                      src={data.broker.headshot}
-                      alt={data.broker.name}
-                      className="rounded-full object-cover border-2 border-white/40"
-                      style={{ 
-                        width: 44, 
-                        height: 44, 
-                        objectPosition: 'top'
-                      }}
-                    />
-                  )}
-                  <div>
-                    <div className="text-white font-semibold text-[11px] leading-tight whitespace-nowrap">{data.broker.name}</div>
-                    <div className="text-white/70 text-[9px] leading-tight">{data.broker.phone}</div>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-px h-8 bg-white/20" />
-
-                {/* Realtor */}
-                <div className="flex items-center gap-2">
-                  {data.realtor.headshot && (
-                    <img
-                      src={data.realtor.headshot}
-                      alt={data.realtor.name}
-                      className="rounded-full object-cover border-2 border-white/40"
-                      style={{ 
-                        width: 44, 
-                        height: 44, 
-                        objectPosition: 'top'
-                      }}
-                    />
-                  )}
-                  <div>
-                    <div className="text-white font-semibold text-[11px] leading-tight whitespace-nowrap">{data.realtor.name}</div>
-                    <div className="text-white/70 text-[9px] leading-tight">{data.realtor.phone}</div>
-                  </div>
+            {/* Row 1: Contacts and Branding */}
+            <div className="flex items-center justify-between px-5 pt-4 pb-2">
+              {/* Left - Broker */}
+              <div className="flex items-center gap-3">
+                {data.broker.headshot && (
+                  <img
+                    src={data.broker.headshot}
+                    alt={data.broker.name}
+                    className="rounded-full object-cover border-2 border-white/30"
+                    style={{ 
+                      width: 48, 
+                      height: 48, 
+                      objectPosition: `center ${data.broker.headshotPosition ?? 15}%`
+                    }}
+                  />
+                )}
+                <div>
+                  <div className="text-white font-semibold text-xs leading-tight">{data.broker.name}</div>
+                  <div className="text-white/60 text-[10px] leading-tight">{data.broker.title}</div>
+                  <div className="text-white/70 text-[10px] leading-tight">{data.broker.phone}</div>
                 </div>
               </div>
 
-              {/* Center - Branding & Rates */}
-              <div className="flex-1 flex items-center justify-center gap-3 min-w-0">
-                <div className="flex items-center gap-2 shrink-0">
-                  <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-[10px]"
-                    style={{ background: themeColor }}
-                  >
-                    IA
-                  </div>
-                  <div>
-                    <div className="text-white font-bold text-xs leading-tight">IA Mortgage</div>
-                    <div className="text-white/50 text-[7px]">NMLS #{data.company.nmls}</div>
-                  </div>
+              {/* Center - Branding */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white text-sm"
+                  style={{ background: themeColor }}
+                >
+                  IA
                 </div>
-
-                <div className="flex gap-2 shrink-0">
-                  <div className="bg-white/15 backdrop-blur rounded-lg px-2.5 py-1.5 text-center">
-                    <div className="text-white/60 text-[7px] uppercase tracking-wide">30-Yr</div>
-                    <div className="text-white font-bold text-base leading-none">{data.rates.thirtyYearFixed}</div>
-                  </div>
-                  <div className="bg-white/15 backdrop-blur rounded-lg px-2.5 py-1.5 text-center">
-                    <div className="text-white/60 text-[7px] uppercase tracking-wide">15-Yr</div>
-                    <div className="text-white font-bold text-base leading-none">{data.rates.fifteenYearFixed}</div>
-                  </div>
+                <div>
+                  <div className="text-white font-bold text-sm leading-tight">IA Mortgage</div>
+                  <div className="text-white/50 text-[9px]">NMLS #{data.company.nmls}</div>
                 </div>
               </div>
 
-              {/* Right side - QR Code and CTA */}
-              <div className="flex items-center gap-2 shrink-0">
-                <div className="bg-white p-1.5 rounded-lg shrink-0">
-                  <QRCodeSVG value={shareUrl} size={40} level="M" />
+              {/* Right - Realtor */}
+              <div className="flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-white font-semibold text-xs leading-tight">{data.realtor.name}</div>
+                  <div className="text-white/60 text-[10px] leading-tight">{data.realtor.title}</div>
+                  <div className="text-white/70 text-[10px] leading-tight">{data.realtor.phone}</div>
                 </div>
-                <div className="flex flex-col items-start gap-0.5 pr-2">
+                {data.realtor.headshot && (
+                  <img
+                    src={data.realtor.headshot}
+                    alt={data.realtor.name}
+                    className="rounded-full object-cover border-2 border-white/30"
+                    style={{ 
+                      width: 48, 
+                      height: 48, 
+                      objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Row 2: Rates and CTA */}
+            <div className="flex items-center justify-between px-5 pb-4 pt-2">
+              {/* Left - Rates */}
+              <div className="flex gap-3">
+                <div className="bg-white/15 backdrop-blur rounded-lg px-4 py-2 text-center">
+                  <div className="text-white/60 text-[8px] uppercase tracking-wide">30-Year Fixed</div>
+                  <div className="text-white font-bold text-xl leading-none">{data.rates.thirtyYearFixed}</div>
+                </div>
+                <div className="bg-white/15 backdrop-blur rounded-lg px-4 py-2 text-center">
+                  <div className="text-white/60 text-[8px] uppercase tracking-wide">15-Year Fixed</div>
+                  <div className="text-white font-bold text-xl leading-none">{data.rates.fifteenYearFixed}</div>
+                </div>
+                <div className="bg-white/15 backdrop-blur rounded-lg px-4 py-2 text-center">
+                  <div className="text-white/60 text-[8px] uppercase tracking-wide">30-Yr Jumbo</div>
+                  <div className="text-white font-bold text-xl leading-none">{data.rates.thirtyYearJumbo}</div>
+                </div>
+              </div>
+
+              {/* Right - QR and CTA */}
+              <div className="flex items-center gap-3">
+                <div className="bg-white p-1.5 rounded-lg">
+                  <QRCodeSVG value={shareUrl} size={50} level="M" />
+                </div>
+                <div className="flex flex-col items-start gap-1">
                   <div
-                    className="px-2 py-1 rounded-full text-white text-[9px] font-semibold whitespace-nowrap"
+                    className="px-3 py-1.5 rounded-full text-white text-[10px] font-semibold whitespace-nowrap"
                     style={{ background: themeColor }}
                   >
                     View Live Rates →
                   </div>
-                  <div className="text-white/40 text-[7px]">
+                  <div className="text-white/40 text-[8px]">
                     As of {data.rates.dateGenerated}
                   </div>
                 </div>
