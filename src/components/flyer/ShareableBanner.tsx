@@ -96,7 +96,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}
           >
             {/* Content - Single row layout */}
-            <div className="relative z-10 h-full flex items-center gap-4 px-4">
+            <div className="relative z-10 h-full flex items-center gap-4 px-5 pr-6">
               {/* Contacts section */}
               <div className="flex items-center gap-4 shrink-0">
                 {/* Broker */}
@@ -109,7 +109,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       style={{ 
                         width: 44, 
                         height: 44, 
-                        objectPosition: 'center top'
+                        objectPosition: 'center 10%'
                       }}
                     />
                   )}
@@ -132,7 +132,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       style={{ 
                         width: 44, 
                         height: 44, 
-                        objectPosition: 'center top'
+                        objectPosition: 'center 10%'
                       }}
                     />
                   )}
@@ -171,9 +171,9 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right side - QR Code and CTA */}
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 shrink-0">
                 <div className="bg-white p-1.5 rounded-lg shadow-lg">
-                  <QRCodeSVG value={shareUrl} size={50} level="M" />
+                  <QRCodeSVG value={shareUrl} size={48} level="M" />
                 </div>
                 <div className="flex flex-col items-start gap-1">
                   <div
@@ -241,7 +241,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               />
 
               {/* Content */}
-              <div className="relative z-10 h-full flex flex-col items-center justify-between p-12">
+              <div className="relative z-10 h-full flex flex-col items-center p-10">
                 {/* Header with branding and contacts */}
                 <div className="w-full flex items-center justify-between">
                   {/* Broker */}
@@ -251,7 +251,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                         src={data.broker.headshot}
                         alt={data.broker.name}
                         className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl"
-                        style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                        style={{ objectPosition: 'center 10%' }}
                       />
                     )}
                     <div>
@@ -285,19 +285,19 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                         src={data.realtor.headshot}
                         alt={data.realtor.name}
                         className="w-20 h-20 rounded-full object-cover border-4 border-white/30 shadow-xl"
-                        style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                        style={{ objectPosition: 'center 10%' }}
                       />
                     )}
                   </div>
                 </div>
 
-                {/* Rates */}
-                <div className="text-center space-y-5">
+                {/* Rates - closer to header */}
+                <div className="text-center mt-8">
                   <div className="text-white/80 text-xl uppercase tracking-widest">
                     Today's Mortgage Rates
                   </div>
 
-                  <div className="grid grid-cols-2 gap-5">
+                  <div className="grid grid-cols-2 gap-5 mt-5">
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5">
                       <div className="text-white/70 text-base">30-Year Fixed</div>
                       <div className="text-white font-bold text-5xl mt-1">{data.rates.thirtyYearFixed}</div>
@@ -321,8 +321,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   </div>
                 </div>
 
-                {/* Footer with QR and CTA */}
-                <div className="flex items-center gap-6">
+                {/* Footer with QR and CTA - pushed to bottom */}
+                <div className="flex items-center gap-6 mt-auto">
                   <div className="bg-white p-3 rounded-2xl shadow-xl">
                     <QRCodeSVG value={shareUrl} size={100} level="M" />
                   </div>
