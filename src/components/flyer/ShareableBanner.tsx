@@ -43,13 +43,15 @@ function HeadshotImage({
     <img
       src={src}
       alt={alt}
+      crossOrigin="anonymous"
       style={{ 
         width: size, 
         height: size, 
         objectFit: 'cover',
         objectPosition: 'center top',
         flexShrink: 0,
-        borderRadius: 8
+        borderRadius: 8,
+        imageRendering: 'high-quality' as any,
       }}
     />
   );
@@ -62,6 +64,25 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
   const facebookBannerRef = useRef<HTMLDivElement>(null);
   const [isDownloading, setIsDownloading] = useState<BannerFormat | null>(null);
 
+  // Preload images before capture to ensure they render properly
+  const preloadImages = async (container: HTMLElement): Promise<void> => {
+    const images = container.querySelectorAll('img');
+    const imagePromises = Array.from(images).map((img) => {
+      return new Promise<void>((resolve) => {
+        if (img.complete && img.naturalHeight !== 0) {
+          resolve();
+        } else {
+          const newImg = new Image();
+          newImg.crossOrigin = 'anonymous';
+          newImg.onload = () => resolve();
+          newImg.onerror = () => resolve();
+          newImg.src = img.src;
+        }
+      });
+    });
+    await Promise.all(imagePromises);
+  };
+
   const downloadBanner = async (format: BannerFormat) => {
     const refs = { email: emailBannerRef, social: socialBannerRef, stories: storiesBannerRef, facebook: facebookBannerRef };
     const ref = refs[format];
@@ -69,16 +90,31 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
 
     setIsDownloading(format);
     try {
+      // Wait for all images to load
+      await preloadImages(ref.current);
+      
+      // Small delay to ensure browser has rendered images
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const canvas = await html2canvas(ref.current, {
         scale: bannerDimensions[format].scale,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: null,
         logging: false,
+        imageTimeout: 15000,
+        onclone: (clonedDoc) => {
+          // Ensure images in cloned document have crossOrigin set
+          const clonedImages = clonedDoc.querySelectorAll('img');
+          clonedImages.forEach((img) => {
+            img.crossOrigin = 'anonymous';
+          });
+        }
       });
 
       const link = document.createElement("a");
       link.download = `rate-flyer-${format}-${Date.now()}.png`;
-      link.href = canvas.toDataURL("image/png");
+      link.href = canvas.toDataURL("image/png", 1.0);
       link.click();
 
       const formatLabels = { email: "Email", social: "Social", stories: "Stories", facebook: "Facebook" };
