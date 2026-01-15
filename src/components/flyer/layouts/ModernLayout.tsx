@@ -68,8 +68,8 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
         </div>
 
         {/* Rates Table Section with APR */}
-        <div className="px-4 py-3" style={{ height: "22%", backgroundColor: "#f8f7f4" }}>
-          <div className="grid grid-cols-4 gap-2 h-[calc(100%-1.5rem)]">
+        <div className="px-6 py-3 flex flex-col justify-center" style={{ height: "22%", backgroundColor: "#f8f7f4" }}>
+          <div className="grid grid-cols-4 gap-3 max-w-[560px] mx-auto">
             {[
               { label: "30-Year Fixed", rate: data.rates.thirtyYearFixed, apr: data.rates.thirtyYearFixedAPR },
               { label: "15-Year Fixed", rate: data.rates.fifteenYearFixed, apr: data.rates.fifteenYearFixedAPR },
@@ -78,8 +78,8 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="bg-white rounded-lg p-2 flex flex-col items-center justify-center shadow-sm"
-                style={{ borderColor: `${primaryColor}30`, borderWidth: 1 }}
+                className="bg-white rounded-lg p-2.5 flex flex-col items-center justify-center"
+                style={{ borderColor: `${primaryColor}40`, borderWidth: 1 }}
               >
                 <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
                   {item.label}
@@ -93,7 +93,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
             ))}
           </div>
-          <p className="text-center text-[9px] text-gray-500 mt-1.5">
+          <p className="text-center text-[9px] text-gray-500 mt-2">
             Rates as of {data.rates.dateGenerated} • Subject to change • APR reflects total loan cost
           </p>
         </div>
@@ -167,10 +167,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.broker.headshot} 
                   alt={data.broker.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ 
-                    objectPosition: 'center top',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                  }}
+                  style={{ objectPosition: 'center top' }}
                 />
               ) : (
                 <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0 rounded-lg">
@@ -203,10 +200,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ 
-                    objectPosition: 'center top',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                  }}
+                  style={{ objectPosition: 'center top' }}
                 />
               ) : (
                 <div 

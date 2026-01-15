@@ -169,10 +169,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.broker.headshot} 
                   alt={data.broker.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ 
-                    objectPosition: 'center top',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                  }}
+                  style={{ objectPosition: 'center top' }}
                 />
               ) : (
                 <div 
@@ -204,10 +201,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ 
-                    objectPosition: 'center top',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-                  }}
+                  style={{ objectPosition: 'center top' }}
                 />
               ) : (
                 <div 

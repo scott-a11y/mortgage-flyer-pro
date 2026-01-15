@@ -48,8 +48,7 @@ function HeadshotImage({
         objectFit: 'cover',
         objectPosition: 'center top',
         flexShrink: 0,
-        borderRadius: 8,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+        borderRadius: 8
       }}
     />
   );
@@ -204,22 +203,12 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}>
               {/* Left - Branding */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ 
-                  width: 24, 
-                  height: 24, 
-                  borderRadius: 5, 
-                  background: themeColor,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                  color: 'white',
-                  fontSize: 10
-                }}>
-                  IA
-                </div>
+                {data.company.logo ? (
+                  <img src={data.company.logo} alt={data.company.name} style={{ height: 28, maxWidth: 80, objectFit: 'contain' }} />
+                ) : (
+                  <div style={{ color: 'white', fontWeight: 600, fontSize: 12 }}>{data.company.name || 'IA Mortgage'}</div>
+                )}
                 <div>
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: 10 }}>IA Mortgage</div>
                   <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>NMLS #{data.company.nmls}</div>
                 </div>
               </div>
@@ -323,25 +312,12 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
 
                 {/* Center - Branding */}
                 <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{ 
-                      width: 80, 
-                      height: 80, 
-                      borderRadius: 16, 
-                      background: themeColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      color: 'white',
-                      fontSize: 30,
-                      margin: '0 auto'
-                    }}
-                  >
-                    IA
-                  </div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 24, marginTop: 12 }}>IA Mortgage</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>NMLS #{data.company.nmls}</div>
+                  {data.company.logo ? (
+                    <img src={data.company.logo} alt={data.company.name} style={{ height: 80, maxWidth: 160, objectFit: 'contain', margin: '0 auto' }} />
+                  ) : (
+                    <div style={{ color: 'white', fontWeight: 700, fontSize: 32 }}>{data.company.name || 'IA Mortgage'}</div>
+                  )}
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 8 }}>NMLS #{data.company.nmls}</div>
                 </div>
 
                 {/* Realtor */}
@@ -448,25 +424,12 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             >
               {/* Top Branding */}
               <div style={{ textAlign: 'center' }}>
-                <div
-                  style={{ 
-                    width: 112, 
-                    height: 112, 
-                    borderRadius: 24, 
-                    background: themeColor,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700,
-                    color: 'white',
-                    fontSize: 50,
-                    margin: '0 auto'
-                  }}
-                >
-                  IA
-                </div>
-                <div style={{ color: 'white', fontWeight: 700, fontSize: 40, marginTop: 24 }}>IA Mortgage</div>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 24 }}>NMLS #{data.company.nmls}</div>
+                {data.company.logo ? (
+                  <img src={data.company.logo} alt={data.company.name} style={{ height: 112, maxWidth: 220, objectFit: 'contain', margin: '0 auto' }} />
+                ) : (
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 48 }}>{data.company.name || 'IA Mortgage'}</div>
+                )}
+                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 24, marginTop: 16 }}>NMLS #{data.company.nmls}</div>
                 <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 20, marginTop: 8 }}>{data.company.website}</div>
               </div>
 
@@ -669,25 +632,12 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
                 {/* Branding */}
                 <div style={{ textAlign: 'center' }}>
-                  <div
-                    style={{ 
-                      width: 80, 
-                      height: 80, 
-                      borderRadius: 16, 
-                      background: themeColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      color: 'white',
-                      fontSize: 30,
-                      margin: '0 auto'
-                    }}
-                  >
-                    IA
-                  </div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 24, marginTop: 12 }}>IA Mortgage</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>NMLS #{data.company.nmls}</div>
+                  {data.company.logo ? (
+                    <img src={data.company.logo} alt={data.company.name} style={{ height: 80, maxWidth: 160, objectFit: 'contain', margin: '0 auto' }} />
+                  ) : (
+                    <div style={{ color: 'white', fontWeight: 700, fontSize: 28 }}>{data.company.name || 'IA Mortgage'}</div>
+                  )}
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 8 }}>NMLS #{data.company.nmls}</div>
                   <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14, marginTop: 4 }}>{data.company.website}</div>
                 </div>
 
