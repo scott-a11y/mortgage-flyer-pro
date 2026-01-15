@@ -360,7 +360,10 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
                         }}>
                           View Live Rates →
                         </div>
-                        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 7, marginTop: 2, textAlign: 'center' }}>
+                        <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 8, marginTop: 3, textAlign: 'center', fontWeight: 500 }}>
+                          {shareUrl.replace('https://', '').replace('http://', '')}
+                        </div>
+                        <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 6, marginTop: 1, textAlign: 'center' }}>
                           As of {currentData.rates.dateGenerated}
                         </div>
                       </div>
