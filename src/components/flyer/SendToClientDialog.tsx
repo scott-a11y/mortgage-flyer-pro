@@ -110,15 +110,22 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
     setIsDownloading(true);
     try {
       await preloadImages(bannerRef.current);
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 200));
 
       const canvas = await html2canvas(bannerRef.current, {
-        scale: 2,
+        scale: 4, // Higher scale for sharper images
         useCORS: true,
         allowTaint: true,
         backgroundColor: null,
         logging: false,
         imageTimeout: 15000,
+        onclone: (clonedDoc) => {
+          // Ensure images in cloned doc have crossOrigin set
+          const images = clonedDoc.querySelectorAll('img');
+          images.forEach((img) => {
+            img.crossOrigin = 'anonymous';
+          });
+        }
       });
 
       const link = document.createElement("a");
@@ -249,7 +256,7 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
                   ref={bannerRef}
                   style={{
                     width: 600,
-                    height: 200,
+                    height: 220,
                     background: themeSecondary,
                     fontFamily: 'system-ui, -apple-system, sans-serif',
                     display: 'flex',
@@ -267,23 +274,24 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
                     padding: '16px 24px',
                   }}>
                     {/* Left - Broker */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                       {currentData.broker.headshot && (
                         <img
                           src={currentData.broker.headshot}
                           alt={currentData.broker.name}
                           crossOrigin="anonymous"
                           style={{ 
-                            width: 60, 
-                            height: 60, 
+                            width: 80, 
+                            height: 80, 
                             objectFit: 'cover',
                             objectPosition: 'center top',
-                            borderRadius: 8
+                            borderRadius: 10,
+                            border: '2px solid rgba(255,255,255,0.2)'
                           }}
                         />
                       )}
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{currentData.broker.name}</div>
+                        <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{currentData.broker.name}</div>
                         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{currentData.broker.nmls}</div>
                         <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{currentData.broker.phone}</div>
                       </div>
@@ -309,23 +317,24 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
                     </div>
 
                     {/* Right - Realtor */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
                       {currentData.realtor.headshot && (
                         <img
                           src={currentData.realtor.headshot}
                           alt={currentData.realtor.name}
                           crossOrigin="anonymous"
                           style={{ 
-                            width: 60, 
-                            height: 60, 
+                            width: 80, 
+                            height: 80, 
                             objectFit: 'cover',
                             objectPosition: 'center top',
-                            borderRadius: 8
+                            borderRadius: 10,
+                            border: '2px solid rgba(255,255,255,0.2)'
                           }}
                         />
                       )}
                       <div style={{ textAlign: 'center' }}>
-                        <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{currentData.realtor.name}</div>
+                        <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{currentData.realtor.name}</div>
                         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{currentData.realtor.brokerage}</div>
                         <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{currentData.realtor.phone}</div>
                       </div>
