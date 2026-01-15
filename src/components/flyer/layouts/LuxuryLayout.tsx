@@ -162,71 +162,71 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Premium Footer */}
         <div className="px-6 py-4" style={{ backgroundColor: "#050505" }}>
           <div className="grid grid-cols-2 gap-6">
-            {/* Broker */}
-            <div className="flex gap-4 items-center">
+            {/* Broker - Stacked vertically */}
+            <div className="flex flex-col items-center">
               {data.broker.headshot ? (
-                <div className="flex-shrink-0 w-16 h-16">
+                <div className="flex-shrink-0 w-16 h-16 mb-2">
                   <img 
                     src={data.broker.headshot} 
                     alt={data.broker.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                    style={{ border: `1px solid ${goldAccent}`, aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                    className="w-16 h-16 object-cover"
+                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
                   />
                 </div>
               ) : (
                 <div 
-                  className="w-16 h-16 flex items-center justify-center"
+                  className="w-16 h-16 flex items-center justify-center mb-2"
                   style={{ border: `1px solid ${goldAccent}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: goldAccent }} />
                 </div>
               )}
-              <div>
+              <div className="text-center">
                 <p className="text-white font-light text-[13px] tracking-wide">{data.broker.name}</p>
                 <p className="text-[9px]" style={{ color: goldAccent }}>{data.broker.title}</p>
                 <p className="text-gray-600 text-[8px]">NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center gap-2 mt-1.5">
+                <div className="flex items-center justify-center gap-2 mt-1.5">
                   <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.broker.phone}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.broker.email}</span>
                 </div>
               </div>
             </div>
 
-            {/* Realtor */}
-            <div className="flex gap-4 items-center justify-end">
-              <div className="text-right">
-                <p className="text-white font-light text-[13px] tracking-wide">{data.realtor.name}</p>
-                <p className="text-[9px]" style={{ color: goldAccent }}>{data.realtor.brokerage}</p>
-                <p className="text-gray-600 text-[8px]">{data.realtor.title}</p>
-                <div className="flex items-center gap-2 mt-1.5 justify-end">
-                  <span className="text-white/80 text-[9px]">{data.realtor.phone}</span>
-                  <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <span className="text-white/80 text-[9px]">{data.realtor.email}</span>
-                  <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                </div>
-              </div>
-              <div className="flex-shrink-0 w-16 h-16">
+            {/* Realtor - Stacked vertically */}
+            <div className="flex flex-col items-center">
+              <div className="flex-shrink-0 w-16 h-16 mb-2">
                 {data.realtor.headshot ? (
                   <img 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                    style={{ border: `1px solid ${goldAccent}`, aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                    className="w-16 h-16 object-cover"
+                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 
-                    className="w-16 h-16 rounded-full flex items-center justify-center"
+                    className="w-16 h-16 flex items-center justify-center"
                     style={{ border: `1px solid ${goldAccent}30` }}
                   >
                     <User className="w-6 h-6" style={{ color: goldAccent }} />
                   </div>
                 )}
+              </div>
+              <div className="text-center">
+                <p className="text-white font-light text-[13px] tracking-wide">{data.realtor.name}</p>
+                <p className="text-[9px]" style={{ color: goldAccent }}>{data.realtor.brokerage}</p>
+                <p className="text-gray-600 text-[8px]">{data.realtor.title}</p>
+                <div className="flex items-center justify-center gap-2 mt-1.5">
+                  <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
+                  <span className="text-white/80 text-[9px]">{data.realtor.phone}</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
+                  <span className="text-white/80 text-[9px]">{data.realtor.email}</span>
+                </div>
               </div>
             </div>
           </div>
