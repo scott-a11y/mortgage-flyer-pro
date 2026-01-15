@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Send, Copy, Check, Loader2, Download, ExternalLink } from "lucide-react";
+import { Send, Copy, Check, Loader2, Download, ExternalLink, Mail, MessageSquare, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { QRCodeSVG } from "qrcode.react";
@@ -38,7 +38,51 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
   const [copied, setCopied] = useState(false);
   const [templateName, setTemplateName] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [showInstructions, setShowInstructions] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
+
+  const clientName = templateName.split(' - ')[0] || 'there';
+
+  const emailSubject = encodeURIComponent(`Your Personalized Mortgage Rates - ${currentData.rates.dateGenerated}`);
+  const emailBody = encodeURIComponent(
+`Hi ${clientName},
+
+I wanted to share today's mortgage rates with you! I've put together a personalized rate sheet that shows our current offerings.
+
+🔗 View your live rates here: ${shareUrl || ''}
+
+What you'll see:
+• Current 30-year, 15-year, and Jumbo rates
+• Rate comparison tools
+• My contact information for questions
+
+The rates are updated regularly, so you'll always see the most current information.
+
+If you have any questions or would like to discuss your options, please don't hesitate to reach out!
+
+Best regards,
+${currentData.broker.name}
+${currentData.broker.phone}
+NMLS #${currentData.broker.nmls}
+
+${currentData.company.name || 'IA Mortgage'}
+${currentData.company.website || ''}`
+  );
+
+  const smsBody = encodeURIComponent(
+`Hi ${clientName}! Here are today's mortgage rates just for you: ${shareUrl || ''} - ${currentData.broker.name}, ${currentData.broker.phone}`
+  );
+
+  const handleEmailShare = () => {
+    window.open(`mailto:?subject=${emailSubject}&body=${emailBody}`, '_blank');
+    toast.success("Opening email composer...");
+  };
+
+  const handleSMSShare = () => {
+    // Use sms: protocol which works on both mobile and some desktop apps
+    window.open(`sms:?body=${smsBody}`, '_blank');
+    toast.success("Opening SMS composer...");
+  };
 
   const handleCreateLink = async () => {
     if (!templateName.trim()) {
@@ -408,15 +452,92 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
               </Button>
             </div>
 
-            {/* Step 3: Send */}
-            <div className="space-y-2">
+            {/* Step 3: Quick Share */}
+            <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">3</div>
-                <span className="font-medium">Send to your client</span>
+                <span className="font-medium">Quick share options</span>
               </div>
-              <p className="text-sm text-muted-foreground pl-8">
-                Paste the link in your email or text. Attach the banner image for a professional touch. Clients can scan the QR code or click the link to see live rates.
+              
+              <div className="grid grid-cols-2 gap-2 pl-8">
+                <Button 
+                  onClick={handleEmailShare} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  Email
+                </Button>
+                <Button 
+                  onClick={handleSMSShare} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Text/SMS
+                </Button>
+              </div>
+
+              <p className="text-xs text-muted-foreground pl-8">
+                Click to open a pre-filled message. Remember to attach the banner image!
               </p>
+            </div>
+
+            {/* Sharing Instructions */}
+            <div className="border rounded-lg overflow-hidden">
+              <button
+                onClick={() => setShowInstructions(!showInstructions)}
+                className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">How to share with clients</span>
+                </div>
+                {showInstructions ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              
+              {showInstructions && (
+                <div className="p-4 pt-0 space-y-4 text-sm border-t bg-muted/30">
+                  <div>
+                    <h4 className="font-medium mb-2">📧 Via Email</h4>
+                    <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                      <li>Click the "Email" button above to open a pre-filled message</li>
+                      <li>Add your client's email address</li>
+                      <li>Attach the downloaded banner image</li>
+                      <li>Personalize the message if needed and send!</li>
+                    </ol>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">💬 Via Text Message</h4>
+                    <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                      <li>Click the "Text/SMS" button to open a pre-filled message</li>
+                      <li>Add your client's phone number</li>
+                      <li>Optionally attach the banner image (MMS)</li>
+                      <li>Send!</li>
+                    </ol>
+                  </div>
+                  
+                  <div>
+                    <h4 className="font-medium mb-2">📱 Via Social Media / Other Apps</h4>
+                    <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                      <li>Copy the link using the button above</li>
+                      <li>Download the banner image</li>
+                      <li>Open your preferred app (WhatsApp, Messenger, etc.)</li>
+                      <li>Paste the link and attach the banner</li>
+                    </ol>
+                  </div>
+
+                  <div className="bg-primary/10 rounded-lg p-3 text-xs">
+                    <strong className="text-primary">💡 Pro Tip:</strong>
+                    <span className="text-muted-foreground"> The QR code on the banner links directly to the live rates page. Clients can scan it from a printed flyer or screenshot!</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2 pt-2">
