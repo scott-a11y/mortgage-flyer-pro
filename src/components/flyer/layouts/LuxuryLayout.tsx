@@ -162,17 +162,15 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Premium Footer */}
         <div className="px-6 py-4" style={{ backgroundColor: "#050505" }}>
           <div className="grid grid-cols-2 gap-6">
-            {/* Broker - Side by side */}
+            {/* Broker - Side by side, no frame */}
             <div className="flex items-center gap-3">
               {data.broker.headshot ? (
-                <div className="flex-shrink-0 w-16 h-16">
-                  <img 
-                    src={data.broker.headshot} 
-                    alt={data.broker.name}
-                    className="w-16 h-16 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                  />
-                </div>
+                <img 
+                  src={data.broker.headshot} 
+                  alt={data.broker.name}
+                  className="w-16 h-16 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                />
               ) : (
                 <div 
                   className="w-16 h-16 flex items-center justify-center flex-shrink-0"
@@ -196,25 +194,23 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
             </div>
 
-            {/* Realtor - Side by side */}
+            {/* Realtor - Side by side, no frame */}
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-16 h-16">
-                {data.realtor.headshot ? (
-                  <img 
-                    src={data.realtor.headshot} 
-                    alt={data.realtor.name}
-                    className="w-16 h-16 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                  />
-                ) : (
-                  <div 
-                    className="w-16 h-16 flex items-center justify-center"
-                    style={{ border: `1px solid ${goldAccent}30` }}
-                  >
-                    <User className="w-6 h-6" style={{ color: goldAccent }} />
-                  </div>
-                )}
-              </div>
+              {data.realtor.headshot ? (
+                <img 
+                  src={data.realtor.headshot} 
+                  alt={data.realtor.name}
+                  className="w-16 h-16 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                />
+              ) : (
+                <div 
+                  className="w-16 h-16 flex items-center justify-center flex-shrink-0"
+                  style={{ border: `1px solid ${goldAccent}30` }}
+                >
+                  <User className="w-6 h-6" style={{ color: goldAccent }} />
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-white font-light text-[13px] tracking-wide">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: goldAccent }}>{data.realtor.brokerage}</p>

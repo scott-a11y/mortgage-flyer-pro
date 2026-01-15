@@ -162,17 +162,15 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Footer with Contact Info */}
         <div className="px-4 py-4" style={{ backgroundColor: secondaryColor }}>
           <div className="grid grid-cols-2 gap-4">
-            {/* Broker - Side by side */}
+            {/* Broker - Side by side, no frame */}
             <div className="flex items-center gap-3 pr-4" style={{ borderRight: `1px solid ${primaryColor}40` }}>
               {data.broker.headshot ? (
-                <div className="flex-shrink-0 w-14 h-14">
-                  <img 
-                    src={data.broker.headshot} 
-                    alt={data.broker.name}
-                    className="w-14 h-14 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                  />
-                </div>
+                <img 
+                  src={data.broker.headshot} 
+                  alt={data.broker.name}
+                  className="w-14 h-14 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                />
               ) : (
                 <div 
                   className="w-14 h-14 flex items-center justify-center flex-shrink-0"
@@ -196,25 +194,23 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
             </div>
 
-            {/* Realtor - Side by side */}
+            {/* Realtor - Side by side, no frame */}
             <div className="flex items-center gap-3 pl-2">
-              <div className="flex-shrink-0 w-14 h-14">
-                {data.realtor.headshot ? (
-                  <img 
-                    src={data.realtor.headshot} 
-                    alt={data.realtor.name}
-                    className="w-14 h-14 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                  />
-                ) : (
-                  <div 
-                    className="w-14 h-14 flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}30` }}
-                  >
-                    <User className="w-6 h-6" style={{ color: primaryColor }} />
-                  </div>
-                )}
-              </div>
+              {data.realtor.headshot ? (
+                <img 
+                  src={data.realtor.headshot} 
+                  alt={data.realtor.name}
+                  className="w-14 h-14 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                />
+              ) : (
+                <div 
+                  className="w-14 h-14 flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: `${primaryColor}30` }}
+                >
+                  <User className="w-6 h-6" style={{ color: primaryColor }} />
+                </div>
+              )}
               <div className="flex-1 min-w-0">
                 <p className="text-white font-bold text-[12px]">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>

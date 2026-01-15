@@ -160,36 +160,22 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Footer Section */}
         <div className="px-4 py-3" style={{ height: "20%", backgroundColor: secondaryColor }}>
           <div className="grid grid-cols-2 gap-3 h-[calc(100%-2.5rem)]">
-            {/* Broker Info - Side by side */}
+            {/* Broker Info - Side by side, no company badge */}
             <div className="flex items-center gap-3 border-r border-white/20 pr-3">
-              <div className="flex-shrink-0 w-14 h-14">
-                {data.broker.headshot ? (
-                  <img 
-                    src={data.broker.headshot} 
-                    alt={data.broker.name}
-                    className="w-14 h-14 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                  />
-                ) : (
-                  <div 
-                    className="w-14 h-14 bg-white/10 flex items-center justify-center"
-                  >
-                    <User className="w-6 h-6 text-white/60" />
-                  </div>
-                )}
-              </div>
+              {data.broker.headshot ? (
+                <img 
+                  src={data.broker.headshot} 
+                  alt={data.broker.name}
+                  className="w-14 h-14 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                />
+              ) : (
+                <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-white/60" />
+                </div>
+              )}
               
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  {data.company.logo ? (
-                    <img src={data.company.logo} alt={data.company.name} className="h-5 max-w-[70px] object-contain" />
-                  ) : (
-                    <div className="bg-white/10 rounded px-2 py-0.5">
-                      <span className="text-white font-bold text-[8px]">IA LOANS</span>
-                    </div>
-                  )}
-                  <span className="text-white/50 text-[7px]">NMLS #{data.company.nmls}</span>
-                </div>
                 <p className="text-white font-semibold text-[11px]">{data.broker.name}</p>
                 <p className="text-white/70 text-[9px]">{data.broker.title} • NMLS #{data.broker.nmls}</p>
                 <div className="flex items-center gap-1 mt-0.5">
@@ -207,36 +193,25 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </div>
             </div>
 
-            {/* Realtor Info - Side by side */}
+            {/* Realtor Info - Side by side, no company badge */}
             <div className="flex items-center gap-3 pl-3">
-              <div className="flex-shrink-0 w-14 h-14">
-                {data.realtor.headshot ? (
-                  <img 
-                    src={data.realtor.headshot} 
-                    alt={data.realtor.name}
-                    className="w-14 h-14 object-cover"
-                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                  />
-                ) : (
-                  <div 
-                    className="w-14 h-14 flex items-center justify-center"
-                    style={{ backgroundColor: `${primaryColor}30` }}
-                  >
-                    <User className="w-6 h-6" style={{ color: primaryColor }} />
-                  </div>
-                )}
-              </div>
+              {data.realtor.headshot ? (
+                <img 
+                  src={data.realtor.headshot} 
+                  alt={data.realtor.name}
+                  className="w-14 h-14 object-cover flex-shrink-0"
+                  style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                />
+              ) : (
+                <div 
+                  className="w-14 h-14 flex items-center justify-center flex-shrink-0"
+                  style={{ backgroundColor: `${primaryColor}30` }}
+                >
+                  <User className="w-6 h-6" style={{ color: primaryColor }} />
+                </div>
+              )}
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  {data.realtor.logo ? (
-                    <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-5 max-w-[70px] object-contain" />
-                  ) : (
-                    <div className="rounded px-2 py-0.5" style={{ backgroundColor: primaryColor }}>
-                      <span style={{ color: secondaryColor }} className="font-bold text-[8px]">C21</span>
-                    </div>
-                  )}
-                </div>
                 <p className="text-white font-semibold text-[11px]">{data.realtor.name}</p>
                 <p className="text-[9px] truncate" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
                 <p className="text-white/70 text-[9px]">{data.realtor.title}</p>
