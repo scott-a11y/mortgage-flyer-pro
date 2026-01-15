@@ -26,7 +26,7 @@ const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
   facebook: { width: 1640, height: 624, scale: 2 },
 };
 
-// Helper component for headshots with proper cropping
+// Helper component for headshots - no frame, just the image
 function HeadshotImage({ 
   src, 
   alt, 
@@ -39,25 +39,17 @@ function HeadshotImage({
   position: number;
 }) {
   return (
-    <div style={{ 
-      width: size, 
-      height: size, 
-      borderRadius: size * 0.12,
-      overflow: 'hidden',
-      flexShrink: 0,
-      background: 'rgba(255,255,255,0.1)'
-    }}>
-      <img
-        src={src}
-        alt={alt}
-        style={{ 
-          width: '100%', 
-          height: '100%', 
-          objectFit: 'cover',
-          objectPosition: `center ${position}%`
-        }}
-      />
-    </div>
+    <img
+      src={src}
+      alt={alt}
+      style={{ 
+        width: size, 
+        height: size, 
+        objectFit: 'cover',
+        objectPosition: `center ${position}%`,
+        flexShrink: 0,
+      }}
+    />
   );
 }
 
@@ -146,8 +138,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               justifyContent: 'space-between',
               padding: '16px 24px',
             }}>
-              {/* Left - Broker */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {/* Left - Broker headshot + info */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                 {data.broker.headshot && (
                   <HeadshotImage 
                     src={data.broker.headshot} 
@@ -156,8 +148,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     position={data.broker.headshotPosition ?? 15} 
                   />
                 )}
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.broker.name}</div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.broker.name}</div>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{data.broker.nmls}</div>
                   <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.broker.phone}</div>
                 </div>
@@ -182,14 +174,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 </div>
               </div>
 
-              {/* Right - Realtor */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ textAlign: 'left' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.realtor.name}</div>
-                  <div style={{ color: themeColor, fontSize: 8, fontWeight: 500 }}>{data.realtor.brokerage}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.website}</div>
-                </div>
+              {/* Right - Realtor headshot + info */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                 {data.realtor.headshot && (
                   <HeadshotImage 
                     src={data.realtor.headshot} 
@@ -198,6 +184,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     position={data.realtor.headshotPosition ?? 25} 
                   />
                 )}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.realtor.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{data.realtor.brokerage}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
+                </div>
               </div>
             </div>
 
