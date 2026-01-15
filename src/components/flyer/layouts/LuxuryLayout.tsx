@@ -169,7 +169,10 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.broker.headshot} 
                   alt={data.broker.name}
                   className="w-16 h-16 object-cover flex-shrink-0"
-                  style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                  style={{ 
+                    objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.2)'
+                  }}
                 />
               ) : (
                 <div 
@@ -201,7 +204,10 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
                   className="w-16 h-16 object-cover flex-shrink-0"
-                  style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                  style={{ 
+                    objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`,
+                    boxShadow: '0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.2)'
+                  }}
                 />
               ) : (
                 <div 
