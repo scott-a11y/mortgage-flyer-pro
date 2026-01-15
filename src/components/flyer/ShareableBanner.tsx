@@ -147,7 +147,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               padding: '16px 24px',
             }}>
               {/* Left - Broker */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 {data.broker.headshot && (
                   <HeadshotImage 
                     src={data.broker.headshot} 
@@ -156,7 +156,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     position={data.broker.headshotPosition ?? 15} 
                   />
                 )}
-                <div>
+                <div style={{ textAlign: 'left' }}>
                   <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.broker.name}</div>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{data.broker.nmls}</div>
                   <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.broker.phone}</div>
@@ -183,8 +183,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right - Realtor */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ textAlign: 'right' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ textAlign: 'left' }}>
                   <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{data.realtor.name}</div>
                   <div style={{ color: themeColor, fontSize: 8, fontWeight: 500 }}>{data.realtor.brokerage}</div>
                   <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
