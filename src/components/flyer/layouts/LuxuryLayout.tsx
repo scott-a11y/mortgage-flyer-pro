@@ -124,47 +124,39 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         </div>
 
         {/* Luxury CTA */}
-        <div 
-          className="px-4 py-3 flex items-center justify-between"
-          style={{ backgroundColor: "#0a0a0a", borderTop: `1px solid ${goldAccent}30` }}
-        >
-          {/* QR Code - Left Corner */}
-          {data.cta.showQRCode && data.cta.buttonUrl && (
-            <div className="flex items-center gap-3">
-              <div className="bg-white p-1.5 rounded">
-                <QRCodeSVG 
-                  value={data.cta.buttonUrl} 
-                  size={48}
-                  level="M"
-                  fgColor="#0a0a0a"
-                />
-              </div>
-              <div className="flex flex-col">
-                <button 
-                  className="font-light py-1.5 px-4 text-[10px] uppercase tracking-[0.15em]"
-                  style={{ backgroundColor: goldAccent, color: "#0a0a0a" }}
-                >
-                  {data.cta.buttonText}
-                </button>
-                <p className="text-white/50 text-[8px] mt-1">
-                  As of {data.rates.dateGenerated}
-                </p>
-              </div>
+        <div className="px-8 py-4">
+          <div 
+            className="flex items-center justify-between p-4"
+            style={{ 
+              border: `1px solid ${goldAccent}`,
+              background: `linear-gradient(90deg, ${goldAccent}10, transparent, ${goldAccent}10)`
+            }}
+          >
+            <div>
+              <p className="text-white text-[12px] font-light tracking-wide">
+                Begin Your Exclusive Journey
+              </p>
+              <p className="text-[10px] text-gray-500">Private consultation available</p>
             </div>
-          )}
-          
-          {/* Centered Website */}
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <p className="text-white font-light text-sm tracking-widest">
-              www.iamortgage.org
-            </p>
-            <p className="text-white/40 text-[8px] mt-0.5">
-              Rates subject to change. Equal Housing Opportunity.
-            </p>
+            <div className="flex items-center gap-4">
+              <button 
+                className="font-light py-2.5 px-8 text-[10px] uppercase tracking-[0.2em]"
+                style={{ backgroundColor: goldAccent, color: "#0a0a0a" }}
+              >
+                {data.cta.buttonText}
+              </button>
+              {data.cta.showQRCode && data.cta.buttonUrl && (
+                <div className="p-1.5" style={{ backgroundColor: "white" }}>
+                  <QRCodeSVG 
+                    value={data.cta.buttonUrl} 
+                    size={44}
+                    level="M"
+                    fgColor="#0a0a0a"
+                  />
+                </div>
+              )}
+            </div>
           </div>
-          
-          {/* Empty spacer for balance */}
-          <div className="w-[120px]" />
         </div>
 
         {/* Premium Footer */}
