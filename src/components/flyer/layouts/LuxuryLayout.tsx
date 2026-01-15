@@ -168,15 +168,15 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.broker.headshot} 
                   alt={data.broker.name}
-                  className="w-16 h-16 object-cover flex-shrink-0"
+                  className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
                     objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.2)'
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.4)'
                   }}
                 />
               ) : (
                 <div 
-                  className="w-16 h-16 flex items-center justify-center flex-shrink-0"
+                  className="w-16 h-16 flex items-center justify-center flex-shrink-0 rounded-lg"
                   style={{ border: `1px solid ${goldAccent}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: goldAccent }} />
@@ -203,15 +203,15 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
-                  className="w-16 h-16 object-cover flex-shrink-0"
+                  className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
                     objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`,
-                    boxShadow: '0 4px 16px rgba(0,0,0,0.5), 0 0 0 1px rgba(212,175,55,0.2)'
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.4)'
                   }}
                 />
               ) : (
                 <div 
-                  className="w-16 h-16 flex items-center justify-center flex-shrink-0"
+                  className="w-16 h-16 flex items-center justify-center flex-shrink-0 rounded-lg"
                   style={{ border: `1px solid ${goldAccent}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: goldAccent }} />

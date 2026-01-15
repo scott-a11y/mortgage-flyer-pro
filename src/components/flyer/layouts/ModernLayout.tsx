@@ -166,14 +166,14 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.broker.headshot} 
                   alt={data.broker.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 shadow-lg"
+                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
                     objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                   }}
                 />
               ) : (
-                <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0">
+                <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0 rounded-lg">
                   <User className="w-6 h-6 text-white/60" />
                 </div>
               )}
@@ -202,15 +202,15 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 shadow-lg"
+                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
                     objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                   }}
                 />
               ) : (
                 <div 
-                  className="w-14 h-14 flex items-center justify-center flex-shrink-0"
+                  className="w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-lg"
                   style={{ backgroundColor: `${primaryColor}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: primaryColor }} />
