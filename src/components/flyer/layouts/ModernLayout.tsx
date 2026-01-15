@@ -166,8 +166,11 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.broker.headshot} 
                   alt={data.broker.name}
-                  className="w-14 h-14 object-cover flex-shrink-0"
-                  style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                  className="w-14 h-14 object-cover flex-shrink-0 shadow-lg"
+                  style={{ 
+                    objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)'
+                  }}
                 />
               ) : (
                 <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0">
@@ -199,8 +202,11 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <img 
                   src={data.realtor.headshot} 
                   alt={data.realtor.name}
-                  className="w-14 h-14 object-cover flex-shrink-0"
-                  style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                  className="w-14 h-14 object-cover flex-shrink-0 shadow-lg"
+                  style={{ 
+                    objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`,
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)'
+                  }}
                 />
               ) : (
                 <div 
