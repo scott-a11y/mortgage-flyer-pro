@@ -5,6 +5,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { Download, Loader2, Mail, Share2, Smartphone, Facebook } from "lucide-react";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
+import iaMortgageLogo from "@/assets/ia-mortgage-logo.png";
 
 interface ShareableBannerProps {
   data: FlyerData;
@@ -305,19 +306,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   <div>
                     <div style={{ color: 'white', fontWeight: 700, fontSize: 24 }}>{data.broker.name}</div>
                     <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>NMLS #{data.broker.nmls}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginTop: 2 }}>{data.company.name || 'IA Mortgage'}</div>
                     <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, marginTop: 4 }}>{data.broker.phone}</div>
                   </div>
-                </div>
-
-                {/* Center - Branding */}
-                <div style={{ textAlign: 'center' }}>
-                  {data.company.logo ? (
-                    <img src={data.company.logo} alt={data.company.name} style={{ height: 80, maxWidth: 160, objectFit: 'contain', margin: '0 auto' }} />
-                  ) : (
-                    <div style={{ color: 'white', fontWeight: 700, fontSize: 32 }}>{data.company.name || 'IA Mortgage'}</div>
-                  )}
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 8 }}>NMLS #{data.company.nmls}</div>
                 </div>
 
                 {/* Realtor */}
@@ -360,8 +350,15 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 </div>
               </div>
 
-              {/* Footer with QR */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+              {/* Footer with Branding + QR */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 40, width: '100%', justifyContent: 'center' }}>
+                {/* Logo/Branding */}
+                <div style={{ textAlign: 'center' }}>
+                  <img src={data.company.logo || iaMortgageLogo} alt={data.company.name || 'IA Mortgage'} style={{ height: 90, maxWidth: 200, objectFit: 'contain' }} />
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16, marginTop: 8 }}>NMLS #{data.company.nmls}</div>
+                </div>
+
+                {/* QR Code */}
                 <div style={{ background: 'white', padding: 16, borderRadius: 16 }}>
                   <QRCodeSVG value={shareUrl} size={110} level="M" />
                 </div>
