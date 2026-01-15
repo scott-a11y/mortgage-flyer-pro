@@ -162,68 +162,68 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Footer with Contact Info */}
         <div className="px-4 py-4" style={{ backgroundColor: secondaryColor }}>
           <div className="grid grid-cols-2 gap-4">
-            {/* Broker */}
-            <div className="flex gap-3 pr-4" style={{ borderRight: `1px solid ${primaryColor}40` }}>
+            {/* Broker - Stacked vertically */}
+            <div className="flex flex-col items-center pr-4" style={{ borderRight: `1px solid ${primaryColor}40` }}>
               {data.broker.headshot ? (
-                <div className="flex-shrink-0 w-14 h-14">
+                <div className="flex-shrink-0 w-14 h-14 mb-2">
                   <img 
                     src={data.broker.headshot} 
                     alt={data.broker.name}
-                    className="w-14 h-14 rounded-full object-cover"
-                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
+                    className="w-14 h-14 object-cover"
+                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
                   />
                 </div>
               ) : (
                 <div 
-                  className="w-14 h-14 rounded flex items-center justify-center"
+                  className="w-14 h-14 flex items-center justify-center mb-2"
                   style={{ backgroundColor: `${primaryColor}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: primaryColor }} />
                 </div>
               )}
-              <div>
+              <div className="text-center">
                 <p className="text-white font-bold text-[12px]">{data.broker.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.broker.title}</p>
                 <p className="text-white/60 text-[8px]">NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center gap-1 mt-1">
+                <div className="flex items-center justify-center gap-1 mt-1">
                   <Phone className="w-2.5 h-2.5" style={{ color: primaryColor }} />
                   <span className="text-white text-[9px]">{data.broker.phone}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <Mail className="w-2.5 h-2.5" style={{ color: primaryColor }} />
                   <span className="text-white text-[9px]">{data.broker.email}</span>
                 </div>
               </div>
             </div>
 
-            {/* Realtor */}
-            <div className="flex gap-3 pl-2">
-              <div className="flex-shrink-0 w-14 h-14">
+            {/* Realtor - Stacked vertically */}
+            <div className="flex flex-col items-center pl-2">
+              <div className="flex-shrink-0 w-14 h-14 mb-2">
                 {data.realtor.headshot ? (
                   <img 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
-                    className="w-14 h-14 rounded-full object-cover"
-                    style={{ border: `2px solid ${primaryColor}`, aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
+                    className="w-14 h-14 object-cover"
+                    style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 
-                    className="w-14 h-14 rounded-full flex items-center justify-center"
+                    className="w-14 h-14 flex items-center justify-center"
                     style={{ backgroundColor: `${primaryColor}30` }}
                   >
                     <User className="w-6 h-6" style={{ color: primaryColor }} />
                   </div>
                 )}
               </div>
-              <div>
+              <div className="text-center">
                 <p className="text-white font-bold text-[12px]">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
                 <p className="text-white/60 text-[8px]">{data.realtor.title}</p>
-                <div className="flex items-center gap-1 mt-1">
+                <div className="flex items-center justify-center gap-1 mt-1">
                   <Phone className="w-2.5 h-2.5" style={{ color: primaryColor }} />
                   <span className="text-white text-[9px]">{data.realtor.phone}</span>
                 </div>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center justify-center gap-1">
                   <Mail className="w-2.5 h-2.5" style={{ color: primaryColor }} />
                   <span className="text-white text-[9px]">{data.realtor.email}</span>
                 </div>
