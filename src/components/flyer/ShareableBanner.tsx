@@ -204,14 +204,8 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}>
               {/* Left - Branding */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                {data.company.logo ? (
-                  <img src={data.company.logo} alt={data.company.name} style={{ height: 28, maxWidth: 80, objectFit: 'contain' }} />
-                ) : (
-                  <div style={{ color: 'white', fontWeight: 600, fontSize: 12 }}>{data.company.name || 'IA Mortgage'}</div>
-                )}
-                <div>
-                  <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>NMLS #{data.company.nmls}</div>
-                </div>
+                <img src={data.company.logo || iaMortgageLogo} alt={data.company.name || 'IA Mortgage'} style={{ height: 32, maxWidth: 100, objectFit: 'contain' }} />
+                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>NMLS #{data.company.nmls}</div>
               </div>
 
               {/* Center - QR and CTA */}
