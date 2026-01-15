@@ -168,7 +168,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   alt={data.broker.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
-                    objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
+                    objectPosition: `center ${data.broker.headshotPosition ?? 15}%`,
                     boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
                   }}
                 />
