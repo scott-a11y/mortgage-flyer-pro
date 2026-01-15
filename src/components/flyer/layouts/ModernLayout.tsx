@@ -160,27 +160,27 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Footer Section */}
         <div className="px-4 py-3" style={{ height: "20%", backgroundColor: secondaryColor }}>
           <div className="grid grid-cols-2 gap-3 h-[calc(100%-2.5rem)]">
-            {/* Broker Info - Stacked vertically */}
-            <div className="flex flex-col items-center justify-center border-r border-white/20 pr-3">
-              <div className="flex-shrink-0 w-12 h-12 mb-2">
+            {/* Broker Info - Side by side */}
+            <div className="flex items-center gap-3 border-r border-white/20 pr-3">
+              <div className="flex-shrink-0 w-14 h-14">
                 {data.broker.headshot ? (
                   <img 
                     src={data.broker.headshot} 
                     alt={data.broker.name}
-                    className="w-12 h-12 object-cover"
+                    className="w-14 h-14 object-cover"
                     style={{ aspectRatio: "1/1", objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 
-                    className="w-12 h-12 bg-white/10 flex items-center justify-center"
+                    className="w-14 h-14 bg-white/10 flex items-center justify-center"
                   >
-                    <User className="w-5 h-5 text-white/60" />
+                    <User className="w-6 h-6 text-white/60" />
                   </div>
                 )}
               </div>
               
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
                   {data.company.logo ? (
                     <img src={data.company.logo} alt={data.company.name} className="h-5 max-w-[70px] object-contain" />
                   ) : (
@@ -192,43 +192,43 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 </div>
                 <p className="text-white font-semibold text-[11px]">{data.broker.name}</p>
                 <p className="text-white/70 text-[9px]">{data.broker.title} • NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center justify-center gap-1 mt-0.5">
+                <div className="flex items-center gap-1 mt-0.5">
                   <Phone className="w-2 h-2" style={{ color: primaryColor }} />
                   <span className="text-white/90 text-[9px]">{data.broker.phone}</span>
                 </div>
-                <div className="flex items-center justify-center gap-1">
+                <div className="flex items-center gap-1">
                   <Mail className="w-2 h-2" style={{ color: primaryColor }} />
                   <span className="text-white/90 text-[9px] truncate">{data.broker.email}</span>
                 </div>
-                <div className="flex items-center justify-center gap-1">
+                <div className="flex items-center gap-1">
                   <Globe className="w-2 h-2" style={{ color: primaryColor }} />
                   <span className="text-white/90 text-[9px]">{data.company.website}</span>
                 </div>
               </div>
             </div>
 
-            {/* Realtor Info - Stacked vertically */}
-            <div className="flex flex-col items-center justify-center pl-3">
-              <div className="flex-shrink-0 w-12 h-12 mb-2">
+            {/* Realtor Info - Side by side */}
+            <div className="flex items-center gap-3 pl-3">
+              <div className="flex-shrink-0 w-14 h-14">
                 {data.realtor.headshot ? (
                   <img 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name}
-                    className="w-12 h-12 object-cover"
+                    className="w-14 h-14 object-cover"
                     style={{ aspectRatio: "1/1", objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
                   />
                 ) : (
                   <div 
-                    className="w-12 h-12 flex items-center justify-center"
+                    className="w-14 h-14 flex items-center justify-center"
                     style={{ backgroundColor: `${primaryColor}30` }}
                   >
-                    <User className="w-5 h-5" style={{ color: primaryColor }} />
+                    <User className="w-6 h-6" style={{ color: primaryColor }} />
                   </div>
                 )}
               </div>
 
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
                   {data.realtor.logo ? (
                     <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-5 max-w-[70px] object-contain" />
                   ) : (
@@ -241,12 +241,12 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <p className="text-[9px] truncate" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
                 <p className="text-white/70 text-[9px]">{data.realtor.title}</p>
                 {data.realtor.phone && (
-                  <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <div className="flex items-center gap-1 mt-0.5">
                     <Phone className="w-2 h-2" style={{ color: primaryColor }} />
                     <span className="text-white/90 text-[9px]">{data.realtor.phone}</span>
                   </div>
                 )}
-                <div className="flex items-center justify-center gap-1">
+                <div className="flex items-center gap-1">
                   <Mail className="w-2 h-2" style={{ color: primaryColor }} />
                   <span className="text-white/90 text-[9px] truncate">{data.realtor.email}</span>
                 </div>

@@ -162,10 +162,10 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         {/* Premium Footer */}
         <div className="px-6 py-4" style={{ backgroundColor: "#050505" }}>
           <div className="grid grid-cols-2 gap-6">
-            {/* Broker - Stacked vertically */}
-            <div className="flex flex-col items-center">
+            {/* Broker - Side by side */}
+            <div className="flex items-center gap-3">
               {data.broker.headshot ? (
-                <div className="flex-shrink-0 w-16 h-16 mb-2">
+                <div className="flex-shrink-0 w-16 h-16">
                   <img 
                     src={data.broker.headshot} 
                     alt={data.broker.name}
@@ -175,30 +175,30 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 </div>
               ) : (
                 <div 
-                  className="w-16 h-16 flex items-center justify-center mb-2"
+                  className="w-16 h-16 flex items-center justify-center flex-shrink-0"
                   style={{ border: `1px solid ${goldAccent}30` }}
                 >
                   <User className="w-6 h-6" style={{ color: goldAccent }} />
                 </div>
               )}
-              <div className="text-center">
+              <div className="flex-1 min-w-0">
                 <p className="text-white font-light text-[13px] tracking-wide">{data.broker.name}</p>
                 <p className="text-[9px]" style={{ color: goldAccent }}>{data.broker.title}</p>
                 <p className="text-gray-600 text-[8px]">NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center justify-center gap-2 mt-1.5">
+                <div className="flex items-center gap-2 mt-1.5">
                   <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.broker.phone}</span>
                 </div>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center gap-2">
                   <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.broker.email}</span>
                 </div>
               </div>
             </div>
 
-            {/* Realtor - Stacked vertically */}
-            <div className="flex flex-col items-center">
-              <div className="flex-shrink-0 w-16 h-16 mb-2">
+            {/* Realtor - Side by side */}
+            <div className="flex items-center gap-3">
+              <div className="flex-shrink-0 w-16 h-16">
                 {data.realtor.headshot ? (
                   <img 
                     src={data.realtor.headshot} 
@@ -215,15 +215,15 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   </div>
                 )}
               </div>
-              <div className="text-center">
+              <div className="flex-1 min-w-0">
                 <p className="text-white font-light text-[13px] tracking-wide">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: goldAccent }}>{data.realtor.brokerage}</p>
                 <p className="text-gray-600 text-[8px]">{data.realtor.title}</p>
-                <div className="flex items-center justify-center gap-2 mt-1.5">
+                <div className="flex items-center gap-2 mt-1.5">
                   <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.realtor.phone}</span>
                 </div>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center gap-2">
                   <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
                   <span className="text-white/80 text-[9px]">{data.realtor.email}</span>
                 </div>
