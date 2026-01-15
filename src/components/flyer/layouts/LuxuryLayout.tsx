@@ -170,7 +170,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   alt={data.broker.name}
                   className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
-                    objectPosition: `center ${data.broker.headshotPosition ?? 25}%`,
+                    objectPosition: 'center top',
                     boxShadow: '0 2px 10px rgba(0,0,0,0.4)'
                   }}
                 />
@@ -205,7 +205,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   alt={data.realtor.name}
                   className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
                   style={{ 
-                    objectPosition: `center ${data.realtor.headshotPosition ?? 25}%`,
+                    objectPosition: 'center top',
                     boxShadow: '0 2px 10px rgba(0,0,0,0.4)'
                   }}
                 />
