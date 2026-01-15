@@ -128,46 +128,35 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
 
         {/* CTA Banner */}
         <div 
-          className="px-4 py-3 flex items-center justify-between"
-          style={{ backgroundColor: secondaryColor }}
+          className="px-6 py-3 flex items-center justify-between"
+          style={{ backgroundColor: primaryColor }}
         >
-          {/* QR Code - Left Corner */}
-          {data.cta.showQRCode && data.cta.buttonUrl && (
-            <div className="flex items-center gap-3">
+          <div>
+            <p className="text-[11px] font-bold" style={{ color: secondaryColor }}>
+              Ready to Find Your Dream Home?
+            </p>
+            <p className="text-[10px]" style={{ color: `${secondaryColor}cc` }}>
+              Get pre-qualified today with personalized service.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <button 
+              className="font-bold py-2 px-5 rounded text-[11px] uppercase tracking-wide"
+              style={{ backgroundColor: secondaryColor, color: "white" }}
+            >
+              {data.cta.buttonText}
+            </button>
+            {data.cta.showQRCode && data.cta.buttonUrl && (
               <div className="bg-white p-1.5 rounded">
                 <QRCodeSVG 
                   value={data.cta.buttonUrl} 
-                  size={48}
+                  size={44}
                   level="M"
                   fgColor={secondaryColor}
                 />
               </div>
-              <div className="flex flex-col">
-                <button 
-                  className="font-bold py-1.5 px-4 rounded text-[10px] uppercase tracking-wide"
-                  style={{ backgroundColor: primaryColor, color: secondaryColor }}
-                >
-                  {data.cta.buttonText}
-                </button>
-                <p className="text-white/60 text-[8px] mt-1">
-                  As of {data.rates.dateGenerated}
-                </p>
-              </div>
-            </div>
-          )}
-          
-          {/* Centered Website */}
-          <div className="flex-1 flex flex-col items-center justify-center">
-            <p className="text-white font-semibold text-sm tracking-wide">
-              www.iamortgage.org
-            </p>
-            <p className="text-white/50 text-[8px] mt-0.5">
-              Rates subject to change. Equal Housing Opportunity.
-            </p>
+            )}
           </div>
-          
-          {/* Empty spacer for balance */}
-          <div className="w-[120px]" />
         </div>
 
         {/* Footer with Contact Info */}

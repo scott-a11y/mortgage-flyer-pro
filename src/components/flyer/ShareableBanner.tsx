@@ -230,22 +230,16 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
             </div>
 
-            {/* Footer - integrated design without harsh line */}
+            {/* Footer - QR left, website centered */}
             <div style={{ 
               background: 'rgba(255,255,255,0.05)',
-              padding: '8px 24px',
+              padding: '8px 16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-              {/* Left - Branding */}
+              {/* Left - QR Code and CTA */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <img src={data.company.logo || iaMortgageLogo} alt={data.company.name || 'IA Mortgage'} style={{ height: 32, maxWidth: 100, objectFit: 'contain' }} />
-                <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>NMLS #{data.company.nmls}</div>
-              </div>
-
-              {/* Center - QR and CTA */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <div style={{ background: 'white', padding: 3, borderRadius: 4 }}>
                   <QRCodeSVG value={shareUrl} size={32} level="M" />
                 </div>
@@ -266,13 +260,16 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 </div>
               </div>
 
-              {/* Right - Disclaimer and website */}
-              <div style={{ textAlign: 'right', maxWidth: 180 }}>
-                <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{data.company.website}</div>
+              {/* Center - Website */}
+              <div style={{ textAlign: 'center', flex: 1 }}>
+                <div style={{ color: 'white', fontSize: 11, fontWeight: 600, letterSpacing: 0.5 }}>www.iamortgage.org</div>
                 <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 6, lineHeight: 1.2, marginTop: 2 }}>
                   Rates subject to change. Equal Housing Opportunity.
                 </div>
               </div>
+
+              {/* Right - Spacer for balance */}
+              <div style={{ width: 100 }} />
             </div>
           </div>
         </div>
