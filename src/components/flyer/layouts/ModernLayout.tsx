@@ -17,22 +17,22 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
       <div
         ref={ref}
         className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col overflow-hidden"
-        style={{ fontFamily: "'Inter', sans-serif" }}
+        style={{ fontFamily: "'Outfit', sans-serif" }}
       >
         {/* Header Section - Modern Gradient */}
-        <div 
+        <div
           className="px-8 py-5 flex flex-col items-center justify-center relative overflow-hidden"
-          style={{ 
+          style={{
             height: "16%",
             background: `linear-gradient(135deg, ${secondaryColor} 0%, #2a2a2a 50%, ${secondaryColor} 100%)`
           }}
         >
           {/* Subtle accent line at top */}
-          <div 
+          <div
             className="absolute top-0 left-0 right-0 h-1"
             style={{ background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)` }}
           />
-          
+
           {/* Co-branding logos */}
           <div className="flex items-center gap-4 mb-3">
             {data.company.logo ? (
@@ -42,13 +42,13 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 {data.company.name || "IA Loans"}
               </span>
             )}
-            
+
             <div className="flex items-center gap-3">
               <div className="h-4 w-px bg-white/20" />
               <span className="text-white/40 text-[10px] font-light tracking-wider uppercase">partnered with</span>
               <div className="h-4 w-px bg-white/20" />
             </div>
-            
+
             {data.realtor.logo ? (
               <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-10 max-w-[130px] object-contain" />
             ) : (
@@ -57,7 +57,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
               </span>
             )}
           </div>
-          
+
           {/* Headline */}
           <h1 className="text-white text-xl font-semibold text-center leading-tight tracking-wide">
             {data.marketCopy.headline}
@@ -129,7 +129,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
         </div>
 
         {/* CTA Section with QR Code */}
-        <div 
+        <div
           className="px-4 py-3 flex items-center justify-center gap-4"
           style={{ background: `linear-gradient(135deg, ${primaryColor}15 0%, ${secondaryColor}08 100%)` }}
         >
@@ -137,7 +137,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
             <p className="text-[10px] text-gray-600 mb-1.5">
               Ready to get started? Get pre-qualified in minutes!
             </p>
-            <button 
+            <button
               className="font-bold py-2 px-6 rounded-lg shadow text-xs uppercase tracking-wide"
               style={{ backgroundColor: primaryColor, color: secondaryColor }}
             >
@@ -146,8 +146,8 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
           </div>
           {data.cta.showQRCode && data.cta.buttonUrl && (
             <div className="bg-white p-1.5 rounded-lg shadow-sm">
-              <QRCodeSVG 
-                value={data.cta.buttonUrl} 
+              <QRCodeSVG
+                value={data.cta.buttonUrl}
                 size={56}
                 level="M"
                 fgColor={secondaryColor}
@@ -163,8 +163,8 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
             {/* Broker Info - Side by side, no company badge */}
             <div className="flex items-center gap-3 border-r border-white/20 pr-3">
               {data.broker.headshot ? (
-                <img 
-                  src={data.broker.headshot} 
+                <img
+                  src={data.broker.headshot}
                   alt={data.broker.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
                   style={{ objectPosition: 'center top' }}
@@ -174,7 +174,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   <User className="w-6 h-6 text-white/60" />
                 </div>
               )}
-              
+
               <div className="flex-1 min-w-0">
                 <p className="text-white font-semibold text-[11px]">{data.broker.name}</p>
                 <p className="text-white/70 text-[9px]">{data.broker.title} • NMLS #{data.broker.nmls}</p>
@@ -196,14 +196,14 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
             {/* Realtor Info - Side by side, no company badge */}
             <div className="flex items-center gap-3 pl-3">
               {data.realtor.headshot ? (
-                <img 
-                  src={data.realtor.headshot} 
+                <img
+                  src={data.realtor.headshot}
                   alt={data.realtor.name}
                   className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
                   style={{ objectPosition: 'center top' }}
                 />
               ) : (
-                <div 
+                <div
                   className="w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-lg"
                   style={{ backgroundColor: `${primaryColor}30` }}
                 >
@@ -232,9 +232,9 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
           {/* Compliance Disclaimer */}
           <div className="mt-2 pt-1.5 border-t border-white/10">
             <p className="text-white/40 text-[6px] text-center leading-relaxed">
-              Equal Housing Opportunity. NMLS #{data.company.nmls}. Rates shown are for informational purposes only and are subject to change without notice. 
-              APR (Annual Percentage Rate) reflects the total cost of the loan including fees, points, and other costs. Actual rates may vary based on credit score, 
-              loan amount, down payment, and other factors. This is not a commitment to lend or a guarantee of rates. All loans subject to credit approval and underwriting. 
+              Equal Housing Opportunity. NMLS #{data.company.nmls}. Rates shown are for informational purposes only and are subject to change without notice.
+              APR (Annual Percentage Rate) reflects the total cost of the loan including fees, points, and other costs. Actual rates may vary based on credit score,
+              loan amount, down payment, and other factors. This is not a commitment to lend or a guarantee of rates. All loans subject to credit approval and underwriting.
               Contact {data.broker.name} at {data.broker.phone} for current rates and personalized quotes.
             </p>
           </div>

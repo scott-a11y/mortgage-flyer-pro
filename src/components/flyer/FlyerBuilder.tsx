@@ -40,9 +40,9 @@ export function FlyerBuilder() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <TemplateManager 
-              currentData={flyerData} 
-              onLoadTemplate={handleLoadTemplate} 
+            <TemplateManager
+              currentData={flyerData}
+              onLoadTemplate={handleLoadTemplate}
             />
             <SendToClientDialog currentData={flyerData} />
             <ShareLinkDialog currentData={flyerData} />
@@ -50,8 +50,8 @@ export function FlyerBuilder() {
               <RotateCcw className="w-4 h-4 mr-1.5" />
               Reset
             </Button>
-            <ExportMenu 
-              previewRef={previewRef} 
+            <ExportMenu
+              previewRef={previewRef}
               isExporting={isExporting}
               setIsExporting={setIsExporting}
             />
@@ -64,7 +64,7 @@ export function FlyerBuilder() {
         <div className="grid lg:grid-cols-[400px_1fr] gap-6">
           {/* Editor Panel */}
           <div className="order-2 lg:order-1">
-            <div className="sticky top-24">
+            <div className="sticky top-24 bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl rounded-3xl p-1">
               <EditorTabs data={flyerData} onChange={setFlyerData} />
             </div>
           </div>

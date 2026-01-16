@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { QRCodeSVG } from "qrcode.react";
 import html2canvas from "html2canvas";
 import iaMortgageLogo from "@/assets/ia-mortgage-logo.png";
+import { track } from "@vercel/analytics";
 
 interface SendToClientDialogProps {
   currentData: FlyerData;
@@ -45,7 +46,7 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
 
   const emailSubject = encodeURIComponent(`Your Personalized Mortgage Rates - ${currentData.rates.dateGenerated}`);
   const emailBody = encodeURIComponent(
-`Hi ${clientName},
+    `Hi ${clientName},
 
 I wanted to share today's mortgage rates with you! I've put together a personalized rate sheet that shows our current offerings.
 
@@ -70,7 +71,7 @@ ${currentData.company.website || ''}`
   );
 
   const smsBody = encodeURIComponent(
-`Hi ${clientName}! Here are today's mortgage rates just for you: ${shareUrl || ''} - ${currentData.broker.name}, ${currentData.broker.phone}`
+    `Hi ${clientName}! Here are today's mortgage rates just for you: ${shareUrl || ''} - ${currentData.broker.name}, ${currentData.broker.phone}`
   );
 
   const handleEmailShare = () => {
@@ -93,7 +94,7 @@ ${currentData.company.website || ''}`
     setIsCreating(true);
     try {
       const slug = generateSlug();
-      
+
       const { error } = await supabase
         .from("flyer_templates")
         .insert([
@@ -108,6 +109,16 @@ ${currentData.company.website || ''}`
         .single();
 
       if (error) throw error;
+
+      // Track flyer generation
+      track('FlyerGenerated', {
+        flyerId: data?.id,
+        flyerName: templateName.trim(),
+        broker: currentData.broker.name,
+        realtor: currentData.realtor.name,
+        layout: currentData.layout || 'modern',
+        source: 'send_to_client'
+      });
 
       const baseUrl = window.location.origin;
       const url = `${baseUrl}/flyer/${slug}`;
@@ -150,7 +161,7 @@ ${currentData.company.website || ''}`
 
   const handleDownloadBanner = async () => {
     if (!bannerRef.current) return;
-    
+
     setIsDownloading(true);
     try {
       await preloadImages(bannerRef.current);
@@ -231,9 +242,9 @@ ${currentData.company.website || ''}`
               />
             </div>
 
-            <Button 
-              onClick={handleCreateLink} 
-              disabled={isCreating || !templateName.trim()} 
+            <Button
+              onClick={handleCreateLink}
+              disabled={isCreating || !templateName.trim()}
               className="w-full"
               size="lg"
             >
@@ -293,7 +304,7 @@ ${currentData.company.website || ''}`
                 <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">2</div>
                 <span className="font-medium">Download the banner image</span>
               </div>
-              
+
               {/* Banner Preview */}
               <div className="rounded-lg overflow-hidden border" style={{ width: '100%' }}>
                 <div
@@ -310,10 +321,10 @@ ${currentData.company.website || ''}`
                   }}
                 >
                   {/* Main content area */}
-                  <div style={{ 
-                    flex: 1, 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  <div style={{
+                    flex: 1,
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '16px 24px',
                   }}>
@@ -324,9 +335,9 @@ ${currentData.company.website || ''}`
                           src={currentData.broker.headshot}
                           alt={currentData.broker.name}
                           crossOrigin="anonymous"
-                          style={{ 
-                            width: 80, 
-                            height: 80, 
+                          style={{
+                            width: 80,
+                            height: 80,
                             objectFit: 'cover',
                             objectPosition: 'center top',
                             borderRadius: 10,
@@ -367,9 +378,9 @@ ${currentData.company.website || ''}`
                           src={currentData.realtor.headshot}
                           alt={currentData.realtor.name}
                           crossOrigin="anonymous"
-                          style={{ 
-                            width: 80, 
-                            height: 80, 
+                          style={{
+                            width: 80,
+                            height: 80,
                             objectFit: 'cover',
                             objectPosition: 'center top',
                             borderRadius: 10,
@@ -386,7 +397,7 @@ ${currentData.company.website || ''}`
                   </div>
 
                   {/* Footer */}
-                  <div style={{ 
+                  <div style={{
                     background: 'rgba(255,255,255,0.05)',
                     padding: '8px 24px',
                     display: 'flex',
@@ -403,7 +414,7 @@ ${currentData.company.website || ''}`
                         <QRCodeSVG value={shareUrl} size={32} level="M" />
                       </div>
                       <div>
-                        <div style={{ 
+                        <div style={{
                           background: themeColor,
                           padding: '4px 10px',
                           borderRadius: 12,
@@ -432,8 +443,8 @@ ${currentData.company.website || ''}`
                 </div>
               </div>
 
-              <Button 
-                onClick={handleDownloadBanner} 
+              <Button
+                onClick={handleDownloadBanner}
                 disabled={isDownloading}
                 variant="outline"
                 className="w-full"
@@ -458,19 +469,19 @@ ${currentData.company.website || ''}`
                 <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center">3</div>
                 <span className="font-medium">Quick share options</span>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-2 pl-8">
-                <Button 
-                  onClick={handleEmailShare} 
-                  variant="outline" 
+                <Button
+                  onClick={handleEmailShare}
+                  variant="outline"
                   className="gap-2"
                 >
                   <Mail className="w-4 h-4" />
                   Email
                 </Button>
-                <Button 
-                  onClick={handleSMSShare} 
-                  variant="outline" 
+                <Button
+                  onClick={handleSMSShare}
+                  variant="outline"
                   className="gap-2"
                 >
                   <MessageSquare className="w-4 h-4" />
@@ -499,7 +510,7 @@ ${currentData.company.website || ''}`
                   <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 )}
               </button>
-              
+
               {showInstructions && (
                 <div className="p-4 pt-0 space-y-4 text-sm border-t bg-muted/30">
                   <div>
@@ -511,7 +522,7 @@ ${currentData.company.website || ''}`
                       <li>Personalize the message if needed and send!</li>
                     </ol>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium mb-2">💬 Via Text Message</h4>
                     <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
@@ -521,7 +532,7 @@ ${currentData.company.website || ''}`
                       <li>Send!</li>
                     </ol>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium mb-2">📱 Via Social Media / Other Apps</h4>
                     <ol className="list-decimal list-inside space-y-1 text-muted-foreground">

@@ -17,6 +17,7 @@ import { Link2, Copy, Check, Loader2, ExternalLink, Image } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ShareableBanner } from "./ShareableBanner";
+import { track } from "@vercel/analytics";
 
 interface ShareLinkDialogProps {
   currentData: FlyerData;
@@ -47,7 +48,7 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
     setIsCreating(true);
     try {
       const slug = generateSlug();
-      
+
       const { data, error } = await supabase
         .from("flyer_templates")
         .insert([
@@ -62,6 +63,15 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
         .single();
 
       if (error) throw error;
+
+      // Track flyer generation
+      track('FlyerGenerated', {
+        flyerId: data?.id,
+        flyerName: templateName.trim(),
+        broker: currentData.broker.name,
+        realtor: currentData.realtor.name,
+        layout: currentData.layout || 'modern'
+      });
 
       const baseUrl = window.location.origin;
       const url = `${baseUrl}/flyer/${slug}`;
@@ -201,7 +211,7 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
               <TabsContent value="banners" className="mt-4">
                 <div className="space-y-2 mb-4">
                   <p className="text-sm text-muted-foreground">
-                    Download professional banners to attach to emails or share on social media. 
+                    Download professional banners to attach to emails or share on social media.
                     Each includes a QR code linking to your live rates.
                   </p>
                 </div>

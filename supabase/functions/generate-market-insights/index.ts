@@ -13,7 +13,7 @@ serve(async (req) => {
   try {
     const { rates, regions, broker, realtor } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
+
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
@@ -28,12 +28,12 @@ Current Mortgage Rates:
 Date: ${rates.dateGenerated}
     `.trim();
 
-    const regionContext = regions.map((r: any) => `${r.name}: ${r.cities}`).join('\n');
-    
+    const regionContext = regions.map((r: { name: string; cities: string }) => `${r.name}: ${r.cities}`).join('\n');
+
     const professionalContext = `
 Mortgage Broker: ${broker.name}, ${broker.title} at ${broker.name}
 Realtor: ${realtor.name}, ${realtor.title} at ${realtor.brokerage}
-Service Areas: ${regions.map((r: any) => r.name).join(', ')}
+Service Areas: ${regions.map((r: { name: string }) => r.name).join(', ')}
     `.trim();
 
     const systemPrompt = `You are an expert mortgage marketing copywriter who creates compelling, professional flyer content for mortgage brokers and real estate agents. Your copy should:
@@ -106,7 +106,7 @@ Create engaging copy that:
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
-    
+
     if (!content) {
       throw new Error("No content returned from AI");
     }
@@ -116,16 +116,16 @@ Create engaging copy that:
     // Parse the JSON response
     const insights = JSON.parse(content);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      insights 
+    return new Response(JSON.stringify({
+      success: true,
+      insights
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error generating market insights:", error);
-    return new Response(JSON.stringify({ 
-      error: error instanceof Error ? error.message : "Unknown error" 
+    return new Response(JSON.stringify({
+      error: error instanceof Error ? error.message : "Unknown error"
     }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

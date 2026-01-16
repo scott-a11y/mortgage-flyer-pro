@@ -28,15 +28,15 @@ const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
 };
 
 // Helper component for headshots - no frame, just the image
-function HeadshotImage({ 
-  src, 
-  alt, 
-  size, 
-  position 
-}: { 
-  src: string; 
-  alt: string; 
-  size: number; 
+function HeadshotImage({
+  src,
+  alt,
+  size,
+  position
+}: {
+  src: string;
+  alt: string;
+  size: number;
   position: number;
 }) {
   return (
@@ -44,14 +44,14 @@ function HeadshotImage({
       src={src}
       alt={alt}
       crossOrigin="anonymous"
-      style={{ 
-        width: size, 
-        height: size, 
+      style={{
+        width: size,
+        height: size,
         objectFit: 'cover',
         objectPosition: `center ${position}%`,
         flexShrink: 0,
         borderRadius: 8,
-        imageRendering: 'high-quality' as any,
+        imageRendering: 'high-quality' as React.CSSProperties['imageRendering'],
       }}
     />
   );
@@ -92,7 +92,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
     try {
       // Wait for all images to load
       await preloadImages(ref.current);
-      
+
       // Small delay to ensure browser has rendered images
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -169,21 +169,21 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}
           >
             {/* Main content area */}
-            <div style={{ 
-              flex: 1, 
-              display: 'flex', 
-              alignItems: 'center', 
+            <div style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'space-between',
               padding: '16px 20px',
             }}>
               {/* Left - Broker (horizontal: headshot | info) */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 140 }}>
                 {data.broker.headshot && (
-                  <HeadshotImage 
-                    src={data.broker.headshot} 
-                    alt={data.broker.name} 
-                    size={60} 
-                    position={data.broker.headshotPosition ?? 15} 
+                  <HeadshotImage
+                    src={data.broker.headshot}
+                    alt={data.broker.name}
+                    size={60}
+                    position={data.broker.headshotPosition ?? 15}
                   />
                 )}
                 <div>
@@ -226,18 +226,18 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   )}
                 </div>
                 {data.realtor.headshot && (
-                  <HeadshotImage 
-                    src={data.realtor.headshot} 
-                    alt={data.realtor.name} 
-                    size={60} 
-                    position={data.realtor.headshotPosition ?? 25} 
+                  <HeadshotImage
+                    src={data.realtor.headshot}
+                    alt={data.realtor.name}
+                    size={60}
+                    position={data.realtor.headshotPosition ?? 25}
                   />
                 )}
               </div>
             </div>
 
             {/* Footer - View Rates button, QR right */}
-            <div style={{ 
+            <div style={{
               background: 'rgba(255,255,255,0.05)',
               padding: '8px 16px',
               display: 'flex',
@@ -246,7 +246,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
             }}>
               {/* Left - CTA Button and date */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ 
+                <div style={{
                   background: themeColor,
                   padding: '6px 14px',
                   borderRadius: 14,
@@ -303,7 +303,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Social Banner (1080x1080) - Scaled for preview */}
-        <div 
+        <div
           className="rounded-lg border bg-muted/20"
           style={{ width: 360, height: 360, overflow: 'hidden' }}
         >
@@ -323,10 +323,10 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               }}
             >
               {/* Header with contacts - full width row */}
-              <div style={{ 
-                width: '100%', 
-                display: 'flex', 
-                alignItems: 'center', 
+              <div style={{
+                width: '100%',
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'space-between',
                 background: 'rgba(255,255,255,0.05)',
                 borderRadius: 16,
@@ -335,11 +335,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 {/* Broker - left aligned */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   {data.broker.headshot && (
-                    <HeadshotImage 
-                      src={data.broker.headshot} 
-                      alt={data.broker.name} 
-                      size={80} 
-                      position={data.broker.headshotPosition ?? 15} 
+                    <HeadshotImage
+                      src={data.broker.headshot}
+                      alt={data.broker.name}
+                      size={80}
+                      position={data.broker.headshotPosition ?? 15}
                     />
                   )}
                   <div>
@@ -363,11 +363,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     )}
                   </div>
                   {data.realtor.headshot && (
-                    <HeadshotImage 
-                      src={data.realtor.headshot} 
-                      alt={data.realtor.name} 
-                      size={80} 
-                      position={data.realtor.headshotPosition ?? 25} 
+                    <HeadshotImage
+                      src={data.realtor.headshot}
+                      alt={data.realtor.name}
+                      size={80}
+                      position={data.realtor.headshotPosition ?? 25}
                     />
                   )}
                 </div>
@@ -395,7 +395,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Footer - QR left, website centered */}
-              <div style={{ 
+              <div style={{
                 background: 'rgba(255,255,255,0.05)',
                 padding: '24px 40px',
                 display: 'flex',
@@ -410,7 +410,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     <QRCodeSVG value={shareUrl} size={90} level="M" />
                   </div>
                   <div>
-                    <div style={{ 
+                    <div style={{
                       background: themeColor,
                       padding: '12px 24px',
                       borderRadius: 24,
@@ -466,7 +466,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Stories Banner (1080x1920) - Scaled for preview */}
-        <div 
+        <div
           className="rounded-lg border bg-muted/20"
           style={{ width: 216, height: 384, overflow: 'hidden' }}
         >
@@ -514,14 +514,14 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   { label: '30-Year Jumbo', rate: data.rates.thirtyYearJumbo, apr: data.rates.thirtyYearJumboAPR },
                   { label: '5/1 ARM', rate: data.rates.fiveOneArm, apr: data.rates.fiveOneArmAPR },
                 ].map((item, i) => (
-                  <div 
-                    key={item.label} 
-                    style={{ 
-                      background: 'rgba(255,255,255,0.1)', 
-                      borderRadius: 24, 
-                      padding: 24, 
-                      display: 'flex', 
-                      alignItems: 'center', 
+                  <div
+                    key={item.label}
+                    style={{
+                      background: 'rgba(255,255,255,0.1)',
+                      borderRadius: 24,
+                      padding: 24,
+                      display: 'flex',
+                      alignItems: 'center',
                       justifyContent: 'space-between',
                       marginTop: i > 0 ? 20 : 0
                     }}
@@ -542,11 +542,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                   {/* Broker */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                     {data.broker.headshot && (
-                      <HeadshotImage 
-                        src={data.broker.headshot} 
-                        alt={data.broker.name} 
-                        size={80} 
-                        position={data.broker.headshotPosition ?? 15} 
+                      <HeadshotImage
+                        src={data.broker.headshot}
+                        alt={data.broker.name}
+                        size={80}
+                        position={data.broker.headshotPosition ?? 15}
                       />
                     )}
                     <div>
@@ -569,18 +569,18 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       )}
                     </div>
                     {data.realtor.headshot && (
-                      <HeadshotImage 
-                        src={data.realtor.headshot} 
-                        alt={data.realtor.name} 
-                        size={80} 
-                        position={data.realtor.headshotPosition ?? 25} 
+                      <HeadshotImage
+                        src={data.realtor.headshot}
+                        alt={data.realtor.name}
+                        size={80}
+                        position={data.realtor.headshotPosition ?? 25}
                       />
                     )}
                   </div>
                 </div>
 
                 {/* Footer - QR left, website centered */}
-                <div style={{ 
+                <div style={{
                   background: 'rgba(255,255,255,0.05)',
                   padding: '24px 32px',
                   display: 'flex',
@@ -595,7 +595,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                       <QRCodeSVG value={shareUrl} size={80} level="M" />
                     </div>
                     <div>
-                      <div style={{ 
+                      <div style={{
                         background: themeColor,
                         padding: '10px 20px',
                         borderRadius: 20,
@@ -652,7 +652,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         </div>
 
         {/* Facebook Cover (1640x624) - Scaled for preview */}
-        <div 
+        <div
           className="rounded-lg border bg-muted/20"
           style={{ width: 492, height: 187, overflow: 'hidden' }}
         >
@@ -675,11 +675,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 {/* Broker */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   {data.broker.headshot && (
-                    <HeadshotImage 
-                      src={data.broker.headshot} 
-                      alt={data.broker.name} 
-                      size={112} 
-                      position={data.broker.headshotPosition ?? 15} 
+                    <HeadshotImage
+                      src={data.broker.headshot}
+                      alt={data.broker.name}
+                      size={112}
+                      position={data.broker.headshotPosition ?? 15}
                     />
                   )}
                   <div>
@@ -695,11 +695,11 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 {/* Realtor */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   {data.realtor.headshot && (
-                    <HeadshotImage 
-                      src={data.realtor.headshot} 
-                      alt={data.realtor.name} 
-                      size={112} 
-                      position={data.realtor.headshotPosition ?? 25} 
+                    <HeadshotImage
+                      src={data.realtor.headshot}
+                      alt={data.realtor.name}
+                      size={112}
+                      position={data.realtor.headshotPosition ?? 25}
                     />
                   )}
                   <div>
@@ -731,7 +731,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right - QR left, website centered footer section */}
-              <div style={{ 
+              <div style={{
                 background: 'rgba(255,255,255,0.08)',
                 padding: '20px 28px',
                 display: 'flex',
@@ -745,7 +745,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     <QRCodeSVG value={shareUrl} size={70} level="M" />
                   </div>
                   <div>
-                    <div style={{ 
+                    <div style={{
                       background: themeColor,
                       padding: '8px 16px',
                       borderRadius: 20,

@@ -8,6 +8,26 @@ import { ThemeEditor } from "./editors/ThemeEditor";
 import { LayoutSelector } from "./editors/LayoutSelector";
 import { ShareableBanner } from "./ShareableBanner";
 import { DollarSign, FileText, MapPin, Users, Palette, Image } from "lucide-react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+
+const tabVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: "easeOut"
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -10,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
 
 interface EditorTabsProps {
   data: FlyerData;
@@ -16,7 +36,7 @@ interface EditorTabsProps {
 
 export function EditorTabs({ data, onChange }: EditorTabsProps) {
   // Generate share URL for banners
-  const shareUrl = typeof window !== 'undefined' 
+  const shareUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/live/${encodeURIComponent(data.broker.name.toLowerCase().replace(/\s+/g, '-'))}`
     : '';
 
@@ -50,35 +70,45 @@ export function EditorTabs({ data, onChange }: EditorTabsProps) {
       </TabsList>
 
       <TabsContent value="rates" className="mt-0">
-        <RatesEditor data={data} onChange={onChange} />
+        <motion.div variants={tabVariants} initial="hidden" animate="visible">
+          <RatesEditor data={data} onChange={onChange} />
+        </motion.div>
       </TabsContent>
 
       <TabsContent value="copy" className="mt-0">
-        <MarketCopyEditor data={data} onChange={onChange} />
+        <motion.div variants={tabVariants} initial="hidden" animate="visible">
+          <MarketCopyEditor data={data} onChange={onChange} />
+        </motion.div>
       </TabsContent>
 
       <TabsContent value="regions" className="mt-0">
-        <RegionsEditor data={data} onChange={onChange} />
+        <motion.div variants={tabVariants} initial="hidden" animate="visible">
+          <RegionsEditor data={data} onChange={onChange} />
+        </motion.div>
       </TabsContent>
 
       <TabsContent value="contacts" className="mt-0">
-        <ContactEditor data={data} onChange={onChange} />
+        <motion.div variants={tabVariants} initial="hidden" animate="visible">
+          <ContactEditor data={data} onChange={onChange} />
+        </motion.div>
       </TabsContent>
 
       <TabsContent value="style" className="mt-0 space-y-6">
-        <LayoutSelector data={data} onChange={onChange} />
-        <ThemeEditor data={data} onChange={onChange} />
+        <motion.div variants={tabVariants} initial="hidden" animate="visible" className="space-y-6">
+          <LayoutSelector data={data} onChange={onChange} />
+          <ThemeEditor data={data} onChange={onChange} />
+        </motion.div>
       </TabsContent>
 
       <TabsContent value="banners" className="mt-0">
-        <div className="space-y-4">
+        <motion.div variants={tabVariants} initial="hidden" animate="visible" className="space-y-4">
           <div className="text-sm text-muted-foreground">
             Download ready-to-share banners for email signatures and social media.
           </div>
           <div className="overflow-x-auto">
             <ShareableBanner data={data} shareUrl={shareUrl} />
           </div>
-        </div>
+        </motion.div>
       </TabsContent>
     </Tabs>
   );

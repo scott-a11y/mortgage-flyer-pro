@@ -68,7 +68,7 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
         // Update region insights if provided
         regions: data.regions.map((region, index) => {
           const aiRegion = insights.regionInsights?.find(
-            (r: any) => r.name.toLowerCase().includes(region.name.toLowerCase().split(" ")[0])
+            (r: { name: string; insight: string }) => r.name.toLowerCase().includes(region.name.toLowerCase().split(" ")[0])
           );
           return {
             ...region,
@@ -189,7 +189,7 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
             </div>
             <Switch
               checked={data.cta.showQRCode}
-              onCheckedChange={(checked) => 
+              onCheckedChange={(checked) =>
                 onChange({
                   ...data,
                   cta: { ...data.cta, showQRCode: checked }

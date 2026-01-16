@@ -44,18 +44,20 @@ async function fetchFredRates(apiKey: string) {
   const seriesIds = {
     thirtyYearFixed: 'MORTGAGE30US',
     fifteenYearFixed: 'MORTGAGE15US',
+    fiveOneArm: 'MORTGAGE5US',
   };
 
   const rates: Record<string, string> = {};
-  
+
   for (const [key, seriesId] of Object.entries(seriesIds)) {
     const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${apiKey}&file_type=json&sort_order=desc&limit=1`;
-    
+
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`FRED API error: ${response.statusText}`);
+      console.error(`FRED API error for ${key}:`, response.statusText);
+      continue;
     }
-    
+
     const data = await response.json();
     if (data.observations && data.observations.length > 0) {
       const rate = parseFloat(data.observations[0].value);
@@ -64,12 +66,17 @@ async function fetchFredRates(apiKey: string) {
     }
   }
 
-  // FRED doesn't have jumbo or ARM rates, so we estimate them
+  // FRED doesn't have jumbo rates, so we estimate them based on 30-year fixed
   const thirtyYearBase = parseFloat(rates.thirtyYearFixed) || 6.75;
   rates.thirtyYearJumbo = `${(thirtyYearBase + 0.30).toFixed(2)}%`;
   rates.thirtyYearJumboAPR = `${(thirtyYearBase + 0.36).toFixed(2)}%`;
-  rates.fiveOneArm = `${(thirtyYearBase - 0.30).toFixed(2)}%`;
-  rates.fiveOneArmAPR = `${(thirtyYearBase - 0.27).toFixed(2)}%`;
+
+  // If we couldn't fetch 5/1 ARM, use a fallback estimation
+  if (!rates.fiveOneArm) {
+    rates.fiveOneArm = `${(thirtyYearBase - 0.30).toFixed(2)}%`;
+    rates.fiveOneArmAPR = `${(thirtyYearBase - 0.27).toFixed(2)}%`;
+  }
+
   rates.dateGenerated = getFormattedDate();
 
   return rates;
@@ -83,14 +90,14 @@ serve(async (req) => {
 
   try {
     const fredApiKey = Deno.env.get('FRED_API_KEY');
-    
+
     // Check if FRED API key is configured
     if (!fredApiKey) {
       console.log('FRED_API_KEY not configured, using simulated rates');
       const rates = generateSimulatedRates();
-      
-      return new Response(JSON.stringify({ 
-        success: true, 
+
+      return new Response(JSON.stringify({
+        success: true,
         rates,
         source: 'Simulated Market Data',
         isSimulated: true,
@@ -106,8 +113,8 @@ serve(async (req) => {
     const rates = await fetchFredRates(fredApiKey);
     console.log('Fetched FRED rates:', rates);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return new Response(JSON.stringify({
+      success: true,
       rates,
       source: 'Freddie Mac PMMS via FRED',
       isSimulated: false,
@@ -118,10 +125,10 @@ serve(async (req) => {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Error fetching mortgage rates:', errorMessage);
-    
+
     // Fallback to simulated rates on error
     const rates = generateSimulatedRates();
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       success: true,
       rates,
       source: 'Simulated Market Data (Fallback)',
