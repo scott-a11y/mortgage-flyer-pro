@@ -214,7 +214,7 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right - Realtor headshot + info */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 110 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, minWidth: 140 }}>
                 {data.realtor.headshot && (
                   <HeadshotImage 
                     src={data.realtor.headshot} 
@@ -223,10 +223,15 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                     position={data.realtor.headshotPosition ?? 25} 
                   />
                 )}
-                <div style={{ textAlign: 'center' }}>
+                <div style={{ textAlign: 'left' }}>
                   <div style={{ color: 'white', fontWeight: 700, fontSize: 11, lineHeight: 1.3 }}>{data.realtor.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.brokerage}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, marginTop: 1 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.title}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7, marginTop: 2 }}>{data.realtor.brokerage}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 8, marginTop: 2 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 7 }}>{data.realtor.email}</div>
+                  {data.realtor.website && (
+                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.realtor.website}</div>
+                  )}
                 </div>
               </div>
             </div>
