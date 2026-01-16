@@ -48,7 +48,7 @@ function HeadshotImage({
         width: size, 
         height: size, 
         objectFit: 'cover',
-        objectPosition: 'center top',
+        objectPosition: `center ${position}%`,
         flexShrink: 0,
         borderRadius: 8,
         imageRendering: 'high-quality' as any,
