@@ -322,42 +322,51 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
                 padding: 48,
               }}
             >
-              {/* Header with contacts - side by side */}
-              <div style={{ width: '100%', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                {/* Broker */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              {/* Header with contacts - full width row */}
+              <div style={{ 
+                width: '100%', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between',
+                background: 'rgba(255,255,255,0.05)',
+                borderRadius: 16,
+                padding: '20px 32px',
+              }}>
+                {/* Broker - left aligned */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   {data.broker.headshot && (
                     <HeadshotImage 
                       src={data.broker.headshot} 
                       alt={data.broker.name} 
-                      size={96} 
+                      size={80} 
                       position={data.broker.headshotPosition ?? 15} 
                     />
                   )}
                   <div>
-                    <div style={{ color: 'white', fontWeight: 700, fontSize: 24 }}>{data.broker.name}</div>
+                    <div style={{ color: 'white', fontWeight: 700, fontSize: 26 }}>{data.broker.name}</div>
                     <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 16 }}>NMLS #{data.broker.nmls}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, marginTop: 4 }}>{data.broker.phone}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 18, marginTop: 4 }}>{data.broker.phone}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 16, fontWeight: 500 }}>www.iamortgage.org</div>
                   </div>
                 </div>
 
-                {/* Realtor */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                {/* Realtor - right aligned */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
                   <div style={{ textAlign: 'right' }}>
-                    <div style={{ color: 'white', fontWeight: 700, fontSize: 24 }}>{data.realtor.name}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>{data.realtor.title}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginTop: 2 }}>{data.realtor.brokerage}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, marginTop: 4 }}>{data.realtor.phone}</div>
-                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>{data.realtor.email}</div>
+                    <div style={{ color: 'white', fontWeight: 700, fontSize: 26 }}>{data.realtor.name}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 15 }}>{data.realtor.title}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14 }}>{data.realtor.brokerage}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 18, marginTop: 4 }}>{data.realtor.phone}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 15 }}>{data.realtor.email}</div>
                     {data.realtor.website && (
-                      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>{data.realtor.website}</div>
+                      <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, fontWeight: 500 }}>{data.realtor.website}</div>
                     )}
                   </div>
                   {data.realtor.headshot && (
                     <HeadshotImage 
                       src={data.realtor.headshot} 
                       alt={data.realtor.name} 
-                      size={96} 
+                      size={80} 
                       position={data.realtor.headshotPosition ?? 25} 
                     />
                   )}
