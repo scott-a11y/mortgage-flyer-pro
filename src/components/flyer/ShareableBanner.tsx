@@ -174,65 +174,65 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'space-between',
-              padding: '12px 20px',
+              padding: '16px 20px',
             }}>
-              {/* Left - Broker headshot + info */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 100 }}>
+              {/* Left - Broker (horizontal: headshot | info) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 140 }}>
                 {data.broker.headshot && (
                   <HeadshotImage 
                     src={data.broker.headshot} 
                     alt={data.broker.name} 
-                    size={55} 
+                    size={60} 
                     position={data.broker.headshotPosition ?? 15} 
                   />
                 )}
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 11, lineHeight: 1.3 }}>{data.broker.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>NMLS #{data.broker.nmls}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, marginTop: 1 }}>{data.broker.phone}</div>
-                  <div style={{ color: 'white', fontSize: 8, fontWeight: 500, marginTop: 2 }}>www.iamortgage.org</div>
+                <div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.broker.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{data.broker.nmls}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.broker.phone}</div>
+                  <div style={{ color: 'white', fontSize: 9, fontWeight: 500, marginTop: 1 }}>www.iamortgage.org</div>
                 </div>
               </div>
 
               {/* Center - Rates */}
               <div style={{ display: 'flex', gap: 8 }}>
-                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '10px 14px', textAlign: 'center', minWidth: 75 }}>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>30-Yr Fixed</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.thirtyYearFixed}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 20, lineHeight: 1.2 }}>{data.rates.thirtyYearFixed}</div>
                   <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.thirtyYearFixedAPR} APR</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '10px 14px', textAlign: 'center', minWidth: 75 }}>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>15-Yr Fixed</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.fifteenYearFixed}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 20, lineHeight: 1.2 }}>{data.rates.fifteenYearFixed}</div>
                   <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.fifteenYearFixedAPR} APR</div>
                 </div>
-                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 12px', textAlign: 'center' }}>
+                <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, padding: '10px 14px', textAlign: 'center', minWidth: 75 }}>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>Jumbo</div>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 18, lineHeight: 1.1 }}>{data.rates.thirtyYearJumbo}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 20, lineHeight: 1.2 }}>{data.rates.thirtyYearJumbo}</div>
                   <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 8 }}>{data.rates.thirtyYearJumboAPR} APR</div>
                 </div>
               </div>
 
-              {/* Right - Realtor headshot + info */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 100 }}>
+              {/* Right - Realtor (horizontal: info | headshot) */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 140 }}>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.realtor.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{data.realtor.title}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.brokerage}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 9 }}>{data.realtor.email}</div>
+                  {data.realtor.website && (
+                    <div style={{ color: 'white', fontSize: 9, fontWeight: 500, marginTop: 1 }}>{data.realtor.website}</div>
+                  )}
+                </div>
                 {data.realtor.headshot && (
                   <HeadshotImage 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name} 
-                    size={55} 
+                    size={60} 
                     position={data.realtor.headshotPosition ?? 25} 
                   />
                 )}
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 11, lineHeight: 1.3 }}>{data.realtor.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.title}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 7 }}>{data.realtor.brokerage}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, marginTop: 1 }}>{data.realtor.phone}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 8 }}>{data.realtor.email}</div>
-                  {data.realtor.website && (
-                    <div style={{ color: 'white', fontSize: 8, fontWeight: 500, marginTop: 2 }}>{data.realtor.website}</div>
-                  )}
-                </div>
               </div>
             </div>
 
