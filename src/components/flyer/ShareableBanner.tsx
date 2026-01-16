@@ -174,22 +174,23 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'space-between',
-              padding: '16px 24px',
+              padding: '12px 20px',
             }}>
               {/* Left - Broker headshot + info */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 100 }}>
                 {data.broker.headshot && (
                   <HeadshotImage 
                     src={data.broker.headshot} 
                     alt={data.broker.name} 
-                    size={60} 
+                    size={55} 
                     position={data.broker.headshotPosition ?? 15} 
                   />
                 )}
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.broker.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{data.broker.nmls}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.broker.phone}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 11, lineHeight: 1.3 }}>{data.broker.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>NMLS #{data.broker.nmls}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, marginTop: 1 }}>{data.broker.phone}</div>
+                  <div style={{ color: 'white', fontSize: 8, fontWeight: 500, marginTop: 2 }}>www.iamortgage.org</div>
                 </div>
               </div>
 
@@ -213,24 +214,24 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               </div>
 
               {/* Right - Realtor headshot + info */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, minWidth: 110 }}>
                 {data.realtor.headshot && (
                   <HeadshotImage 
                     src={data.realtor.headshot} 
                     alt={data.realtor.name} 
-                    size={60} 
+                    size={55} 
                     position={data.realtor.headshotPosition ?? 25} 
                   />
                 )}
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ color: 'white', fontWeight: 700, fontSize: 12, lineHeight: 1.3 }}>{data.realtor.name}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{data.realtor.brokerage}</div>
-                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 10, marginTop: 2 }}>{data.realtor.phone}</div>
+                  <div style={{ color: 'white', fontWeight: 700, fontSize: 11, lineHeight: 1.3 }}>{data.realtor.name}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 8 }}>{data.realtor.brokerage}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 9, marginTop: 1 }}>{data.realtor.phone}</div>
                 </div>
               </div>
             </div>
 
-            {/* Footer - QR left, website centered */}
+            {/* Footer - View Rates button, QR right */}
             <div style={{ 
               background: 'rgba(255,255,255,0.05)',
               padding: '8px 16px',
@@ -238,38 +239,36 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-              {/* Left - QR Code and CTA */}
+              {/* Left - CTA Button and date */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ background: 'white', padding: 3, borderRadius: 4 }}>
-                  <QRCodeSVG value={shareUrl} size={32} level="M" />
+                <div style={{ 
+                  background: themeColor,
+                  padding: '6px 14px',
+                  borderRadius: 14,
+                  color: 'white',
+                  fontSize: 10,
+                  fontWeight: 600
+                }}>
+                  View Live Rates →
                 </div>
-                <div>
-                  <div style={{ 
-                    background: themeColor,
-                    padding: '4px 10px',
-                    borderRadius: 12,
-                    color: 'white',
-                    fontSize: 9,
-                    fontWeight: 600
-                  }}>
-                    View Live Rates →
-                  </div>
-                  <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 7, marginTop: 2, textAlign: 'center' }}>
-                    As of {data.rates.dateGenerated}
-                  </div>
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 7 }}>
+                  As of {data.rates.dateGenerated}
                 </div>
               </div>
 
-              {/* Center - Website */}
+              {/* Center - Disclaimer */}
               <div style={{ textAlign: 'center', flex: 1 }}>
-                <div style={{ color: 'white', fontSize: 11, fontWeight: 600, letterSpacing: 0.5 }}>www.iamortgage.org</div>
-                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 6, lineHeight: 1.2, marginTop: 2 }}>
+                <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 6, lineHeight: 1.2 }}>
                   Rates subject to change. Equal Housing Opportunity.
                 </div>
               </div>
 
-              {/* Right - Spacer for balance */}
-              <div style={{ width: 100 }} />
+              {/* Right - QR Code */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ background: 'white', padding: 3, borderRadius: 4 }}>
+                  <QRCodeSVG value={shareUrl} size={32} level="M" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
