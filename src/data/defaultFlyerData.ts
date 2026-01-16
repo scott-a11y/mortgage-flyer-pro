@@ -53,8 +53,8 @@ export const defaultFlyerData: FlyerData = {
     phone: "(360) 606-1106",
     email: "scott@ialoans.com",
     nmls: "130371",
-    headshot: scottHeadshot,
-    headshotPosition: 12, // Show face at top of image
+    headshot: "https://www.nwhomeloanrates.com/wp-content/uploads/Revised-signature_02-214x300.gif",
+    headshotPosition: 45, // Show face at top of image
   },
   company: {
     name: "IA Mortgage",
@@ -73,7 +73,7 @@ export const defaultFlyerData: FlyerData = {
     brokerage: "Century 21 North Homes - Kirkland",
     website: "www.century21northhomes.com",
     headshot: celesteHeadshot,
-    headshotPosition: 25, // Default to show upper portion of face
+    headshotPosition: 45, // Default to show upper portion of face
     logo: "",
   },
   colorTheme: brokerageThemes[0], // Century 21 default

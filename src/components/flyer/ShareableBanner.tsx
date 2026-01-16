@@ -21,10 +21,10 @@ interface BannerDimensions {
 }
 
 const bannerDimensions: Record<BannerFormat, BannerDimensions> = {
-  email: { width: 600, height: 200, scale: 2 },
-  social: { width: 1080, height: 1080, scale: 2 },
-  stories: { width: 1080, height: 1920, scale: 2 },
-  facebook: { width: 1640, height: 624, scale: 2 },
+  email: { width: 600, height: 200, scale: 4 },
+  social: { width: 1080, height: 1080, scale: 3 },
+  stories: { width: 1080, height: 1920, scale: 3 },
+  facebook: { width: 1640, height: 624, scale: 3 },
 };
 
 // Helper component for headshots - no frame, just the image
@@ -51,7 +51,9 @@ function HeadshotImage({
         objectPosition: `center ${position}%`,
         flexShrink: 0,
         borderRadius: 8,
-        imageRendering: 'high-quality' as React.CSSProperties['imageRendering'],
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden',
+        filter: 'contrast(1.05) saturate(1.05)',
       }}
     />
   );
