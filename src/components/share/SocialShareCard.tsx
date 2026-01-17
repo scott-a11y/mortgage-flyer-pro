@@ -239,6 +239,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
             <div style={{
                 padding: '50px 80px',
                 display: 'flex',
+                flexWrap: 'nowrap',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 background: ONYX
