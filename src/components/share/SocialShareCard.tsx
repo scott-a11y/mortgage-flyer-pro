@@ -59,16 +59,25 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
     const rFHA = formatRate(data.rates.fha);
     const rVA = formatRate(data.rates.va);
 
+    // APR values
+    const aprJumbo = formatRate(data.rates.thirtyYearJumboAPR);
+    const aprFixed30 = formatRate(data.rates.thirtyYearFixedAPR);
+    const aprFixed15 = formatRate(data.rates.fifteenYearFixedAPR);
+    const aprFHA = formatRate(data.rates.fhaAPR);
+    const aprVA = formatRate(data.rates.vaAPR);
+
     const isConventional = data.rateType === 'conventional';
     const isGovernment = data.rateType === 'government';
 
     // Left Card
     const label1 = isGovernment ? 'FHA 30-Year' : (isConventional ? '30-Year Fixed' : 'Jumbo Portfolio');
     const value1 = isGovernment ? rFHA : (isConventional ? rFixed30 : rJumbo);
+    const apr1 = isGovernment ? aprFHA : (isConventional ? aprFixed30 : aprJumbo);
 
     // Right Card
     const label3 = isGovernment ? 'VA 30-Year' : (isConventional ? '15-Year Fixed' : '15-Year Acq.');
     const value3 = isGovernment ? rVA : rFixed15;
+    const apr3 = isGovernment ? aprVA : aprFixed15;
 
     const subhead = isGovernment ? 'Government Loan Update' : 'Private Client Market Update';
 
@@ -163,7 +172,10 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                         <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value1}</span>
                         <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#60a5fa' : GOLD, marginTop: 12 }}>%</span>
                     </div>
-                    <div style={{ color: '#444', fontSize: 18, marginTop: 20 }}>
+                    <div style={{ color: '#666', fontSize: 14, marginTop: 8, letterSpacing: 1 }}>
+                        APR {apr1}%
+                    </div>
+                    <div style={{ color: '#444', fontSize: 18, marginTop: 16 }}>
                         {isGovernment ? "Low down payment options." : "Flexible underwriting for HNW liquidity."}
                     </div>
                 </div>
@@ -229,7 +241,10 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                         <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value3}</span>
                         <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#ef4444' : '#10b981', marginTop: 12 }}>%</span>
                     </div>
-                    <div style={{ color: '#444', fontSize: 18, marginTop: 20 }}>
+                    <div style={{ color: '#666', fontSize: 14, marginTop: 8, letterSpacing: 1 }}>
+                        APR {apr3}%
+                    </div>
+                    <div style={{ color: '#444', fontSize: 18, marginTop: 16 }}>
                         {isGovernment ? "Zero down for veterans." : "Accelerated equity strategy."}
                     </div>
                 </div>
