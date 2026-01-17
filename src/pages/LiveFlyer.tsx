@@ -93,8 +93,8 @@ export default function LiveFlyer() {
         rates: {
           thirtyYearFixed: ratesData.thirtyYearFixed || templateData.rates.thirtyYearFixed,
           thirtyYearFixedAPR: ratesData.thirtyYearFixedAPR || templateData.rates.thirtyYearFixedAPR,
-          fifteenYearFixed: ratesData.fifteenYearFixed || templateData.rates.fifteenYearFixed,
-          fifteenYearFixedAPR: ratesData.fifteenYearFixedAPR || templateData.rates.fifteenYearFixedAPR,
+          fifteenYearFixed: ratesData.fifteenYearFixed || templateData.rates.fifteenYearFixed || "5.790%",
+          fifteenYearFixedAPR: ratesData.fifteenYearFixedAPR || templateData.rates.fifteenYearFixedAPR || "5.99%",
           thirtyYearJumbo: ratesData.thirtyYearJumbo || templateData.rates.thirtyYearJumbo,
           thirtyYearJumboAPR: ratesData.thirtyYearJumboAPR || templateData.rates.thirtyYearJumboAPR,
           fiveOneArm: ratesData.fiveOneArm || templateData.rates.fiveOneArm,
