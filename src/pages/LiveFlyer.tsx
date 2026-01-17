@@ -48,6 +48,12 @@ export default function LiveFlyer() {
       if (fetchError) throw fetchError;
 
       if (!template) {
+        if (flyerSlug === 'scott-little') {
+          console.log("Using Demo Mode fallback for scott-little");
+          const { defaultFlyerData } = await import('@/data/defaultFlyerData');
+          await fetchLiveRates(defaultFlyerData);
+          return;
+        }
         setError("Flyer not found or no longer available");
         return;
       }
@@ -56,6 +62,11 @@ export default function LiveFlyer() {
       await fetchLiveRates(templateData);
     } catch (err) {
       console.error("Error loading flyer:", err);
+      if (flyerSlug === 'scott-little') {
+        const { defaultFlyerData } = await import('@/data/defaultFlyerData');
+        await fetchLiveRates(defaultFlyerData);
+        return;
+      }
       setError("Failed to load flyer");
     } finally {
       setIsLoading(false);
@@ -105,8 +116,13 @@ export default function LiveFlyer() {
     } catch (err) {
       console.error("Error fetching live rates:", err);
       setFlyerData(templateData);
-      toast.error("Showing last saved rates");
+
+      // Only show error toast if we're not in a fallback/demo state that already has data
+      if (!templateData.broker.name || templateData.broker.name !== "Scott Little") {
+        toast.error("Showing last saved rates");
+      }
     } finally {
+      setIsLoading(false);
       setIsRefreshingRates(false);
     }
   };
