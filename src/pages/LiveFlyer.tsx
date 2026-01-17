@@ -352,15 +352,15 @@ export default function LiveFlyer() {
       />
 
       {/* Hidden Social Card for Capture: 
-          Positioned off-screen but fully rendered to ensure html2canvas captures it correctly.
-          Using visibility:hidden is more reliable than opacity:0 for preventing empty images.
+          Using opacity: 0 instead of visibility:hidden because the QR code canvas needs
+          to initialize with proper dimensions. visibility:hidden causes 0-width canvas.
       */}
       <div
         style={{
           position: 'absolute',
           top: '-10000px',
           left: 0,
-          visibility: 'hidden',
+          opacity: 0,
           pointerEvents: 'none',
           width: 1080,
           height: 1080
