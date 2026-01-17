@@ -43,27 +43,33 @@ function HeadshotImage({
 
 const GOLD = "#D4AF37";
 const ONYX = "#050505";
+const CARD_BG = "#0f0f11";
+const GRID_BG = "#0a0a0c";
 
 export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(({ data, shareUrl }, ref) => {
-    // Logic for Rate Display
-    const rJumbo = data.rates.thirtyYearJumbo.replace('%', '');
-    const rFixed30 = data.rates.thirtyYearFixed.replace('%', '');
-    const rFixed15 = data.rates.fifteenYearFixed.replace('%', '');
-    const rFHA = data.rates.fha ? data.rates.fha.replace('%', '') : '5.50';
-    const rVA = data.rates.va ? data.rates.va.replace('%', '') : '5.50';
+    // Logic for Rate Display - Standardizing format to 3 decimals
+    const formatRate = (val: string | undefined) => {
+        if (!val) return '0.000';
+        return parseFloat(val.replace('%', '')).toFixed(3);
+    };
+
+    const rJumbo = formatRate(data.rates.thirtyYearJumbo);
+    const rFixed30 = formatRate(data.rates.thirtyYearFixed);
+    const rFixed15 = formatRate(data.rates.fifteenYearFixed);
+    const rFHA = formatRate(data.rates.fha);
+    const rVA = formatRate(data.rates.va);
 
     const isConventional = data.rateType === 'conventional';
     const isGovernment = data.rateType === 'government';
 
-    // Card 1
-    const label1 = isGovernment ? 'FHA 30-Year' : (isConventional ? '30-Yr Fixed' : 'Jumbo Portfolio');
+    // Left Card
+    const label1 = isGovernment ? 'FHA 30-Year' : (isConventional ? '30-Year Fixed' : 'Jumbo Portfolio');
     const value1 = isGovernment ? rFHA : (isConventional ? rFixed30 : rJumbo);
 
-    // Card 3
-    const label3 = isGovernment ? 'VA 30-Year' : (isConventional ? '15-Yr Fixed' : '15-Yr Acq.');
+    // Right Card
+    const label3 = isGovernment ? 'VA 30-Year' : (isConventional ? '15-Year Fixed' : '15-Year Acq.');
     const value3 = isGovernment ? rVA : rFixed15;
 
-    const headline = isGovernment ? 'Security & Stability' : 'Liquidity & Acquisition';
     const subhead = isGovernment ? 'Government Loan Update' : 'Private Client Market Update';
 
     // Fallback positions for Scott
@@ -71,77 +77,222 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
     const getY = (name: string, y?: number) => name.includes('Scott Little') ? 15 : (y ?? 15);
 
     return (
-        <div style={{ width: 1080, height: 1080, background: ONYX, display: 'flex', flexDirection: 'column', position: 'relative' }} ref={ref}>
-            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, background: 'rgba(212, 175, 55, 0.1)', filter: 'blur(120px)', borderRadius: '50%' }} />
+        <div
+            style={{
+                width: 1080,
+                height: 1080,
+                background: ONYX,
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                fontFamily: 'Inter, system-ui, sans-serif',
+                overflow: 'hidden'
+            }}
+            ref={ref}
+        >
+            {/* AMBIENT GLOW */}
+            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 800, height: 400, background: 'rgba(212, 175, 55, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
 
-            {/* Header */}
-            <div style={{ padding: '80px 40px', textAlign: 'center', zIndex: 10 }}>
-                <div style={{ display: 'inline-block', padding: '8px 24px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 50, marginBottom: 30, background: 'rgba(255,255,255,0.03)' }}>
-                    <span style={{ color: GOLD, fontSize: 14, letterSpacing: 3, textTransform: 'uppercase', fontWeight: 600 }}>{subhead}</span>
+            {/* HEADER */}
+            <div style={{ padding: '80px 60px 60px', textAlign: 'center', zIndex: 10 }}>
+                <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 12,
+                    padding: '8px 24px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: 50,
+                    marginBottom: 40,
+                    background: 'rgba(255,255,255,0.03)'
+                }}>
+                    <div style={{ width: 8, height: 8, background: GOLD, borderRadius: '50%' }} />
+                    <span style={{ color: '#94a3b8', fontSize: 16, letterSpacing: 4, textTransform: 'uppercase', fontWeight: 500 }}>{subhead}</span>
                 </div>
-                <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 80, lineHeight: 1 }}>
+
+                <h1 style={{
+                    fontFamily: 'Playfair Display, serif',
+                    color: 'white',
+                    fontSize: 100,
+                    lineHeight: 1.1,
+                    margin: 0,
+                    letterSpacing: '-0.02em'
+                }}>
                     {isGovernment ? (
                         <span>Security & <span style={{ color: '#60a5fa' }}>Stability.</span></span>
                     ) : (
-                        <span>Liquidity & <span style={{ background: `linear-gradient(to right, #FFE5A0, ${GOLD})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Acquisition.</span></span>
+                        <span>Liquidity & <span style={{ color: GOLD }}>Acquisition.</span></span>
                     )}
-                </div>
+                </h1>
             </div>
 
-            {/* Grid */}
-            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 40, padding: '0 60px' }}>
-                {/* Left Card */}
-                <div style={{ background: '#0a0a0c', border: '1px solid rgba(255,255,255,0.05)', padding: 40, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    {isGovernment ? <Building2 size={40} className="text-blue-400" style={{ marginBottom: 20, opacity: 0.8 }} /> : <ShieldCheck size={40} color={GOLD} style={{ marginBottom: 20, opacity: 0.8 }} />}
-                    <div style={{ color: '#555', fontSize: 14, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>{label1}</div>
-                    <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 72 }}>{value1}<span style={{ fontSize: 24, fontStyle: 'italic', color: isGovernment ? '#60a5fa' : GOLD }}>%</span></div>
-                    <div style={{ color: '#444', fontSize: 14, marginTop: 12 }}>
+            {/* GRID SECTION */}
+            <div style={{
+                flex: 1,
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr',
+                background: GRID_BG,
+                borderTop: '1px solid rgba(255,255,255,0.05)',
+                borderBottom: '1px solid rgba(255,255,255,0.05)'
+            }}>
+                {/* LEFT CARD */}
+                <div style={{
+                    padding: 60,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    borderRight: '1px solid rgba(255,255,255,0.05)'
+                }}>
+                    <div style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        background: '#0a0a0c',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 24,
+                        color: isGovernment ? '#60a5fa' : '#94a3b8'
+                    }}>
+                        {isGovernment ? <Building2 size={32} /> : <ShieldCheck size={32} />}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: 18, textTransform: 'uppercase', letterSpacing: 3, fontWeight: 700, marginBottom: 16 }}>{label1}</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value1}</span>
+                        <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#60a5fa' : GOLD, marginTop: 12 }}>%</span>
+                    </div>
+                    <div style={{ color: '#444', fontSize: 18, marginTop: 20 }}>
                         {isGovernment ? "Low down payment options." : "Flexible underwriting for HNW liquidity."}
                     </div>
                 </div>
 
-                {/* Center - Bridge */}
-                <div style={{ background: `linear-gradient(to bottom, rgba(212, 175, 55, 0.1), transparent)`, border: `1px solid ${GOLD}40`, padding: 40, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)` }} />
-                    <Landmark size={40} color={GOLD} style={{ marginBottom: 20 }} />
-                    <div style={{ color: GOLD, fontSize: 14, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8, fontWeight: 700 }}>Bridge Strategy</div>
-                    <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 36, fontStyle: 'italic' }}>Non-Contingent</div>
-                    <div style={{ color: GOLD, fontSize: 14, marginTop: 12, opacity: 0.8 }}>Secure the asset first.</div>
+                {/* CENTER CARD (HERO) */}
+                <div style={{
+                    padding: 60,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    background: 'linear-gradient(to bottom, rgba(212, 175, 55, 0.08), transparent)',
+                    position: 'relative'
+                }}>
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${GOLD}, transparent)`, opacity: 0.4 }} />
+
+                    <div style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        background: 'rgba(212, 175, 55, 0.1)',
+                        border: `1px solid ${GOLD}40`,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 24,
+                        color: GOLD
+                    }}>
+                        <Landmark size={32} />
+                    </div>
+                    <div style={{ color: GOLD, fontSize: 18, textTransform: 'uppercase', letterSpacing: 3, fontWeight: 700, marginBottom: 16 }}>Bridge Strategy</div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', color: 'white', fontSize: 48, lineHeight: 1.2 }}>Non-Contingent</div>
+                    <div style={{ color: GOLD, fontSize: 18, marginTop: 24, opacity: 0.8 }}>Secure the asset first.</div>
                 </div>
 
-                {/* Right Card */}
-                <div style={{ background: '#0a0a0c', border: '1px solid rgba(255,255,255,0.05)', padding: 40, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    {isGovernment ? <Flag size={40} className="text-red-400" style={{ marginBottom: 20, opacity: 0.8 }} /> : <TrendingDown size={40} color={GOLD} style={{ marginBottom: 20, opacity: 0.8 }} />}
-                    <div style={{ color: '#555', fontSize: 14, textTransform: 'uppercase', letterSpacing: 2, marginBottom: 8 }}>{label3}</div>
-                    <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 72 }}>{value3}<span style={{ fontSize: 24, fontStyle: 'italic', color: isGovernment ? '#ef4444' : GOLD }}>%</span></div>
-                    <div style={{ color: '#444', fontSize: 14, marginTop: 12 }}>
+                {/* RIGHT CARD */}
+                <div style={{
+                    padding: 60,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                    borderLeft: '1px solid rgba(255,255,255,0.05)'
+                }}>
+                    <div style={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        background: '#0a0a0c',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 24,
+                        color: isGovernment ? '#ef4444' : '#94a3b8'
+                    }}>
+                        {isGovernment ? <Flag size={32} /> : <TrendingDown size={32} />}
+                    </div>
+                    <div style={{ color: '#64748b', fontSize: 18, textTransform: 'uppercase', letterSpacing: 3, fontWeight: 700, marginBottom: 16 }}>{label3}</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value3}</span>
+                        <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#ef4444' : '#10b981', marginTop: 12 }}>%</span>
+                    </div>
+                    <div style={{ color: '#444', fontSize: 18, marginTop: 20 }}>
                         {isGovernment ? "Zero down for veterans." : "Accelerated equity strategy."}
                     </div>
                 </div>
             </div>
 
-            {/* Footer */}
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', padding: '40px 60px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#0a0a0c' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-                    {data.broker.headshot && <HeadshotImage src={data.broker.headshot} alt="" size={80} positionY={getY(data.broker.name, data.broker.headshotPosition)} positionX={getX(data.broker.name, data.broker.headshotPositionX)} />}
+            {/* FOOTER */}
+            <div style={{
+                padding: '50px 80px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: ONYX
+            }}>
+                {/* SCOTT */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                    {data.broker.headshot && (
+                        <HeadshotImage
+                            src={data.broker.headshot}
+                            alt=""
+                            size={120}
+                            positionY={getY(data.broker.name, data.broker.headshotPosition)}
+                            positionX={getX(data.broker.name, data.broker.headshotPositionX)}
+                        />
+                    )}
                     <div>
-                        <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 24 }}>{data.broker.name}</div>
-                        <div style={{ color: GOLD, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>{data.broker.title}</div>
-                        <div style={{ color: '#666', fontSize: 14 }}>NMLS #{data.broker.nmls}</div>
+                        <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 32, marginBottom: 4 }}>{data.broker.name}</div>
+                        <div style={{ color: GOLD, fontSize: 16, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>{data.broker.title}</div>
+                        <div style={{ color: '#666', fontSize: 16, marginTop: 4 }}>NMLS #{data.broker.nmls}</div>
                     </div>
                 </div>
+
+                {/* QR CODE */}
                 <div style={{ textAlign: 'center' }}>
-                    <QRCodeSVG value={shareUrl} size={60} fgColor="white" bgColor="transparent" />
-                    <div style={{ color: '#444', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', marginTop: 8 }}>Scan Me</div>
+                    <div style={{ border: '1px solid rgba(255,255,255,0.1)', padding: 12, background: 'rgba(255,255,255,0.02)', borderRadius: 12, marginBottom: 8 }}>
+                        <QRCodeSVG value={shareUrl} size={80} fgColor="white" bgColor="transparent" />
+                    </div>
+                    <div style={{ color: '#444', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>Scan Me</div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexDirection: 'row-reverse', textAlign: 'right' }}>
-                    {data.realtor.headshot && <HeadshotImage src={data.realtor.headshot} alt="" size={80} positionY={getY(data.realtor.name, data.realtor.headshotPosition)} positionX={getX(data.realtor.name, data.realtor.headshotPositionX)} />}
+
+                {/* CELESTE */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexDirection: 'row-reverse', textAlign: 'right' }}>
+                    {data.realtor.headshot && (
+                        <HeadshotImage
+                            src={data.realtor.headshot}
+                            alt=""
+                            size={120}
+                            positionY={getY(data.realtor.name, data.realtor.headshotPosition)}
+                            positionX={getX(data.realtor.name, data.realtor.headshotPositionX)}
+                        />
+                    )}
                     <div>
-                        <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 24 }}>{data.realtor.name}</div>
-                        <div style={{ color: GOLD, fontSize: 14, letterSpacing: 1, textTransform: 'uppercase' }}>{data.realtor.title}</div>
-                        <div style={{ color: '#666', fontSize: 14 }}>{data.realtor.email}</div>
+                        <div style={{ fontFamily: 'Playfair Display, serif', color: 'white', fontSize: 32, marginBottom: 4 }}>{data.realtor.name}</div>
+                        <div style={{ color: GOLD, fontSize: 16, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>{data.realtor.title}</div>
+                        <div style={{ color: '#666', fontSize: 16, marginTop: 4 }}>{data.realtor.email}</div>
                     </div>
                 </div>
+            </div>
+
+            {/* COMPLIANCE */}
+            <div style={{ position: 'absolute', bottom: 20, left: 0, right: 0, textAlign: 'center' }}>
+                <span style={{ color: '#333', fontSize: 12, letterSpacing: 1, textTransform: 'uppercase' }}>
+                    Equal Housing Opportunity • Rates subject to change • Verified Pro Marketing
+                </span>
             </div>
         </div>
     );
