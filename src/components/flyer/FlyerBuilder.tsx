@@ -9,6 +9,7 @@ import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
 
 export function FlyerBuilder() {
+  console.log("FlyerBuilder: rendering...");
   const { data, updateData, resetData, isLoading } = useFlyer();
   const [isExporting, setIsExporting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);

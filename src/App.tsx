@@ -10,24 +10,27 @@ import { FlyerProvider } from "@/context/FlyerContext";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <FlyerProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/flyer/:slug" element={<LiveFlyer />} />
-            <Route path="/live/:slug" element={<LiveFlyer />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </FlyerProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  console.log("App: rendering...");
+  return (
+    <QueryClientProvider client={queryClient}>
+      <FlyerProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/flyer/:slug" element={<LiveFlyer />} />
+              <Route path="/live/:slug" element={<LiveFlyer />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </FlyerProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
