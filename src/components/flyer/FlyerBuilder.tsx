@@ -4,7 +4,7 @@ import { EditorTabs } from "./EditorTabs";
 import { TemplateManager } from "./TemplateManager";
 import { ExportMenu } from "./ExportMenu";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Loader2, Share2 } from "lucide-react";
+import { RotateCcw, Loader2, Share2, Sparkles } from "lucide-react";
 import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
 
@@ -23,18 +23,18 @@ export function FlyerBuilder() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* 1. HEADER - Global Controls Only */}
-      <header className="border-b bg-card sticky top-0 z-50 shadow-sm">
+      {/* HEADER: Tools & Navigation */}
+      <header className="border-b bg-card sticky top-0 z-50 shadow-sm backdrop-blur-sm bg-white/80">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-primary font-bold text-lg tracking-tight">IA LOANS</span>
-            <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full font-medium">Pro</span>
+            <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shadow-sm">Pro</span>
           </div>
 
           <div className="flex items-center gap-2">
             <TemplateManager currentData={data} onLoadTemplate={updateData} />
 
-            <div className="h-6 w-px bg-border mx-1" />
+            <div className="h-6 w-px bg-border mx-2" />
 
             <Button variant="ghost" size="sm" onClick={resetData} className="text-muted-foreground hover:text-destructive">
               <RotateCcw className="w-4 h-4 mr-1.5" />
@@ -50,22 +50,18 @@ export function FlyerBuilder() {
         </div>
       </header>
 
-      {/* 2. MAIN WORKSPACE */}
+      {/* MAIN LAYOUT */}
       <main className="container mx-auto px-4 py-6 flex-1">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-100px)]">
 
-          {/* LEFT PANEL: Editor & Share Tools */}
-          <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-6 overflow-y-auto max-h-[calc(100vh-100px)] pb-10">
-            {/* Editor Inputs */}
-            <EditorTabs data={data} onChange={updateData} />
-
-            {/* SHARE TOOLBAR - Moved HERE so it is OUTSIDE the flyer */}
-            <div className="bg-white p-6 rounded-xl border border-blue-100 shadow-sm">
+          {/* --- LEFT PANEL: EDITING & SHARING --- */}
+          <div className="lg:col-span-4 flex flex-col gap-6 overflow-y-auto pr-2 pb-20">
+            {/* 1. The Share Toolbar (Prominent & Easy Access) */}
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100 shadow-sm">
               <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Share2 className="w-4 h-4 text-blue-600" />
-                Ready to Post?
+                Distribute Flyer
               </h3>
-
               <SmartShareButton
                 onGenerateBlob={async () => {
                   const { default: html2canvas } = await import('html2canvas');
@@ -77,12 +73,21 @@ export function FlyerBuilder() {
                 text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
               />
             </div>
+
+            {/* 2. The Editor Inputs */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="p-4 border-b border-slate-100 bg-slate-50 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                <span className="text-sm font-bold text-slate-700">Content Editor</span>
+              </div>
+              <EditorTabs data={data} onChange={updateData} />
+            </div>
           </div>
 
-          {/* RIGHT PANEL: The Pure Flyer Preview */}
-          <div className="lg:col-span-7 xl:col-span-8 bg-slate-100 rounded-xl p-8 flex items-start justify-center overflow-auto border border-slate-200">
-            {/* This DIV is what gets exported. It contains NO buttons. */}
-            <div className="w-full max-w-[800px] shadow-2xl transition-transform duration-300 bg-white">
+          {/* --- RIGHT PANEL: LIVE PREVIEW --- */}
+          <div className="lg:col-span-8 bg-slate-100/50 rounded-2xl p-8 flex items-start justify-center overflow-y-auto border border-slate-200/60 backdrop-blur-3xl">
+            {/* The Flyer Container */}
+            <div className="w-full max-w-[800px] shadow-2xl transition-all duration-300 origin-top hover:scale-[1.01]">
               <FlyerPreview ref={previewRef} data={data} />
             </div>
           </div>
