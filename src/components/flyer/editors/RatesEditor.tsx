@@ -66,14 +66,15 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
       console.error('Error fetching live rates:', error);
 
       // Resilient Fallback: Simulate rates client-side if the Edge Function fails or in placeholder mode
+      const baseRate = 6.125 + (Math.random() - 0.5) * 0.1;
       const simulatedRates = {
         ...data.rates,
-        thirtyYearFixed: (6.25 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
-        thirtyYearFixedAPR: (6.45 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
-        fifteenYearFixed: (5.790 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
-        fifteenYearFixedAPR: (5.99 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
-        thirtyYearJumbo: (6.125 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
-        thirtyYearJumboAPR: (6.25 + (Math.random() - 0.5) * 0.1).toFixed(3) + "%",
+        thirtyYearFixed: baseRate.toFixed(3) + "%",
+        thirtyYearFixedAPR: (baseRate + 0.2).toFixed(3) + "%",
+        fifteenYearFixed: (baseRate - 0.335).toFixed(3) + "%",
+        fifteenYearFixedAPR: (baseRate - 0.135).toFixed(3) + "%",
+        thirtyYearJumbo: (baseRate + 0.125).toFixed(3) + "%",
+        thirtyYearJumboAPR: (baseRate + 0.325).toFixed(3) + "%",
         dateGenerated: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
       };
 

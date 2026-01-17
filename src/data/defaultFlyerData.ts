@@ -10,12 +10,12 @@ const today = new Date().toLocaleDateString('en-US', {
 
 export const defaultFlyerData: FlyerData = {
   rates: {
-    thirtyYearFixed: "6.25%",
-    thirtyYearFixedAPR: "6.45%",
+    thirtyYearFixed: "6.125%",
+    thirtyYearFixedAPR: "6.325%",
     fifteenYearFixed: "5.790%",
     fifteenYearFixedAPR: "5.99%",
-    thirtyYearJumbo: "6.125%",
-    thirtyYearJumboAPR: "6.25%",
+    thirtyYearJumbo: "6.25%",
+    thirtyYearJumboAPR: "6.45%",
     fiveOneArm: "5.72%",
     fiveOneArmAPR: "6.85%",
     fha: "5.50%",
