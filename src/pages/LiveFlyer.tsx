@@ -344,8 +344,24 @@ export default function LiveFlyer() {
         }
       />
 
-      {/* Hidden Social Card for Capture */}
-      <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+      {/* Hidden Social Card for Capture: 
+          Using opacity: 0 instead of left: -9999px because some mobile renderers 
+          might skip off-screen elements during canvas capture.
+      */}
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          opacity: 0,
+          pointerEvents: 'none',
+          zIndex: -1,
+          overflow: 'hidden',
+          width: 1080,
+          height: 1080
+        }}
+        aria-hidden="true"
+      >
         <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
       </div>
 
