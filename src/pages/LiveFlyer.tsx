@@ -83,7 +83,8 @@ export default function LiveFlyer() {
     setIsRefreshingRates(true);
 
     // Detect if we should use silent simulation mode
-    const isPlaceholder = supabase.supabaseUrl.includes('placeholder.supabase.co');
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
+    const isPlaceholder = !supabaseUrl || supabaseUrl.includes('placeholder.supabase.co');
     const isDemo = slug === 'scott-little';
 
     try {

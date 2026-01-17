@@ -28,7 +28,8 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
     setIsLoading(true);
 
     // Check if Supabase is in placeholder mode
-    const isPlaceholder = supabase.supabaseUrl.includes('placeholder.supabase.co');
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
+    const isPlaceholder = !supabaseUrl || supabaseUrl.includes('placeholder.supabase.co');
 
     try {
       if (isPlaceholder) {
