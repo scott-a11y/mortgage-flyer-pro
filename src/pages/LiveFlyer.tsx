@@ -352,8 +352,8 @@ export default function LiveFlyer() {
       />
 
       {/* Hidden Social Card for Capture: 
-          Using opacity: 0 instead of left: -9999px because some mobile renderers 
-          might skip off-screen elements during canvas capture.
+          Positioned off-screen but fully rendered to ensure html2canvas captures it correctly.
+          Using visibility:hidden is more reliable than opacity:0 for preventing empty images.
       */}
       <div
         style={{
