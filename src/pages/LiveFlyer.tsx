@@ -218,10 +218,11 @@ export default function LiveFlyer() {
         // Small delay ensures download works reliably
         setTimeout(() => {
           link.click();
+          // Wait longer before cleanup to allow browser download to start
           setTimeout(() => {
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-          }, 100);
+          }, 2000); // Increased from 100ms to 2000ms
         }, 100);
 
         toast.dismiss(toastId);
