@@ -73,8 +73,8 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
         thirtyYearFixedAPR: (baseRate + 0.2).toFixed(3) + "%",
         fifteenYearFixed: (baseRate - 0.335).toFixed(3) + "%",
         fifteenYearFixedAPR: (baseRate - 0.135).toFixed(3) + "%",
-        thirtyYearJumbo: (baseRate + 0.125).toFixed(3) + "%",
-        thirtyYearJumboAPR: (baseRate + 0.325).toFixed(3) + "%",
+        thirtyYearJumbo: (baseRate + 0.300).toFixed(3) + "%",
+        thirtyYearJumboAPR: (baseRate + 0.500).toFixed(3) + "%",
         dateGenerated: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
       };
 

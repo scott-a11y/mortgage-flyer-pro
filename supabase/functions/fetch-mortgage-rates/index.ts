@@ -18,9 +18,9 @@ function getFormattedDate() {
 function generateSimulatedRates() {
   // Updated to match Scott Little's default preference
   const baseRates = {
-    thirtyYearFixed: 6.25,
+    thirtyYearFixed: 6.125,
     fifteenYearFixed: 5.79,
-    thirtyYearJumbo: 6.125,
+    thirtyYearJumbo: 6.425,
     fiveOneArm: 6.00,
   };
 
