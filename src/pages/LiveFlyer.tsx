@@ -164,15 +164,19 @@ export default function LiveFlyer() {
       const blob = await generateSocialCard();
       if (!blob) throw new Error("Generation failed");
 
-      // Check for mobile vs desktop
-      // Desktop navigator.share (Windows/macOS) is unreliable for local files
-      const userAgent = navigator.userAgent;
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
-      console.log("Sharing trigger:", { isMobile, userAgent });
+      // STRICT DEVICE DETECTION
+      // navigator.share on Windows/macOS is unreliable for local file blobs (Outlook/Teams/etc)
+      const ua = navigator.userAgent;
+      const isWindows = /Win/i.test(ua);
+      const isMac = /Mac/i.test(ua) && !('ontouchend' in document);
+      const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(ua);
+
+      const shouldNativeShare = isMobile && !isWindows && !isMac && !!navigator.share;
+      console.log("Sharing Strategy:", { shouldNativeShare, isMobile, isWindows, isMac, ua });
 
       const file = new File([blob], 'rate-update.png', { type: 'image/png' });
 
-      if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (shouldNativeShare && navigator.canShare && navigator.canShare({ files: [file] })) {
         toast.dismiss(toastId);
         await navigator.share({
           files: [file],
@@ -180,8 +184,7 @@ export default function LiveFlyer() {
           text: `Check out today's live rates from ${flyerData?.broker.name} at ${flyerData?.company.name}.`,
         });
       } else {
-        // Desktop / Fallback: 
-        // 1. Try to Copy to Clipboard (High convenience for socials/slack)
+        // Desktop / Fallback (Windows/macOS)
         let copied = false;
         try {
           if (navigator.clipboard && window.ClipboardItem) {
@@ -191,7 +194,7 @@ export default function LiveFlyer() {
             copied = true;
           }
         } catch (clipErr) {
-          console.log("Clipboard fallback failed:", clipErr);
+          console.warn("Clipboard failed:", clipErr);
         }
 
         // 2. Trigger Download (Safe fallback)
@@ -206,8 +209,8 @@ export default function LiveFlyer() {
 
         toast.dismiss(toastId);
         if (copied) {
-          toast.success("Image copied & downloaded!", {
-            description: "You can now paste it directly into messages or social media."
+          toast.success("Ready to Paste!", {
+            description: "Image copied to clipboard. Go to your email/social and press Ctrl+V."
           });
         } else {
           toast.success("Flyer downloaded!", {
