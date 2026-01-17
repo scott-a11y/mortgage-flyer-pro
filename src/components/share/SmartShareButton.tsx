@@ -24,12 +24,15 @@ export const SmartShareButton = ({
             const blob = await onGenerateBlob();
             if (!blob) throw new Error("Failed to generate image");
 
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const ua = navigator.userAgent;
+            const isWindows = /Win/i.test(ua);
+            const isMac = /Mac/i.test(ua) && !('ontouchend' in document);
+            const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(ua);
+
+            const shouldNativeShare = isMobile && !isWindows && !isMac && !!navigator.share;
             const file = new File([blob], 'rate-flyer.png', { type: 'image/png' });
 
-            // Check if the browser supports sharing FILES AND it's a mobile device
-            // (Windows/macOS native share for local blobs is extremely unreliable)
-            if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            if (shouldNativeShare && navigator.canShare && navigator.canShare({ files: [file] })) {
                 toast.dismiss(toastId);
                 await navigator.share({
                     files: [file],
@@ -63,8 +66,8 @@ export const SmartShareButton = ({
 
                 toast.dismiss(toastId);
                 if (copied) {
-                    toast.success("Image copied & downloaded!", {
-                        description: "Paste it directly into Instagram or Messages."
+                    toast.success("Ready to Paste!", {
+                        description: "Image copied to clipboard. Go to your app/email and press Ctrl+V."
                     });
                 } else {
                     toast.success("Flyer downloaded!", {
