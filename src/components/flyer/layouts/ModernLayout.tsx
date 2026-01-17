@@ -1,247 +1,104 @@
+import React, { forwardRef } from "react";
 import { FlyerData } from "@/types/flyer";
-import { Home, Phone, Mail, Globe, User } from "lucide-react";
-import { forwardRef } from "react";
-import { QRCodeSVG } from "qrcode.react";
 
 interface LayoutProps {
   data: FlyerData;
 }
 
-export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(
-  ({ data }, ref) => {
-    const theme = data.colorTheme;
-    const primaryColor = theme?.primary || "#B5A26E";
-    const secondaryColor = theme?.secondary || "#1C1C1C";
+export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref) => {
+  // HELPER: Robust image checker using existing Broker data
+  const profileImage = data.broker.headshot && data.broker.headshot.length > 0
+    ? data.broker.headshot
+    : "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
-    return (
-      <div
-        ref={ref}
-        className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col overflow-hidden"
-        style={{ fontFamily: "'Outfit', sans-serif" }}
-      >
-        {/* Header Section - Modern Gradient */}
-        <div
-          className="px-8 py-5 flex flex-col items-center justify-center relative overflow-hidden"
-          style={{
-            height: "16%",
-            background: `linear-gradient(135deg, ${secondaryColor} 0%, #2a2a2a 50%, ${secondaryColor} 100%)`
-          }}
-        >
-          {/* Subtle accent line at top */}
-          <div
-            className="absolute top-0 left-0 right-0 h-1"
-            style={{ background: `linear-gradient(90deg, transparent, ${primaryColor}, transparent)` }}
-          />
+  return (
+    <div ref={ref} className="w-full h-full bg-white shadow-none overflow-hidden flex flex-col relative print:shadow-none">
+      {/* Hero Image Section */}
+      <div className="relative h-2/5 w-full bg-slate-100">
+        <img
+          src={"https://placehold.co/800x600/png?text=Property+Image"}
+          alt="Property"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-20">
+          <h1 className="text-4xl font-bold text-white mb-2">{data.marketCopy.headline || "Market Update"}</h1>
+          <p className="text-xl text-white/90">{data.regions[0].name || "Local Market"}</p>
+        </div>
+      </div>
 
-          {/* Co-branding logos */}
-          <div className="flex items-center gap-4 mb-3">
-            {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-10 max-w-[130px] object-contain brightness-0 invert opacity-95" />
-            ) : (
-              <span className="text-white/95 font-semibold text-sm tracking-[0.2em] uppercase">
-                {data.company.name || "IA Loans"}
-              </span>
-            )}
+      {/* Main Content Grid */}
+      <div className="flex-1 p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
 
-            <div className="flex items-center gap-3">
-              <div className="h-4 w-px bg-white/20" />
-              <span className="text-white/40 text-[10px] font-light tracking-wider uppercase">partnered with</span>
-              <div className="h-4 w-px bg-white/20" />
+        {/* Left Column: Property Details (Mapped to Market Data) */}
+        <div className="md:col-span-2 space-y-6">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <span className="block text-slate-500 text-sm uppercase font-bold">30-Yr Fixed</span>
+              <span className="block text-2xl font-bold text-slate-900">{data.rates.thirtyYearFixed}</span>
             </div>
-
-            {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-10 max-w-[130px] object-contain" />
-            ) : (
-              <span style={{ color: primaryColor }} className="font-semibold text-sm tracking-[0.15em] uppercase">
-                {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
-              </span>
-            )}
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <span className="block text-slate-500 text-sm uppercase font-bold">Jumbo</span>
+              <span className="block text-2xl font-bold text-blue-600">{data.rates.thirtyYearJumbo}</span>
+            </div>
+            <div className="bg-slate-50 p-4 rounded-lg border border-slate-100">
+              <span className="block text-slate-500 text-sm uppercase font-bold">Refi ARM</span>
+              <span className="block text-2xl font-bold text-slate-900">{data.rates.fiveOneArm}</span>
+            </div>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-white text-xl font-semibold text-center leading-tight tracking-wide">
-            {data.marketCopy.headline}
-          </h1>
-          <p className="text-white/70 text-[11px] text-center mt-1.5 font-light tracking-wide">
-            {data.marketCopy.subheading}
-          </p>
+          <div className="prose text-slate-600 max-w-none">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Market Insight</h3>
+            <p className="whitespace-pre-wrap">{data.marketCopy.marketInsight}</p>
+          </div>
         </div>
 
-        {/* Rates Table Section with APR */}
-        <div className="px-6 py-3 flex flex-col justify-center" style={{ height: "22%", backgroundColor: "#f8f7f4" }}>
-          <div className="grid grid-cols-4 gap-3 max-w-[560px] mx-auto">
-            {[
-              { label: "30-Year Fixed", rate: data.rates.thirtyYearFixed, apr: data.rates.thirtyYearFixedAPR },
-              { label: "15-Year Fixed", rate: data.rates.fifteenYearFixed, apr: data.rates.fifteenYearFixedAPR },
-              { label: "30-Year Jumbo", rate: data.rates.thirtyYearJumbo, apr: data.rates.thirtyYearJumboAPR },
-              { label: "5/1 ARM", rate: data.rates.fiveOneArm, apr: data.rates.fiveOneArmAPR },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="bg-white rounded-lg p-2.5 flex flex-col items-center justify-center"
-                style={{ borderColor: `${primaryColor}40`, borderWidth: 1 }}
-              >
-                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-0.5">
-                  {item.label}
-                </span>
-                <span className="text-xl font-bold" style={{ color: secondaryColor }}>
-                  {item.rate}
-                </span>
-                <span className="text-[9px] text-gray-500">
-                  APR: {item.apr}
-                </span>
+        {/* Right Column: Profile Card (Correctly Centered) */}
+        <div className="md:col-span-1 flex flex-col justify-end">
+          <div className="bg-slate-950 text-white rounded-xl p-6 border border-slate-800 relative overflow-hidden">
+            {/* Background pattern effect (optional) */}
+            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-slate-800 rounded-full opacity-20 blur-xl"></div>
+
+            <div className="flex flex-col items-center text-center space-y-4 relative z-10">
+              {/* Profile Image - Fixed to use the variable defined above */}
+              <div className="relative">
+                <img
+                  src={profileImage}
+                  alt={data.broker.name || "Agent"}
+                  className="w-24 h-24 rounded-full border-4 border-amber-500 object-cover shadow-md bg-slate-800"
+                />
               </div>
-            ))}
-          </div>
-          <p className="text-center text-[9px] text-gray-500 mt-2">
-            Rates as of {data.rates.dateGenerated} • Subject to change • APR reflects total loan cost
-          </p>
-        </div>
 
-        {/* Market Insight Banner */}
-        <div className="px-6 py-2 border-y" style={{ borderColor: `${primaryColor}30`, backgroundColor: `${primaryColor}10` }}>
-          <p className="text-[10px] text-gray-700 text-center italic">
-            "{data.marketCopy.marketInsight}"
-          </p>
-        </div>
-
-        {/* Regional Insights Section */}
-        <div className="px-5 py-3 flex-1 bg-white">
-          <h2 className="text-xs font-bold mb-2 text-center uppercase tracking-wide" style={{ color: primaryColor }}>
-            Regional Market Insights
-          </h2>
-          <div className="grid grid-cols-3 gap-3 h-[calc(100%-1.25rem)]">
-            {data.regions.map((region, idx) => (
-              <div key={idx} className="flex flex-col">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <Home className="w-3 h-3" style={{ color: primaryColor }} />
-                  <h3 className="font-bold text-[11px]" style={{ color: secondaryColor }}>{region.name}</h3>
-                </div>
-                <p className="text-[9px] font-medium mb-1" style={{ color: primaryColor }}>
-                  {region.cities}
+              <div className="space-y-1 w-full">
+                <h3 className="text-xl font-serif text-amber-500 font-medium tracking-wide">
+                  {data.broker.name || "Mortgage Broker"}
+                </h3>
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                  {data.broker.title || "Mortgage Broker"}
                 </p>
-                <p className="text-[9px] text-gray-600 leading-relaxed flex-1">
-                  {region.insight}
+                <p className="text-sm font-medium text-slate-500">
+                  NMLS #{data.broker.nmls || "000000"}
                 </p>
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* CTA Section with QR Code */}
-        <div
-          className="px-4 py-3 flex items-center justify-center gap-4"
-          style={{ background: `linear-gradient(135deg, ${primaryColor}15 0%, ${secondaryColor}08 100%)` }}
-        >
-          <div className="flex flex-col items-center">
-            <p className="text-[10px] text-gray-600 mb-1.5">
-              Ready to get started? Get pre-qualified in minutes!
-            </p>
-            <button
-              className="font-bold py-2 px-6 rounded-lg shadow text-xs uppercase tracking-wide"
-              style={{ backgroundColor: primaryColor, color: secondaryColor }}
-            >
-              {data.cta.buttonText}
-            </button>
-          </div>
-          {data.cta.showQRCode && data.cta.buttonUrl && (
-            <div className="bg-white p-1.5 rounded-lg shadow-sm">
-              <QRCodeSVG
-                value={data.cta.buttonUrl}
-                size={56}
-                level="M"
-                fgColor={secondaryColor}
-              />
-              <p className="text-[7px] text-center text-gray-500 mt-0.5">Scan to apply</p>
-            </div>
-          )}
-        </div>
-
-        {/* Footer Section */}
-        <div className="px-4 py-3" style={{ height: "20%", backgroundColor: secondaryColor }}>
-          <div className="grid grid-cols-2 gap-3 h-[calc(100%-2.5rem)]">
-            {/* Broker Info - Side by side, no company badge */}
-            <div className="flex items-center gap-3 border-r border-white/20 pr-3">
-              {data.broker.headshot ? (
-                <img
-                  src={data.broker.headshot}
-                  alt={data.broker.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div className="w-14 h-14 bg-white/10 flex items-center justify-center flex-shrink-0 rounded-lg">
-                  <User className="w-6 h-6 text-white/60" />
-                </div>
-              )}
-
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-[11px]">{data.broker.name}</p>
-                <p className="text-white/70 text-[9px]">{data.broker.title} • NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <Phone className="w-2 h-2" style={{ color: primaryColor }} />
-                  <span className="text-white/90 text-[9px]">{data.broker.phone}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Mail className="w-2 h-2" style={{ color: primaryColor }} />
-                  <span className="text-white/90 text-[9px] truncate">{data.broker.email}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Globe className="w-2 h-2" style={{ color: primaryColor }} />
-                  <span className="text-white/90 text-[9px]">{data.company.website}</span>
-                </div>
+              <div className="w-full pt-4 mt-2 border-t border-slate-800 space-y-1">
+                <p className="text-xs text-slate-400 truncate">
+                  {data.broker.email}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {data.broker.phone}
+                </p>
               </div>
             </div>
-
-            {/* Realtor Info - Side by side, no company badge */}
-            <div className="flex items-center gap-3 pl-3">
-              {data.realtor.headshot ? (
-                <img
-                  src={data.realtor.headshot}
-                  alt={data.realtor.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div
-                  className="w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-lg"
-                  style={{ backgroundColor: `${primaryColor}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: primaryColor }} />
-                </div>
-              )}
-
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-semibold text-[11px]">{data.realtor.name}</p>
-                <p className="text-[9px] truncate" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
-                <p className="text-white/70 text-[9px]">{data.realtor.title}</p>
-                {data.realtor.phone && (
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Phone className="w-2 h-2" style={{ color: primaryColor }} />
-                    <span className="text-white/90 text-[9px]">{data.realtor.phone}</span>
-                  </div>
-                )}
-                <div className="flex items-center gap-1">
-                  <Mail className="w-2 h-2" style={{ color: primaryColor }} />
-                  <span className="text-white/90 text-[9px] truncate">{data.realtor.email}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Compliance Disclaimer */}
-          <div className="mt-2 pt-1.5 border-t border-white/10">
-            <p className="text-white/40 text-[6px] text-center leading-relaxed">
-              Equal Housing Opportunity. NMLS #{data.company.nmls}. Rates shown are for informational purposes only and are subject to change without notice.
-              APR (Annual Percentage Rate) reflects the total cost of the loan including fees, points, and other costs. Actual rates may vary based on credit score,
-              loan amount, down payment, and other factors. This is not a commitment to lend or a guarantee of rates. All loans subject to credit approval and underwriting.
-              Contact {data.broker.name} at {data.broker.phone} for current rates and personalized quotes.
-            </p>
           </div>
         </div>
       </div>
-    );
-  }
-);
+
+      {/* Footer Disclaimer */}
+      <div className="bg-slate-100 p-4 text-[10px] text-slate-400 text-center leading-relaxed">
+        {data.marketCopy.marketInsight ? "Rates subject to change. Equal Housing Opportunity." : "Rates subject to change."}
+      </div>
+    </div>
+  );
+});
 
 ModernLayout.displayName = "ModernLayout";

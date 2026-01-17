@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { FlyerData } from "@/types/flyer";
@@ -9,6 +9,10 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
+import LuxuryFlyerLayout from "@/components/LuxuryFlyerLayout";
+import html2canvas from "html2canvas";
+import { SocialShareCard } from "@/components/share/SocialShareCard";
+import { SmartShareButton } from "@/components/share/SmartShareButton";
 
 export default function LiveFlyer() {
   const { slug } = useParams<{ slug: string }>();
@@ -17,6 +21,9 @@ export default function LiveFlyer() {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
   const [lastRateUpdate, setLastRateUpdate] = useState<Date | null>(null);
+
+  // Ref for the social card capture (Must be at top level)
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const pageTitle = flyerData
     ? `${flyerData.broker.name} x ${flyerData.realtor.name} | Mortgage Rates`
@@ -81,6 +88,10 @@ export default function LiveFlyer() {
           thirtyYearJumboAPR: ratesData.thirtyYearJumboAPR || templateData.rates.thirtyYearJumboAPR,
           fiveOneArm: ratesData.fiveOneArm || templateData.rates.fiveOneArm,
           fiveOneArmAPR: ratesData.fiveOneArmAPR || templateData.rates.fiveOneArmAPR,
+          fha: ratesData.fha || templateData.rates.fha || "5.50%",
+          fhaAPR: ratesData.fhaAPR || templateData.rates.fhaAPR || "6.68%",
+          va: ratesData.va || templateData.rates.va || "5.50%",
+          vaAPR: ratesData.vaAPR || templateData.rates.vaAPR || "5.72%",
           dateGenerated: new Date().toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
@@ -147,125 +158,78 @@ export default function LiveFlyer() {
 
   if (!flyerData) return null;
 
+  if (!flyerData) return null;
+  const generateSocialCard = async () => {
+    if (!cardRef.current) return null;
+
+    // Helper: Wait for images to load
+    const images = Array.from(cardRef.current.querySelectorAll('img')) as HTMLImageElement[];
+    await Promise.all(images.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve; // Continue even if error
+      });
+    }));
+
+    // Generate Canvas
+    const canvas = await html2canvas(cardRef.current, {
+      scale: 2, // 2x is enough for social (2160x2160)
+      useCORS: true,
+      backgroundColor: null,
+      logging: false,
+    });
+
+    return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-x-hidden selection:bg-primary selection:text-black">
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta name="description" content={pageDescription} />
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Helmet>
+    <>
+      <LuxuryFlyerLayout
+        officer={{
+          name: flyerData.broker.name,
+          title: flyerData.broker.title,
+          nmls: flyerData.broker.nmls,
+          image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
+          imagePosition: flyerData.broker.headshotPosition,
+          imagePositionX: flyerData.broker.headshotPositionX
+        }}
+        agent={{
+          name: flyerData.realtor.name,
+          title: flyerData.realtor.title,
+          email: flyerData.realtor.email,
+          image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-celeste.jpg",
+          imagePosition: flyerData.realtor.headshotPosition,
+          imagePositionX: flyerData.realtor.headshotPositionX
+        }}
+        rates={{
+          jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
+          conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
+          fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
+          va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
+        }}
+        rateType={flyerData.rateType}
+        lastUpdated={lastRateUpdate
+          ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+          : flyerData.rates.dateGenerated
+        }
+      />
 
-      <div className="container max-w-5xl mx-auto px-4 py-8 md:py-12 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-[500px] bg-primary/10 blur-[120px] rounded-full -z-10 opacity-30 pointer-events-none" />
+      {/* Hidden Social Card for Capture */}
+      <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+        <SocialShareCard ref={cardRef} data={flyerData} shareUrl={window.location.href} />
+      </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col md:flex-row items-center justify-between mb-8 gap-4"
-        >
-          <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="bg-primary/20 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 border border-primary/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Live Market Data
-              </div>
-              <div className="bg-white/5 text-white/60 px-3 py-1 rounded-full text-[10px] font-medium uppercase tracking-widest border border-white/10 flex items-center gap-1.5">
-                <ShieldCheck className="w-3 h-3" />
-                NMLS Verified
-              </div>
-            </div>
-            <h1 className="text-2xl md:text-3xl font-light tracking-tight">
-              Personalized Rate Sheet
-            </h1>
-            {lastRateUpdate && (
-              <p className="text-white/40 text-sm mt-1">
-                Updated at {lastRateUpdate.toLocaleTimeString()} • Powered by Freddie Mac
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCopyLink}
-              className="border-white/10 bg-white/5 hover:bg-white/10 transition-all rounded-full h-10 px-6"
-            >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => fetchLiveRates(flyerData)}
-              disabled={isRefreshingRates}
-              className="border-white/10 bg-white/5 hover:bg-white/10 transition-all rounded-full h-10 px-6"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshingRates ? 'animate-spin' : ''}`} />
-              Refresh
-            </Button>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          className="relative group"
-        >
-          <div className="absolute -inset-1 bg-gradient-to-b from-primary/20 to-transparent blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
-          <div className="relative bg-[#0a0a0a] rounded-xl shadow-[0_0_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden border border-white/5 flex flex-col items-center">
-            <div className="w-full max-w-full overflow-x-auto overflow-y-hidden pb-4 md:pb-0 scrollbar-hide">
-              <div className="transform scale-[0.85] md:scale-100 py-4 md:py-0 origin-top">
-                <FlyerPreview data={flyerData} />
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6"
-        >
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center md:text-left">
-            <TrendingUp className="w-6 h-6 text-primary mb-3 mx-auto md:mx-0" />
-            <h3 className="text-sm font-medium mb-1">Live Updates</h3>
-            <p className="text-xs text-white/40 leading-relaxed">
-              These rates are fetched in real-time. Refresh this page anytime for the latest market data.
-            </p>
-          </div>
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center md:text-left">
-            <ShieldCheck className="w-6 h-6 text-primary mb-3 mx-auto md:mx-0" />
-            <h3 className="text-sm font-medium mb-1">Secure & Official</h3>
-            <p className="text-xs text-white/40 leading-relaxed">
-              Data is sourced directly from Freddie Mac’s Primary Mortgage Market Survey (PMMS).
-            </p>
-          </div>
-          <div className="p-6 rounded-2xl bg-white/5 border border-white/10 text-center md:text-left">
-            <Loader2 className="w-6 h-6 text-primary mb-3 mx-auto md:mx-0" />
-            <h3 className="text-sm font-medium mb-1">Instant Pre-Qual</h3>
-            <p className="text-xs text-white/40 leading-relaxed">
-              Click the "Apply Now" button on the flyer to start your loan application instantly.
-            </p>
-          </div>
-        </motion.div>
-
-        <div className="mt-12 pt-8 border-t border-white/5 text-center">
-          <p className="text-[10px] text-white/20 uppercase tracking-[0.3em] font-medium mb-4">
-            Compliance & Disclosures
-          </p>
-          <p className="text-[10px] text-white/30 max-w-3xl mx-auto leading-relaxed px-4">
-            Equal Housing Opportunity. Rates are for informational purposes only and are subject to change.
-            APR reflects total loan cost including estimated fees and points. This is not a commitment to lend.
-            Registered NMLS #{flyerData.broker.nmls} and #{flyerData.company.nmls}.
-          </p>
+      {/* Smart Share Button (Mobile/Desktop Action) */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-full px-4 flex justify-center pointer-events-none">
+        <div className="pointer-events-auto bg-[#050505]/90 backdrop-blur-md border border-white/10 p-4 shadow-2xl rounded-2xl max-w-sm w-full">
+          <SmartShareButton
+            onGenerateBlob={generateSocialCard}
+            title={`Live Rate Update: ${flyerData.broker.name}`}
+            text={`Check out the latest mortgage rates for ${flyerData.regions[0].name}.`}
+          />
         </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -6,6 +6,7 @@ import { FlyerData } from "@/types/flyer";
 import { supabase } from "@/integrations/supabase/client";
 import { RefreshCw, Wifi } from "lucide-react";
 import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface RatesEditorProps {
   data: FlyerData;
@@ -27,16 +28,16 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
     setIsLoading(true);
     try {
       const { data: response, error } = await supabase.functions.invoke('fetch-mortgage-rates');
-      
+
       if (error) throw error;
-      
+
       if (response?.success && response?.rates) {
         onChange({
           ...data,
           rates: response.rates,
         });
         setLastFetch(new Date().toLocaleTimeString());
-        
+
         if (response.isSimulated) {
           toast.info("Sample rates loaded", {
             description: "These are simulated rates. Configure FRED API key for real Freddie Mac data.",
@@ -78,7 +79,7 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
           {isLoading ? "Fetching..." : "Fetch Live Rates"}
         </Button>
       </div>
-      
+
       <div className="flex items-center gap-2 mb-4">
         <p className="text-xs text-muted-foreground">
           Update current mortgage rates or fetch live data.
@@ -89,6 +90,34 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
             Updated {lastFetch}
           </span>
         )}
+      </div>
+
+      <div className="mb-6 space-y-3 p-3 bg-muted/30 rounded-lg border">
+        <Label className="text-base font-semibold">Program Type</Label>
+        <RadioGroup
+          value={data.rateType || 'jumbo'}
+          onValueChange={(val) => onChange({ ...data, rateType: val as 'jumbo' | 'conventional' })}
+          className="flex gap-4"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="jumbo" id="r-jumbo" />
+            <Label htmlFor="r-jumbo" className="font-normal cursor-pointer">
+              Jumbo <span className="text-muted-foreground text-xs">(Private Client)</span>
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="conventional" id="r-conventional" />
+            <Label htmlFor="r-conventional" className="font-normal cursor-pointer">
+              Conventional
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="government" id="r-government" />
+            <Label htmlFor="r-government" className="font-normal cursor-pointer">
+              Government <span className="text-muted-foreground text-xs">(FHA/VA)</span>
+            </Label>
+          </div>
+        </RadioGroup>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -167,6 +196,30 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
             />
           </div>
         </div>
+
+        <div className="space-y-2">
+          <Label className="editor-label">FHA 30-Year</Label>
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.fha}
+              onChange={(e) => updateRate("fha", e.target.value)}
+              placeholder="5.50%"
+              className="flex-1"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="editor-label">VA 30-Year</Label>
+          <div className="flex gap-2">
+            <Input
+              value={data.rates.va}
+              onChange={(e) => updateRate("va", e.target.value)}
+              placeholder="5.50%"
+              className="flex-1"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="space-y-2 pt-2">
@@ -180,7 +233,7 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
 
       <div className="mt-4 p-3 bg-muted/50 rounded-md">
         <p className="text-xs text-muted-foreground">
-          <strong>TILA Compliance:</strong> Rates shown are for informational purposes. 
+          <strong>TILA Compliance:</strong> Rates shown are for informational purposes.
           APR reflects the actual yearly cost including fees. Rates subject to change without notice.
         </p>
       </div>

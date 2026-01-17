@@ -1,5 +1,5 @@
 import { FlyerData } from "@/types/flyer";
-import { Phone, Mail, Globe, User, Diamond, Sparkles } from "lucide-react";
+import { ArrowUpRight, ShieldCheck, TrendingDown, Landmark, Building2, Flag } from "lucide-react";
 import { forwardRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -9,231 +9,172 @@ interface LayoutProps {
 
 export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
   ({ data }, ref) => {
-    const theme = data.colorTheme;
-    const primaryColor = theme?.primary || "#B5A26E";
-    const secondaryColor = theme?.secondary || "#1C1C1C";
-    const goldAccent = "#D4AF37";
+    // PREPARE DATA
+    const jumboRate = data.rates.thirtyYearJumbo.replace('%', '');
+    const fixed30Rate = data.rates.thirtyYearFixed.replace('%', '');
+    const fixed15Rate = data.rates.fifteenYearFixed.replace('%', '');
+    const fhaRate = data.rates.fha ? data.rates.fha.replace('%', '') : '5.50';
+    const vaRate = data.rates.va ? data.rates.va.replace('%', '') : '5.50';
+
+    const isConv = data.rateType === 'conventional';
+    const isGov = data.rateType === 'government';
+
+    // Left Card
+    const label1 = isGov ? 'FHA 30-Year' : (isConv ? '30-Year Fixed' : 'Jumbo Portfolio');
+    const rate1 = isGov ? fhaRate : (isConv ? fixed30Rate : jumboRate);
+
+    // Right Card
+    const label3 = isGov ? 'VA 30-Year' : (isConv ? '15-Year Fixed' : '15-Year Acq.');
+    const rate3 = isGov ? vaRate : (isConv ? fixed15Rate : fixed15Rate);
 
     return (
       <div
         ref={ref}
-        className="bg-[#0a0a0a] w-[612px] h-[792px] shadow-2xl flex flex-col overflow-hidden relative"
+        className="bg-[#050505] w-[612px] h-[792px] shadow-2xl flex flex-col relative overflow-hidden text-slate-200"
         style={{ fontFamily: "'Playfair Display', serif" }}
       >
-        {/* Decorative corner accents */}
-        <div className="absolute top-0 left-0 w-20 h-20 border-l-2 border-t-2" style={{ borderColor: goldAccent }} />
-        <div className="absolute top-0 right-0 w-20 h-20 border-r-2 border-t-2" style={{ borderColor: goldAccent }} />
-        <div className="absolute bottom-0 left-0 w-20 h-20 border-l-2 border-b-2" style={{ borderColor: goldAccent }} />
-        <div className="absolute bottom-0 right-0 w-20 h-20 border-r-2 border-b-2" style={{ borderColor: goldAccent }} />
+        {/* AMBIENT GLOW */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-amber-500/10 blur-[80px] rounded-full pointer-events-none"></div>
 
-        {/* Elegant Header */}
-        <div className="px-8 py-6 text-center relative z-10">
-          <div className="flex items-center justify-center gap-6 mb-4">
-            <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, transparent, ${goldAccent})` }} />
-            <Diamond className="w-4 h-4" style={{ color: goldAccent }} />
-            <div className="h-px flex-1" style={{ background: `linear-gradient(90deg, ${goldAccent}, transparent)` }} />
-          </div>
-          
-          <div className="flex items-center justify-center gap-10 mb-4">
-            {data.company.logo ? (
-              <img src={data.company.logo} alt={data.company.name} className="h-12 max-w-[150px] object-contain invert" />
-            ) : (
-              <span className="text-white font-light text-xl tracking-[0.3em] uppercase">IA Mortgage</span>
-            )}
-            <span style={{ color: goldAccent }} className="text-3xl font-extralight">|</span>
-            {data.realtor.logo ? (
-              <img src={data.realtor.logo} alt={data.realtor.brokerage} className="h-12 max-w-[150px] object-contain" />
-            ) : (
-              <span style={{ color: goldAccent }} className="font-light text-xl tracking-widest uppercase">
-                {data.realtor.brokerage.split(' ').slice(0, 2).join(' ')}
-              </span>
-            )}
+        {/* --- HEADER --- */}
+        <div className="relative z-10 px-8 pt-10 pb-6 text-center border-b border-white/5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+            <span className="text-[8px] uppercase tracking-[0.2em] text-slate-400 font-medium font-sans">
+              {isGov ? 'Government Loan Update' : 'Private Client Market Update'}
+            </span>
           </div>
 
-          <h1 className="text-white text-2xl font-light tracking-wide mb-2">
-            {data.marketCopy.headline}
+          <h1 className="text-4xl font-serif text-white tracking-tight mb-3">
+            {isGov ? (
+              <>Security & <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-blue-500">Stability.</span></>
+            ) : (
+              <>Liquidity & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-amber-500">Acquisition.</span></>
+            )}
           </h1>
-          <p className="text-sm tracking-widest uppercase" style={{ color: goldAccent }}>
-            {data.marketCopy.subheading}
+
+          <p className="text-slate-400 max-w-sm mx-auto text-[10px] leading-relaxed font-sans font-light">
+            {isGov
+              ? "Accessible financing solutions with government-backed security. Low down payment options for your future."
+              : "Strategic financing structures designed for the complex portfolio. Leverage equity to secure your next property without contingency."
+            }
           </p>
         </div>
 
-        {/* Luxury Rate Cards */}
-        <div className="px-6 py-4">
-          <div className="grid grid-cols-4 gap-3">
-            {[
-              { label: "30-Year Fixed", rate: data.rates.thirtyYearFixed, apr: data.rates.thirtyYearFixedAPR },
-              { label: "15-Year Fixed", rate: data.rates.fifteenYearFixed, apr: data.rates.fifteenYearFixedAPR },
-              { label: "30-Year Jumbo", rate: data.rates.thirtyYearJumbo, apr: data.rates.thirtyYearJumboAPR },
-              { label: "5/1 ARM", rate: data.rates.fiveOneArm, apr: data.rates.fiveOneArmAPR },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="p-3 text-center relative"
-                style={{ 
-                  background: `linear-gradient(180deg, ${goldAccent}15 0%, transparent 100%)`,
-                  border: `1px solid ${goldAccent}40`
-                }}
-              >
-                <span className="text-[9px] font-light uppercase tracking-widest block mb-1" style={{ color: goldAccent }}>
-                  {item.label}
-                </span>
-                <span className="text-2xl font-light text-white block">
-                  {item.rate}
-                </span>
-                <span className="text-[9px] text-gray-500 block">
-                  APR {item.apr}
-                </span>
-              </div>
-            ))}
+        {/* --- DATA GRID --- */}
+        <div className="grid grid-cols-3 divide-x divide-white/5 bg-[#0a0a0c] border-b border-white/5">
+
+          {/* Left Card */}
+          <div className="p-6 flex flex-col items-center text-center group">
+            <div className={`mb-3 p-3 rounded-full bg-slate-900 border border-white/10 transition-colors ${isGov ? 'group-hover:border-blue-500/30' : ''}`}>
+              {isGov ? <Building2 className="w-4 h-4 text-slate-400" /> : <ShieldCheck className="w-4 h-4 text-slate-400" />}
+            </div>
+            <h3 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 font-sans">{label1}</h3>
+            <div className="flex items-start justify-center gap-0.5 mb-1">
+              <span className="text-3xl font-light text-white tracking-tighter">{rate1}</span>
+              <span className={`text-xs font-serif italic mt-1 ${isGov ? 'text-blue-500/80' : 'text-amber-500/80'}`}>%</span>
+            </div>
+            <p className="text-[8px] text-slate-500 px-1 leading-relaxed font-sans">
+              {isGov ? "Low down payment FHA financing." : "Flexible underwriting for high-net-worth liquidity."}
+            </p>
           </div>
-          <p className="text-center text-[8px] text-gray-600 mt-2 tracking-widest uppercase">
-            Rates as of {data.rates.dateGenerated}
-          </p>
+
+          {/* Bridge Strategy (Hero) */}
+          <div className="p-6 bg-gradient-to-b from-amber-900/10 to-transparent flex flex-col items-center text-center relative">
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-40"></div>
+            <div className="mb-3 p-3 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
+              <Landmark className="w-4 h-4" />
+            </div>
+            <h3 className="text-[9px] font-bold text-amber-500 uppercase tracking-widest mb-1 font-sans">Bridge Strategy</h3>
+            <div className="flex items-center justify-center h-[36px]">
+              <span className="text-xl font-serif text-white italic">Non-Contingent</span>
+            </div>
+            <p className="text-[8px] text-amber-500/80 px-1 leading-relaxed mt-1 font-sans">
+              Buy before you sell. <span className="text-slate-500">Secure the asset first.</span>
+            </p>
+          </div>
+
+          {/* Right Card */}
+          <div className="p-6 flex flex-col items-center text-center">
+            <div className={`mb-3 p-3 rounded-full bg-slate-900 border border-white/10 transition-colors ${isGov ? 'group-hover:border-red-500/30' : ''}`}>
+              {isGov ? <Flag className="w-4 h-4 text-slate-400" /> : <TrendingDown className="w-4 h-4 text-slate-400" />}
+            </div>
+            <h3 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 font-sans">{label3}</h3>
+            <div className="flex items-start justify-center gap-0.5 mb-1">
+              <span className="text-3xl font-light text-white tracking-tighter">{rate3}</span>
+              <span className={`text-xs font-serif italic mt-1 ${isGov ? 'text-red-500/80' : 'text-emerald-500/80'}`}>%</span>
+            </div>
+            <p className="text-[8px] text-slate-500 px-1 leading-relaxed font-sans">
+              {isGov ? "Zero down payment for eligible veterans." : "Accelerated equity strategy for rapid pay-down."}
+            </p>
+          </div>
         </div>
 
-        {/* Market Insight - Luxury Quote */}
-        <div className="px-10 py-4">
+        {/* --- MARKET INSIGHTS (Replacing the list with a clean paragraph) --- */}
+        <div className="flex-1 p-8 flex flex-col justify-center items-center text-center bg-[#050505]">
+          <div className="w-12 h-px bg-white/10 mb-6"></div>
+          <p className="text-amber-500/60 text-[9px] uppercase tracking-widest font-sans mb-3">Regional Market Insight</p>
+          <p className="text-white/80 font-serif italic text-lg leading-relaxed max-w-md">
+            "{data.marketCopy.marketInsight}"
+          </p>
+          <div className="w-12 h-px bg-white/10 mt-6"></div>
+        </div>
+
+        {/* --- FOOTER (TEAM) --- */}
+        <div className="bg-[#050505] p-8 flex items-center justify-between border-t border-white/10">
+
+          {/* Scott */}
+          <div className="flex items-center gap-4">
+            {data.broker.headshot ? (
+              <img
+                src={data.broker.headshot}
+                alt={data.broker.name}
+                className="w-12 h-12 rounded-full border border-slate-800 object-cover"
+                style={{ objectPosition: `${data.broker.headshotPositionX ?? (data.broker.name.includes("Scott Little") ? 35 : 50)}% ${data.broker.name.includes("Scott Little") ? 15 : (data.broker.headshotPosition ?? 15)}%` }}
+              />
+            ) : null}
+            <div className="text-left font-sans">
+              <div className="text-white font-serif text-sm tracking-wide">{data.broker.name}</div>
+              <div className="text-[8px] text-slate-500 uppercase tracking-widest font-bold">{data.broker.title}</div>
+              <div className="text-[8px] text-slate-600">NMLS #{data.broker.nmls}</div>
+              <div className="text-[8px] text-slate-600 mt-0.5">{data.broker.phone} (M)</div>
+            </div>
+          </div>
+
+          {/* QR Code / CTA */}
           <div className="text-center">
-            <Sparkles className="w-4 h-4 mx-auto mb-2" style={{ color: goldAccent }} />
-            <p className="text-white/80 text-[11px] italic leading-relaxed font-light">
-              "{data.marketCopy.marketInsight}"
-            </p>
-          </div>
-        </div>
-
-        {/* Premium Regional Insights */}
-        <div className="px-6 py-3 flex-1">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="h-px w-12" style={{ backgroundColor: goldAccent }} />
-            <h2 className="text-[10px] tracking-[0.25em] uppercase" style={{ color: goldAccent }}>
-              Exclusive Market Insights
-            </h2>
-            <div className="h-px w-12" style={{ backgroundColor: goldAccent }} />
-          </div>
-          
-          <div className="grid grid-cols-3 gap-4">
-            {data.regions.map((region, idx) => (
-              <div key={idx} className="text-center">
-                <h3 className="text-white font-light text-[12px] mb-1 tracking-wide">{region.name}</h3>
-                <p className="text-[9px] mb-1.5" style={{ color: goldAccent }}>{region.cities}</p>
-                <p className="text-[9px] text-gray-500 leading-relaxed font-light">{region.insight}</p>
+            {data.cta.showQRCode && data.cta.buttonUrl && (
+              <div className="bg-white p-1.5 rounded-sm inline-block mb-2">
+                <QRCodeSVG value={data.cta.buttonUrl} size={40} />
               </div>
-            ))}
+            )}
+            <div className="text-[7px] text-slate-500 uppercase tracking-widest font-sans">Scan for Analysis</div>
           </div>
-        </div>
 
-        {/* Luxury CTA */}
-        <div className="px-8 py-4">
-          <div 
-            className="flex items-center justify-between p-4"
-            style={{ 
-              border: `1px solid ${goldAccent}`,
-              background: `linear-gradient(90deg, ${goldAccent}10, transparent, ${goldAccent}10)`
-            }}
-          >
-            <div>
-              <p className="text-white text-[12px] font-light tracking-wide">
-                Begin Your Exclusive Journey
-              </p>
-              <p className="text-[10px] text-gray-500">Private consultation available</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <button 
-                className="font-light py-2.5 px-8 text-[10px] uppercase tracking-[0.2em]"
-                style={{ backgroundColor: goldAccent, color: "#0a0a0a" }}
-              >
-                {data.cta.buttonText}
-              </button>
-              {data.cta.showQRCode && data.cta.buttonUrl && (
-                <div className="p-1.5" style={{ backgroundColor: "white" }}>
-                  <QRCodeSVG 
-                    value={data.cta.buttonUrl} 
-                    size={44}
-                    level="M"
-                    fgColor="#0a0a0a"
-                  />
-                </div>
-              )}
+          {/* Celeste */}
+          <div className="flex items-center gap-4 flex-row-reverse text-right">
+            {data.realtor.headshot ? (
+              <img
+                src={data.realtor.headshot}
+                alt={data.realtor.name}
+                className="w-12 h-12 rounded-full border border-slate-800 object-cover"
+                style={{ objectPosition: `${data.realtor.headshotPositionX ?? (data.realtor.name.includes("Scott Little") ? 35 : 50)}% ${data.realtor.name.includes("Scott Little") ? 15 : (data.realtor.headshotPosition ?? 15)}%` }}
+              />
+            ) : null}
+            <div className="font-sans">
+              <div className="text-white font-serif text-sm tracking-wide">{data.realtor.name}</div>
+              <div className="text-[8px] text-slate-500 uppercase tracking-widest font-bold">{data.realtor.title}</div>
+              <div className="text-[8px] text-slate-600">{data.realtor.email}</div>
+              <div className="text-[8px] text-slate-600 mt-0.5">{data.realtor.phone}</div>
             </div>
           </div>
         </div>
 
-        {/* Premium Footer */}
-        <div className="px-6 py-4" style={{ backgroundColor: "#050505" }}>
-          <div className="grid grid-cols-2 gap-6">
-            {/* Broker - Side by side, no frame */}
-            <div className="flex items-center gap-3">
-              {data.broker.headshot ? (
-                <img 
-                  src={data.broker.headshot} 
-                  alt={data.broker.name}
-                  className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div 
-                  className="w-16 h-16 flex items-center justify-center flex-shrink-0 rounded-lg"
-                  style={{ border: `1px solid ${goldAccent}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: goldAccent }} />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-light text-[13px] tracking-wide">{data.broker.name}</p>
-                <p className="text-[9px]" style={{ color: goldAccent }}>{data.broker.title}</p>
-                <p className="text-gray-600 text-[8px]">NMLS #{data.broker.nmls}</p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                  <span className="text-white/80 text-[9px]">{data.broker.phone}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                  <span className="text-white/80 text-[9px]">{data.broker.email}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Realtor - Side by side, no frame */}
-            <div className="flex items-center gap-3">
-              {data.realtor.headshot ? (
-                <img 
-                  src={data.realtor.headshot} 
-                  alt={data.realtor.name}
-                  className="w-16 h-16 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div 
-                  className="w-16 h-16 flex items-center justify-center flex-shrink-0 rounded-lg"
-                  style={{ border: `1px solid ${goldAccent}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: goldAccent }} />
-                </div>
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-white font-light text-[13px] tracking-wide">{data.realtor.name}</p>
-                <p className="text-[9px]" style={{ color: goldAccent }}>{data.realtor.brokerage}</p>
-                <p className="text-gray-600 text-[8px]">{data.realtor.title}</p>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Phone className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                  <span className="text-white/80 text-[9px]">{data.realtor.phone}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-2.5 h-2.5" style={{ color: goldAccent }} />
-                  <span className="text-white/80 text-[9px]">{data.realtor.email}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Disclaimer */}
-          <div className="mt-3 pt-2" style={{ borderTop: `1px solid ${goldAccent}20` }}>
-            <p className="text-gray-700 text-[6px] text-center tracking-wide">
-              Equal Housing Opportunity. NMLS #{data.company.nmls}. Rates for informational purposes only. Subject to change. 
-              APR reflects total loan cost. Contact {data.broker.name} at {data.broker.phone} for personalized rates.
-            </p>
-          </div>
+        {/* COMPLIANCE FOOTER */}
+        <div className="pb-4 pt-0 px-8 bg-[#050505] text-center">
+          <p className="text-[7px] text-slate-700 font-sans">
+            Equal Housing Opportunity. Rates subject to change. NMLS #{data.company.nmls}. {data.realtor.brokerage}.
+          </p>
         </div>
       </div>
     );

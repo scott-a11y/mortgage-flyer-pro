@@ -1,6 +1,6 @@
 import { FlyerData, brokerageThemes } from "@/types/flyer";
 import celesteHeadshot from "@/assets/celeste-zarling-headshot.jpg";
-import scottHeadshot from "@/assets/scott-little-headshot.jpg";
+import scottHeadshot from "@/assets/scott-little-headshot.png";
 
 const today = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -12,12 +12,16 @@ export const defaultFlyerData: FlyerData = {
   rates: {
     thirtyYearFixed: "6.25%",
     thirtyYearFixedAPR: "6.45%",
-    fifteenYearFixed: "5.79%",
+    fifteenYearFixed: "5.790%",
     fifteenYearFixedAPR: "5.99%",
-    thirtyYearJumbo: "6.40%",
-    thirtyYearJumboAPR: "6.55%",
+    thirtyYearJumbo: "6.125%",
+    thirtyYearJumboAPR: "6.25%",
     fiveOneArm: "5.72%",
     fiveOneArmAPR: "6.85%",
+    fha: "5.50%",
+    fhaAPR: "6.68%",
+    va: "5.50%",
+    vaAPR: "5.72%",
     dateGenerated: today,
   },
   marketCopy: {
@@ -44,7 +48,7 @@ export const defaultFlyerData: FlyerData = {
   ],
   cta: {
     buttonText: "Start My Pre-Qualification",
-    buttonUrl: "https://www.iamortgage.org/apply",
+    buttonUrl: "https://1731464.my1003app.com/130371/register",
     showQRCode: true,
   },
   broker: {
@@ -53,8 +57,9 @@ export const defaultFlyerData: FlyerData = {
     phone: "(360) 606-1106",
     email: "scott@ialoans.com",
     nmls: "130371",
-    headshot: "https://www.nwhomeloanrates.com/wp-content/uploads/Revised-signature_02-214x300.gif",
-    headshotPosition: 45, // Show face at top of image
+    headshot: scottHeadshot,
+    headshotPosition: 15, // Show face at top of image
+    headshotPositionX: 35, // Adjust horizontal center
   },
   company: {
     name: "IA Mortgage",
@@ -77,7 +82,8 @@ export const defaultFlyerData: FlyerData = {
     logo: "",
   },
   colorTheme: brokerageThemes[0], // Century 21 default
-  layout: "modern",
+  layout: "luxury",
+  rateType: "jumbo",
 };
 
 // Pre-defined region templates for different markets

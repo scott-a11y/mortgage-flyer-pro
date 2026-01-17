@@ -8,6 +8,10 @@ export interface RateInfo {
   thirtyYearJumboAPR: string;
   fiveOneArm: string;
   fiveOneArmAPR: string;
+  fha: string;
+  fhaAPR: string;
+  va: string;
+  vaAPR: string;
   dateGenerated: string;
 }
 
@@ -37,6 +41,7 @@ export interface BrokerContact {
   nmls: string;
   headshot?: string;
   headshotPosition?: number; // 0-100, vertical position for circular crop
+  headshotPositionX?: number; // 0-100, horizontal position for circular crop
 }
 
 export interface CompanyContact {
@@ -58,6 +63,7 @@ export interface RealtorContact {
   website: string;
   headshot?: string;
   headshotPosition?: number; // 0-100, vertical position for circular crop
+  headshotPositionX?: number; // 0-100, horizontal position for circular crop
   logo?: string;
 }
 
@@ -80,21 +86,21 @@ export interface LayoutConfig {
 }
 
 export const layoutTemplates: LayoutConfig[] = [
-  { 
-    id: "modern", 
-    name: "Modern", 
+  {
+    id: "modern",
+    name: "Modern",
     description: "Clean lines, bold typography, minimal design",
     preview: "🎨"
   },
-  { 
-    id: "traditional", 
-    name: "Traditional", 
+  {
+    id: "traditional",
+    name: "Traditional",
     description: "Classic layout, professional appearance",
     preview: "📋"
   },
-  { 
-    id: "luxury", 
-    name: "Luxury", 
+  {
+    id: "luxury",
+    name: "Luxury",
     description: "Premium feel, elegant styling, gold accents",
     preview: "✨"
   },
@@ -110,6 +116,7 @@ export interface FlyerData {
   realtor: RealtorContact;
   colorTheme?: ColorTheme;
   layout?: LayoutTemplate;
+  rateType?: 'jumbo' | 'conventional' | 'government';
 }
 
 // Predefined brokerage color themes

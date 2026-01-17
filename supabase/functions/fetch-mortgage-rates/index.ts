@@ -16,25 +16,30 @@ function getFormattedDate() {
 
 // Simulated market rates (used when no API key is configured)
 function generateSimulatedRates() {
+  // Updated to match Scott Little's default preference
   const baseRates = {
-    thirtyYearFixed: 6.75,
-    fifteenYearFixed: 6.10,
-    thirtyYearJumbo: 7.05,
-    fiveOneArm: 6.45,
+    thirtyYearFixed: 6.25,
+    fifteenYearFixed: 5.79,
+    thirtyYearJumbo: 6.125,
+    fiveOneArm: 6.00,
   };
 
-  // Add small random variation (-0.125 to +0.125) to simulate market movement
-  const variation = () => (Math.random() - 0.5) * 0.25;
+  // Add small random variation (-0.05 to +0.05) to simulate market movement slightly
+  const variation = () => (Math.random() - 0.5) * 0.10;
 
   return {
-    thirtyYearFixed: `${(baseRates.thirtyYearFixed + variation()).toFixed(2)}%`,
-    thirtyYearFixedAPR: `${(baseRates.thirtyYearFixed + variation() + 0.05).toFixed(2)}%`,
-    fifteenYearFixed: `${(baseRates.fifteenYearFixed + variation()).toFixed(2)}%`,
-    fifteenYearFixedAPR: `${(baseRates.fifteenYearFixed + variation() + 0.04).toFixed(2)}%`,
-    thirtyYearJumbo: `${(baseRates.thirtyYearJumbo + variation()).toFixed(2)}%`,
-    thirtyYearJumboAPR: `${(baseRates.thirtyYearJumbo + variation() + 0.06).toFixed(2)}%`,
-    fiveOneArm: `${(baseRates.fiveOneArm + variation()).toFixed(2)}%`,
-    fiveOneArmAPR: `${(baseRates.fiveOneArm + variation() + 0.03).toFixed(2)}%`,
+    thirtyYearFixed: `${(baseRates.thirtyYearFixed + variation()).toFixed(3)}%`,
+    thirtyYearFixedAPR: `${(baseRates.thirtyYearFixed + variation() + 0.08).toFixed(3)}%`,
+    fifteenYearFixed: `${(baseRates.fifteenYearFixed + variation()).toFixed(3)}%`,
+    fifteenYearFixedAPR: `${(baseRates.fifteenYearFixed + variation() + 0.05).toFixed(3)}%`,
+    thirtyYearJumbo: `${(baseRates.thirtyYearJumbo + variation()).toFixed(3)}%`,
+    thirtyYearJumboAPR: `${(baseRates.thirtyYearJumbo + variation() + 0.1).toFixed(3)}%`,
+    fiveOneArm: `${(baseRates.fiveOneArm + variation()).toFixed(3)}%`,
+    fiveOneArmAPR: `${(baseRates.fiveOneArm + variation() + 0.04).toFixed(3)}%`,
+    fha: "5.500%",
+    fhaAPR: "6.680%",
+    va: "5.500%",
+    vaAPR: "5.720%",
     dateGenerated: getFormattedDate(),
   };
 }
