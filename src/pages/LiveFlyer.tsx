@@ -151,9 +151,19 @@ export default function LiveFlyer() {
     }
   };
 
+  const getShareUrl = () => {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal && slug) {
+      return `https://mortgage-flyer-pro.vercel.app/live/${slug}`;
+    }
+    return window.location.href;
+  };
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    toast.success("Link copied to clipboard");
+    navigator.clipboard.writeText(getShareUrl());
+    toast.success("Link copied to clipboard", {
+      description: "Link updated to production URL for sharing."
+    });
   };
 
   const handleShareImage = async () => {
@@ -230,7 +240,7 @@ export default function LiveFlyer() {
   };
 
   const handleTextClient = () => {
-    const text = `Hi, check out today's live mortgage rates here: ${window.location.href}`;
+    const text = `Hi, check out today's live mortgage rates here: ${getShareUrl()}`;
     window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
   };
 
@@ -336,7 +346,7 @@ export default function LiveFlyer() {
 
       {/* Hidden Social Card for Capture */}
       <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
-        <SocialShareCard ref={cardRef} data={flyerData} shareUrl={window.location.href} />
+        <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
       </div>
 
       {/* SMART TOOLBAR: 
