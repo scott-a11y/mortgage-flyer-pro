@@ -293,6 +293,7 @@ export default function LiveFlyer() {
         rates={{
           jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
           conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
+          fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
           fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
           va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
         }}

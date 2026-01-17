@@ -22,6 +22,7 @@ interface FlyerProps {
     rates: {
         jumbo: string;
         conventional: string;
+        fifteenYear: string;
         fha: string;
         va: string;
     };
@@ -175,7 +176,7 @@ export default function LuxuryFlyerLayout({ officer, agent, rates, lastUpdated, 
                         </h3>
                         <div className="flex items-start justify-center gap-1 mb-2">
                             <span className="text-5xl font-light text-white tracking-tighter">
-                                {isGov ? rates.va : (isConv ? rates.conventional : rates.conventional)}
+                                {isGov ? rates.va : rates.fifteenYear}
                             </span>
                             <span className={`text-lg font-serif italic mt-1 ${isGov ? 'text-red-500/80' : 'text-emerald-500/80'}`}>%</span>
                         </div>
