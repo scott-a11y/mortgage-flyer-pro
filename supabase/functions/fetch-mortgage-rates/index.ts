@@ -44,6 +44,37 @@ function generateSimulatedRates() {
   };
 }
 
+// Fetch live Jumbo rate from Mortgage News Daily
+async function fetchMndJumboRate() {
+  try {
+    const url = 'https://www.mortgagenewsdaily.com/mortgage-rates/30-year-jumbo';
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    if (!response.ok) return null;
+
+    const html = await response.text();
+
+    // Search for the daily survey header and grab the first rate that follows it
+    // The pattern looks for the header and then the first percentage value in a <td> after it
+    const mndSection = html.split("MND's 30 Year Jumbo (daily survey)")[1];
+    if (!mndSection) return null;
+
+    const rateMatch = mndSection.match(/>(\d+\.\d+)%<\/td>/);
+    if (rateMatch && rateMatch[1]) {
+      return parseFloat(rateMatch[1]);
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error scraping MND Jumbo rate:', error);
+    return null;
+  }
+}
+
 // Fetch real rates from FRED API (Freddie Mac Primary Mortgage Market Survey)
 async function fetchFredRates(apiKey: string) {
   const seriesIds = {
@@ -66,20 +97,30 @@ async function fetchFredRates(apiKey: string) {
     const data = await response.json();
     if (data.observations && data.observations.length > 0) {
       const rate = parseFloat(data.observations[0].value);
-      rates[key] = `${rate.toFixed(2)}%`;
-      rates[`${key}APR`] = `${(rate + 0.04).toFixed(2)}%`;
+      rates[key] = `${rate.toFixed(3)}%`;
+      rates[`${key}APR`] = `${(rate + 0.20).toFixed(3)}%`;
     }
   }
 
-  // FRED doesn't have jumbo rates, so we estimate them based on 30-year fixed
-  const thirtyYearBase = parseFloat(rates.thirtyYearFixed) || 6.75;
-  rates.thirtyYearJumbo = `${(thirtyYearBase + 0.30).toFixed(2)}%`;
-  rates.thirtyYearJumboAPR = `${(thirtyYearBase + 0.36).toFixed(2)}%`;
+  // Use MND for Jumbo rate
+  const mndJumbo = await fetchMndJumboRate();
+  const thirtyYearBase = parseFloat(rates.thirtyYearFixed) || 6.125;
+
+  if (mndJumbo) {
+    rates.thirtyYearJumbo = `${mndJumbo.toFixed(3)}%`;
+    rates.thirtyYearJumboAPR = `${(mndJumbo + 0.20).toFixed(3)}%`;
+    rates.jumboSource = 'Mortgage News Daily';
+  } else {
+    // Fallback to the 0.30% rule if MND fails
+    rates.thirtyYearJumbo = `${(thirtyYearBase + 0.30).toFixed(3)}%`;
+    rates.thirtyYearJumboAPR = `${(thirtyYearBase + 0.50).toFixed(3)}%`;
+    rates.jumboSource = 'Estimated (FRED + 0.30%)';
+  }
 
   // If we couldn't fetch 5/1 ARM, use a fallback estimation
   if (!rates.fiveOneArm) {
-    rates.fiveOneArm = `${(thirtyYearBase - 0.30).toFixed(2)}%`;
-    rates.fiveOneArmAPR = `${(thirtyYearBase - 0.27).toFixed(2)}%`;
+    rates.fiveOneArm = `${(thirtyYearBase - 0.30).toFixed(3)}%`;
+    rates.fiveOneArmAPR = `${(thirtyYearBase - 0.27).toFixed(3)}%`;
   }
 
   rates.dateGenerated = getFormattedDate();
