@@ -61,7 +61,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
 
     // Card 3
     const label3 = isGovernment ? 'VA 30-Year' : (isConventional ? '15-Yr Fixed' : '15-Yr Acq.');
-    const value3 = isGovernment ? rVA : (isConventional ? rFixed15 : rFixed15);
+    const value3 = isGovernment ? rVA : rFixed15;
 
     const headline = isGovernment ? 'Security & Stability' : 'Liquidity & Acquisition';
     const subhead = isGovernment ? 'Government Loan Update' : 'Private Client Market Update';

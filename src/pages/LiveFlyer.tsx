@@ -164,10 +164,12 @@ export default function LiveFlyer() {
       const blob = await generateSocialCard();
       if (!blob) throw new Error("Generation failed");
 
+      // Check for mobile vs desktop
+      // Desktop navigator.share (Windows/macOS) is unreliable for local files
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       const file = new File([blob], 'rate-update.png', { type: 'image/png' });
 
-      // If mobile supports sharing
-      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
         toast.dismiss(toastId);
         await navigator.share({
           files: [file],
@@ -175,7 +177,21 @@ export default function LiveFlyer() {
           text: `Check out today's live rates from ${flyerData?.broker.name} at ${flyerData?.company.name}.`,
         });
       } else {
-        // Desktop Fallback: Download the file
+        // Desktop / Fallback: 
+        // 1. Try to Copy to Clipboard (High convenience for socials/slack)
+        let copied = false;
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            await navigator.clipboard.write([
+              new ClipboardItem({ [blob.type]: blob })
+            ]);
+            copied = true;
+          }
+        } catch (clipErr) {
+          console.log("Clipboard fallback failed:", clipErr);
+        }
+
+        // 2. Trigger Download (Safe fallback)
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -186,14 +202,22 @@ export default function LiveFlyer() {
         URL.revokeObjectURL(url);
 
         toast.dismiss(toastId);
-        toast.success("Flyer downloaded!", {
-          description: "On desktop, sharing triggers a direct download of the image."
-        });
+        if (copied) {
+          toast.success("Image copied & downloaded!", {
+            description: "You can now paste it directly into messages or social media."
+          });
+        } else {
+          toast.success("Flyer downloaded!", {
+            description: "Sharing sheet not available on desktop; image saved to your downloads."
+          });
+        }
       }
     } catch (err) {
       console.error("Sharing failed:", err);
       toast.dismiss(toastId);
-      toast.error("Could not share image");
+      toast.error("Could not share image", {
+        description: "Please try 'Copy Link' instead."
+      });
     } finally {
       setIsGenerating(false);
     }
