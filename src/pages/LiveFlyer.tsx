@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet-async";
 import { FlyerData } from "@/types/flyer";
 import { FlyerPreview } from "@/components/flyer/FlyerPreview";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, AlertCircle, RefreshCw, Share2, ShieldCheck, TrendingUp } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Share2, MessageCircle, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,6 +21,7 @@ export default function LiveFlyer() {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshingRates, setIsRefreshingRates] = useState(false);
   const [lastRateUpdate, setLastRateUpdate] = useState<Date | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Ref for the social card capture (Must be at top level)
   const cardRef = useRef<HTMLDivElement>(null);
@@ -155,6 +156,54 @@ export default function LiveFlyer() {
     toast.success("Link copied to clipboard");
   };
 
+  const handleShareImage = async () => {
+    setIsGenerating(true);
+    const toastId = toast.loading("Capturing flyer...");
+
+    try {
+      const blob = await generateSocialCard();
+      if (!blob) throw new Error("Generation failed");
+
+      const file = new File([blob], 'rate-update.png', { type: 'image/png' });
+
+      // If mobile supports sharing
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        toast.dismiss(toastId);
+        await navigator.share({
+          files: [file],
+          title: `Rate Update: ${flyerData?.broker.name}`,
+          text: `Check out today's live rates from ${flyerData?.broker.name} at ${flyerData?.company.name}.`,
+        });
+      } else {
+        // Desktop Fallback: Download the file
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `mortgage-rates-${new Date().toISOString().split('T')[0]}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        toast.dismiss(toastId);
+        toast.success("Flyer downloaded!", {
+          description: "On desktop, sharing triggers a direct download of the image."
+        });
+      }
+    } catch (err) {
+      console.error("Sharing failed:", err);
+      toast.dismiss(toastId);
+      toast.error("Could not share image");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleTextClient = () => {
+    const text = `Hi, check out today's live mortgage rates here: ${window.location.href}`;
+    window.location.href = `sms:?&body=${encodeURIComponent(text)}`;
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] text-white">
@@ -259,14 +308,52 @@ export default function LiveFlyer() {
         <SocialShareCard ref={cardRef} data={flyerData} shareUrl={window.location.href} />
       </div>
 
-      {/* Smart Share Button (Mobile/Desktop Action) */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-full px-4 flex justify-center pointer-events-none">
-        <div className="pointer-events-auto bg-[#050505]/90 backdrop-blur-md border border-white/10 p-4 shadow-2xl rounded-2xl max-w-sm w-full">
-          <SmartShareButton
-            onGenerateBlob={generateSocialCard}
-            title={`Rate Update: Scott Little | IA Mortgage`}
-            text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
-          />
+      {/* SMART TOOLBAR: 
+         - Mobile: Fixed at bottom, full width.
+         - Desktop: Floats in the center bottom, rounded corners.
+      */}
+      <div className="fixed bottom-0 md:bottom-6 left-0 right-0 p-4 md:p-0 z-50 flex justify-center pointer-events-none">
+        <div className="w-full max-w-md bg-slate-900/95 backdrop-blur-md border border-slate-800 p-4 md:rounded-2xl shadow-2xl pointer-events-auto">
+
+          <div className="flex flex-col gap-3">
+
+            {/* Primary Action */}
+            <Button
+              onClick={handleShareImage}
+              disabled={isGenerating}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-12 rounded-xl text-lg shadow-lg flex items-center justify-center gap-2"
+            >
+              {isGenerating ? <Loader2 className="animate-spin" /> : <Share2 className="w-5 h-5" />}
+              Share Flyer Image
+            </Button>
+
+            {/* Secondary Actions */}
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={handleTextClient}
+                variant="secondary"
+                className="bg-slate-800 text-white hover:bg-slate-700 h-11 rounded-lg border border-slate-700"
+              >
+                <MessageCircle className="w-4 h-4 mr-2 text-green-400" />
+                Text Link
+              </Button>
+
+              <Button
+                onClick={handleCopyLink}
+                variant="secondary"
+                className="bg-slate-800 text-white hover:bg-slate-700 h-11 rounded-lg border border-slate-700"
+              >
+                <LinkIcon className="w-4 h-4 mr-2 text-blue-400" />
+                Copy Link
+              </Button>
+            </div>
+
+            {/* Desktop Hint */}
+            <p className="hidden md:block text-center text-[10px] text-slate-500">
+              On desktop? 'Share' will download the image.
+            </p>
+
+          </div>
         </div>
       </div>
     </>
