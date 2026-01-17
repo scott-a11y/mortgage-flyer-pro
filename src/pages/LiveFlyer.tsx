@@ -166,7 +166,10 @@ export default function LiveFlyer() {
 
       // Check for mobile vs desktop
       // Desktop navigator.share (Windows/macOS) is unreliable for local files
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      const userAgent = navigator.userAgent;
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+      console.log("Sharing trigger:", { isMobile, userAgent });
+
       const file = new File([blob], 'rate-update.png', { type: 'image/png' });
 
       if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {

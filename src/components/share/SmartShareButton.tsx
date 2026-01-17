@@ -24,10 +24,12 @@ export const SmartShareButton = ({
             const blob = await onGenerateBlob();
             if (!blob) throw new Error("Failed to generate image");
 
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             const file = new File([blob], 'rate-flyer.png', { type: 'image/png' });
 
-            // Check if the browser supports sharing FILES (Mobile mostly)
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            // Check if the browser supports sharing FILES AND it's a mobile device
+            // (Windows/macOS native share for local blobs is extremely unreliable)
+            if (isMobile && navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
                 toast.dismiss(toastId);
                 await navigator.share({
                     files: [file],
@@ -36,12 +38,44 @@ export const SmartShareButton = ({
                 });
                 toast.success("Shared successfully!");
             } else {
-                throw new Error("Native file sharing not supported");
+                // Desktop / Unreliable fallback
+                let copied = false;
+                try {
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ [blob.type]: blob })
+                        ]);
+                        copied = true;
+                    }
+                } catch (clipErr) {
+                    console.log("Clipboard fallback failed:", clipErr);
+                }
+
+                // Trigger Download
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `mortgage-rates-${new Date().toISOString().split('T')[0]}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                toast.dismiss(toastId);
+                if (copied) {
+                    toast.success("Image copied & downloaded!", {
+                        description: "Paste it directly into Instagram or Messages."
+                    });
+                } else {
+                    toast.success("Flyer downloaded!", {
+                        description: "Sharing sheet not available; image saved to downloads."
+                    });
+                }
             }
         } catch (error) {
-            console.log("Fallback to clipboard/download", error);
+            console.log("Sharing failed:", error);
             toast.dismiss(toastId);
-            handleFallbackShare();
+            toast.error("Could not share image");
         } finally {
             setIsSharing(false);
         }
