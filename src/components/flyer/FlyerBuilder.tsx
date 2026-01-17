@@ -73,8 +73,8 @@ export function FlyerBuilder() {
                   const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true });
                   return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
                 }}
-                title={`Rate Update: ${data.marketCopy.headline || "Market Update"}`}
-                text={`Check out the latest mortgage rates for ${data.regions[0].name || "local market"}. #RealEstate`}
+                title={`Rate Update: Scott Little | IA Mortgage`}
+                text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
               />
             </div>
           </div>

@@ -241,8 +241,8 @@ export default function LiveFlyer() {
         <div className="pointer-events-auto bg-[#050505]/90 backdrop-blur-md border border-white/10 p-4 shadow-2xl rounded-2xl max-w-sm w-full">
           <SmartShareButton
             onGenerateBlob={generateSocialCard}
-            title={`Live Rate Update: ${flyerData.broker.name}`}
-            text={`Check out the latest mortgage rates for ${flyerData.regions[0].name}.`}
+            title={`Rate Update: Scott Little | IA Mortgage`}
+            text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
           />
         </div>
       </div>

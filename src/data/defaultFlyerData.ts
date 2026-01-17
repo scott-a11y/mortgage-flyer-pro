@@ -25,8 +25,8 @@ export const defaultFlyerData: FlyerData = {
     dateGenerated: today,
   },
   marketCopy: {
-    headline: "Competitive Mortgage Rates Available!",
-    subheading: "Take advantage of today's rates in the Greater Seattle & Portland Areas",
+    headline: "Liquidity & Acquisition",
+    subheading: "Private Client Market Update",
     marketInsight: "Current market conditions offer opportunities for buyers. Contact us for a personalized quote and rate lock options.",
   },
   regions: [
