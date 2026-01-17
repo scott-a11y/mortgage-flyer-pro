@@ -357,13 +357,11 @@ export default function LiveFlyer() {
       */}
       <div
         style={{
-          position: 'fixed',
-          top: 0,
+          position: 'absolute',
+          top: '-10000px',
           left: 0,
-          opacity: 0,
+          visibility: 'hidden',
           pointerEvents: 'none',
-          zIndex: -1,
-          overflow: 'hidden',
           width: 1080,
           height: 1080
         }}
