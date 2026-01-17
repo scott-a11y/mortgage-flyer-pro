@@ -207,24 +207,31 @@ export default function LiveFlyer() {
           console.warn("Clipboard failed:", clipErr);
         }
 
-        // 2. Trigger Download (Safe fallback)
+        // 2. Trigger Download (with delay for browser compatibility)
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.download = `mortgage-rates-${new Date().toISOString().split('T')[0]}.png`;
+        link.style.display = 'none';
         document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+
+        // Small delay ensures download works reliably
+        setTimeout(() => {
+          link.click();
+          setTimeout(() => {
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+          }, 100);
+        }, 100);
 
         toast.dismiss(toastId);
         if (copied) {
-          toast.success("Ready to Paste!", {
-            description: "Image copied to clipboard. Go to your email/social and press Ctrl+V."
+          toast.success("Image Ready!", {
+            description: "Copied to clipboard + downloading to your computer."
           });
         } else {
-          toast.success("Flyer downloaded!", {
-            description: "Sharing sheet not available on desktop; image saved to your downloads."
+          toast.success("Downloading...", {
+            description: "Check your Downloads folder for the flyer image."
           });
         }
       }
