@@ -19,9 +19,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Save, FolderOpen, Trash2, ChevronDown, Loader2 } from "lucide-react";
+import { Save, FolderOpen, Trash2, ChevronDown, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { agentPartners, AgentPartnerProfile } from "@/data/agentPartners";
+import { UserPlus, UserPlus2 } from "lucide-react";
+import { AgentRegistrationForm } from "./AgentRegistrationForm";
+import { RealtorContact } from "@/types/flyer";
 
 interface SavedTemplate {
   id: string;
@@ -41,33 +45,100 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
   const [templateName, setTemplateName] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [registeredPartners, setRegisteredPartners] = useState<AgentPartnerProfile[]>([]);
+  const [registrationDialogOpen, setRegistrationDialogOpen] = useState(false);
 
-  // Fetch templates from database
+  // Fetch templates from database (or localStorage fallback)
   useEffect(() => {
     fetchTemplates();
   }, []);
 
+  const isSupabaseConfigured = () => {
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    return url && !url.includes('placeholder.supabase.co');
+  };
+
   const fetchTemplates = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('flyer_templates')
-        .select('*')
-        .order('created_at', { ascending: false });
+      let fetchedTemplates: SavedTemplate[] = [];
 
-      if (error) throw error;
-      
-      setTemplates(data?.map(t => ({
-        id: t.id,
-        name: t.name,
-        data: t.data as unknown as FlyerData,
-        created_at: t.created_at
-      })) || []);
+      if (isSupabaseConfigured()) {
+        const { data, error } = await supabase
+          .from('flyer_templates')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          fetchedTemplates = data.map(t => ({
+            id: t.id,
+            name: t.name,
+            data: t.data as unknown as FlyerData,
+            created_at: t.created_at
+          }));
+        }
+      }
+
+      // Load from localStorage as fallback or addition
+      const localTemplatesJson = localStorage.getItem('flyer_templates_local');
+      if (localTemplatesJson) {
+        const localTemplates = JSON.parse(localTemplatesJson);
+        // Merge without duplicates (by ID)
+        const existingIds = new Set(fetchedTemplates.map(t => t.id));
+        localTemplates.forEach((lt: SavedTemplate) => {
+          if (!existingIds.has(lt.id)) {
+            fetchedTemplates.push(lt);
+          }
+        });
+      }
+
+      setTemplates(fetchedTemplates.sort((a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      ));
     } catch (error) {
       console.error('Error fetching templates:', error);
-      toast.error("Failed to load templates");
+      if (isSupabaseConfigured()) {
+        toast.error("Failed to load cloud templates");
+      }
     } finally {
       setIsLoading(false);
+    }
+
+    // Fetch registered agents
+    if (isSupabaseConfigured()) {
+      try {
+        const { data, error } = await supabase
+          .from('agent_profiles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!error && data) {
+          const partners: AgentPartnerProfile[] = data.map(p => ({
+            id: p.id,
+            name: p.name,
+            realtor: {
+              name: p.name,
+              title: p.title || "REALTOR®",
+              phone: p.phone || "",
+              email: p.email || "",
+              brokerage: p.brokerage || "",
+              website: p.website || "",
+              headshot: p.headshot_url || "",
+              license_number: p.license_number || ""
+            } as any, // Using any here to bypass strict typing for now if needed, but should match RealtorContact
+            colorTheme: {
+              id: `custom-${p.id}`,
+              name: p.brokerage || "Custom",
+              primary: p.color_primary || "#000000",
+              secondary: p.color_secondary || "#FFFFFF",
+              accent: p.color_accent || "#D4AF37"
+            }
+          }));
+          setRegisteredPartners(partners);
+        }
+      } catch (error) {
+        console.error('Error fetching registered agents:', error);
+      }
     }
   };
 
@@ -79,28 +150,41 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
 
     setIsSaving(true);
     try {
-      const { data, error } = await supabase
-        .from('flyer_templates')
-        .insert([{
-          name: templateName.trim(),
-          data: JSON.parse(JSON.stringify(currentData))
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      const newTemplate: SavedTemplate = {
-        id: data.id,
-        name: data.name as string,
-        data: data.data as unknown as FlyerData,
-        created_at: data.created_at
+      const newId = crypto.randomUUID();
+      const createdAt = new Date().toISOString();
+      const templateToSave: SavedTemplate = {
+        id: newId,
+        name: templateName.trim(),
+        data: JSON.parse(JSON.stringify(currentData)),
+        created_at: createdAt
       };
 
-      setTemplates(prev => [newTemplate, ...prev]);
+      // Try saving to Supabase if configured
+      if (isSupabaseConfigured()) {
+        try {
+          const { error } = await supabase
+            .from('flyer_templates')
+            .insert([{
+              id: newId,
+              name: templateName.trim(),
+              data: templateToSave.data as any
+            }]);
+          if (error) throw error;
+        } catch (supaErr) {
+          console.warn("Cloud save failed, using local only", supaErr);
+        }
+      }
+
+      // Always save to localStorage for persistence/offline
+      const localTemplatesJson = localStorage.getItem('flyer_templates_local');
+      const localTemplates = localTemplatesJson ? JSON.parse(localTemplatesJson) : [];
+      localTemplates.unshift(templateToSave);
+      localStorage.setItem('flyer_templates_local', JSON.stringify(localTemplates));
+
+      setTemplates(prev => [templateToSave, ...prev]);
       setTemplateName("");
       setSaveDialogOpen(false);
-      toast.success(`Template "${newTemplate.name}" saved!`);
+      toast.success(`Template "${templateToSave.name}" saved!`);
     } catch (error) {
       console.error('Error saving template:', error);
       toast.error("Failed to save template");
@@ -116,12 +200,21 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
 
   const handleDelete = async (templateId: string, templateName: string) => {
     try {
-      const { error } = await supabase
-        .from('flyer_templates')
-        .delete()
-        .eq('id', templateId);
+      // Delete from Supabase if configured
+      if (isSupabaseConfigured()) {
+        await supabase
+          .from('flyer_templates')
+          .delete()
+          .eq('id', templateId);
+      }
 
-      if (error) throw error;
+      // Always delete from localStorage
+      const localTemplatesJson = localStorage.getItem('flyer_templates_local');
+      if (localTemplatesJson) {
+        const localTemplates = JSON.parse(localTemplatesJson);
+        const filtered = localTemplates.filter((t: SavedTemplate) => t.id !== templateId);
+        localStorage.setItem('flyer_templates_local', JSON.stringify(filtered));
+      }
 
       setTemplates(prev => prev.filter(t => t.id !== templateId));
       toast.success(`Deleted template "${templateName}"`);
@@ -133,6 +226,28 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
 
   return (
     <div className="flex items-center gap-2">
+      {/* Registration Dialog */}
+      <Dialog open={registrationDialogOpen} onOpenChange={setRegistrationDialogOpen}>
+        <DialogTrigger asChild>
+          <Button variant="ghost" size="sm" className="hidden md:flex gap-1.5 h-8 text-xs text-muted-foreground hover:text-primary">
+            <UserPlus2 className="w-3.5 h-3.5" />
+            Join as Partner
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[600px] overflow-y-auto max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>Partner Registration</DialogTitle>
+            <DialogDescription>
+              Register your professional profile to appear in the partner registry.
+            </DialogDescription>
+          </DialogHeader>
+          <AgentRegistrationForm onSuccess={() => {
+            setRegistrationDialogOpen(false);
+            fetchTemplates(); // Refresh both lists
+          }} />
+        </DialogContent>
+      </Dialog>
+
       {/* Save Template Dialog */}
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogTrigger asChild>
@@ -150,7 +265,7 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
           </DialogHeader>
           <div className="py-4">
             <Input
-              placeholder="Template name (e.g., 'Celeste - Kirkland')"
+              placeholder="Template name (e.g., 'Adrian - Portland')"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && !isSaving && handleSave()}
@@ -223,6 +338,71 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
               </DropdownMenuItem>
             ))
           )}
+
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="flex items-center gap-2">
+            <UserPlus className="w-3.5 h-3.5" />
+            Partner Profiles
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {agentPartners.map((partner) => (
+            <DropdownMenuItem
+              key={partner.id}
+              className="cursor-pointer"
+              onClick={() => {
+                onLoadTemplate({
+                  ...currentData,
+                  realtor: partner.realtor,
+                  colorTheme: partner.colorTheme,
+                });
+                toast.success(`Switched to ${partner.name}'s profile`);
+              }}
+            >
+              <div className="flex flex-col">
+                <span className="font-medium">{partner.name}</span>
+                <span className="text-[10px] text-muted-foreground">{partner.realtor.brokerage}</span>
+              </div>
+            </DropdownMenuItem>
+          ))}
+
+          {registeredPartners.length > 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
+                Registered Partners
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {registeredPartners.map((partner) => (
+                <DropdownMenuItem
+                  key={partner.id}
+                  className="cursor-pointer"
+                  onClick={() => {
+                    onLoadTemplate({
+                      ...currentData,
+                      realtor: partner.realtor,
+                      colorTheme: partner.colorTheme,
+                    });
+                    toast.success(`Switched to ${partner.name}'s profile`);
+                  }}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium">{partner.name}</span>
+                    <span className="text-[10px] text-muted-foreground">{partner.realtor.brokerage}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </>
+          )}
+
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="cursor-pointer text-primary focus:text-primary font-medium"
+            onClick={() => setRegistrationDialogOpen(true)}
+          >
+            <UserPlus2 className="w-4 h-4 mr-2" />
+            Join as a Partner
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

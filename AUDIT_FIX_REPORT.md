@@ -11,7 +11,11 @@ All security vulnerabilities have been successfully resolved through npm audit f
 
 ---
 
-## Audit Results
+## Audit ResultsAnd that should be a main toolbar where everything is housed. I also don't see a tape measure where I can measure walls to set the scale. 
+
+This is still really challenging to use. I don't like the way that the wall tool just clicks around. Should be able to exit out of it when I hit spacebar or something to go back to the select button. 
+
+Thank you. 
 
 ### Before Audit Fix
 - **Total Vulnerabilities:** 7

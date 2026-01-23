@@ -97,13 +97,14 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                 fontFamily: 'Inter, system-ui, sans-serif',
                 overflow: 'hidden'
             }}
+            data-capture="banner"
             ref={ref}
         >
             {/* AMBIENT GLOW */}
             <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 800, height: 400, background: 'rgba(212, 175, 55, 0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
 
             {/* HEADER */}
-            <div style={{ padding: '80px 60px 60px', textAlign: 'center', zIndex: 10 }}>
+            <div style={{ padding: '60px 60px 30px', textAlign: 'center', zIndex: 10 }}>
                 <div style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -111,7 +112,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     padding: '8px 24px',
                     border: '1px solid rgba(255,255,255,0.1)',
                     borderRadius: 50,
-                    marginBottom: 40,
+                    marginBottom: 30,
                     background: 'rgba(255,255,255,0.03)'
                 }}>
                     <div style={{ width: 8, height: 8, background: GOLD, borderRadius: '50%' }} />
@@ -145,7 +146,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
             }}>
                 {/* LEFT CARD */}
                 <div style={{
-                    padding: 60,
+                    padding: '40px 30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -169,7 +170,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     </div>
                     <div style={{ color: '#64748b', fontSize: 18, textTransform: 'uppercase', letterSpacing: 3, fontWeight: 700, marginBottom: 16 }}>{label1}</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value1}</span>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 90, letterSpacing: '-0.05em' }}>{value1}</span>
                         <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#60a5fa' : GOLD, marginTop: 12 }}>%</span>
                     </div>
                     <div style={{ color: '#666', fontSize: 14, marginTop: 8, letterSpacing: 1 }}>
@@ -182,7 +183,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
 
                 {/* CENTER CARD (HERO) */}
                 <div style={{
-                    padding: 60,
+                    padding: '40px 30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -214,7 +215,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
 
                 {/* RIGHT CARD */}
                 <div style={{
-                    padding: 60,
+                    padding: '40px 30px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -238,7 +239,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     </div>
                     <div style={{ color: '#64748b', fontSize: 18, textTransform: 'uppercase', letterSpacing: 3, fontWeight: 700, marginBottom: 16 }}>{label3}</div>
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 4 }}>
-                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 96, letterSpacing: '-0.05em' }}>{value3}</span>
+                        <span style={{ fontFamily: 'Inter, sans-serif', fontWeight: 300, color: 'white', fontSize: 90, letterSpacing: '-0.05em' }}>{value3}</span>
                         <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 32, color: isGovernment ? '#ef4444' : '#10b981', marginTop: 12 }}>%</span>
                     </div>
                     <div style={{ color: '#666', fontSize: 14, marginTop: 8, letterSpacing: 1 }}>
@@ -252,7 +253,7 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
 
             {/* FOOTER */}
             <div style={{
-                padding: '50px 80px',
+                padding: '40px 80px 60px',
                 display: 'flex',
                 flexWrap: 'nowrap',
                 justifyContent: 'space-between',
@@ -264,10 +265,10 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     {data.broker.headshot && (
                         <HeadshotImage
                             src={data.broker.headshot}
-                            alt=""
-                            size={120}
-                            positionY={getY(data.broker.name, data.broker.headshotPosition)}
+                            alt={data.broker.name}
+                            size={100}
                             positionX={getX(data.broker.name, data.broker.headshotPositionX)}
+                            positionY={getY(data.broker.name, data.broker.headshotPosition)}
                         />
                     )}
                     <div>
@@ -285,15 +286,15 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     <div style={{ color: '#444', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>Scan Me</div>
                 </div>
 
-                {/* CELESTE */}
+                {/* ADRIAN */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexDirection: 'row-reverse', textAlign: 'right' }}>
                     {data.realtor.headshot && (
                         <HeadshotImage
                             src={data.realtor.headshot}
-                            alt=""
-                            size={120}
-                            positionY={getY(data.realtor.name, data.realtor.headshotPosition)}
+                            alt={data.realtor.name}
+                            size={100}
                             positionX={getX(data.realtor.name, data.realtor.headshotPositionX)}
+                            positionY={getY(data.realtor.name, data.realtor.headshotPosition)}
                         />
                     )}
                     <div>

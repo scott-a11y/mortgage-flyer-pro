@@ -1,6 +1,4 @@
 import { FlyerData, brokerageThemes } from "@/types/flyer";
-import celesteHeadshot from "@/assets/celeste-zarling-headshot.jpg";
-import scottHeadshot from "@/assets/scott-little-headshot.png";
 
 const today = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -57,9 +55,8 @@ export const defaultFlyerData: FlyerData = {
     phone: "(360) 606-1106",
     email: "scott@ialoans.com",
     nmls: "130371",
-    headshot: scottHeadshot,
-    headshotPosition: 15, // Show face at top of image
-    headshotPositionX: 35, // Adjust horizontal center
+    headshot: "/scott-little-headshot.png",
+    headshotPosition: 10,
   },
   company: {
     name: "IA Mortgage",
@@ -77,9 +74,9 @@ export const defaultFlyerData: FlyerData = {
     email: "cmzarling@gmail.com",
     brokerage: "Century 21 North Homes - Kirkland",
     website: "www.century21northhomes.com",
-    headshot: celesteHeadshot,
-    headshotPosition: 45, // Default to show upper portion of face
     logo: "",
+    headshot: "/celeste-zarling-headshot.jpg",
+    headshotPosition: 40,
   },
   colorTheme: brokerageThemes[0], // Century 21 default
   layout: "luxury",
@@ -124,36 +121,36 @@ export const regionTemplates = {
   ],
   portlandVancouver: [
     {
-      name: "Portland",
-      cities: "Downtown, Pearl District, Alberta Arts",
-      insight: "Portland metro continues to see steady demand with diverse neighborhoods offering unique character and walkability.",
+      name: "Northeast Portland",
+      cities: "Alberta Arts, Concordia, Williams District",
+      insight: "High demand for historic homes and walkable urban amenities. Williams/Vancouver corridor remains a top-tier investment zone.",
     },
     {
-      name: "Vancouver",
-      cities: "Downtown, Salmon Creek, Camas",
-      insight: "Clark County remains active for buyers seeking value near Portland with no state income tax advantage.",
+      name: "North Portland",
+      cities: "St. Johns, Kenton, Overlook",
+      insight: "Rapid appreciation driven by neighborhood character and proximity to downtown. Overlook offers premium views and park access.",
     },
     {
-      name: "Lake Oswego",
-      cities: "Downtown, First Addition, Lake Grove",
-      insight: "Premium Lake Oswego market attracts buyers seeking excellent schools and waterfront living.",
+      name: "Southeast Portland",
+      cities: "Hawthorne, Division, Richmond",
+      insight: "Iconic Portland lifestyle with strong buyer interest. Division corridor continues to set local benchmarks for modern urban living.",
     },
   ],
-  celesteServiceAreas: [
+  adrianServiceAreas: [
     {
-      name: "Seattle Eastside",
-      cities: "Kirkland, Bellevue, Redmond, Sammamish",
-      insight: "Kirkland's waterfront appeal and tech proximity drive consistent demand. Strong school districts attract families seeking long-term value.",
+      name: "Portland Metro",
+      cities: "Northeast, North, & Southeast Portland",
+      insight: "Portland's core neighborhoods maintain strong resilience. Walkable districts with unique business cores continue to drive premium value.",
     },
     {
-      name: "Seattle Metro",
-      cities: "Seattle, Shoreline, Bothell, Edmonds",
-      insight: "Light rail expansion continues to transform the market. Buyers find excellent transit access with growing urban amenities.",
+      name: "Close-in Eastside",
+      cities: "Buckman, Kerns, Laurelhurst",
+      insight: "Historic charm meets urban convenience. High demand for well-preserved period homes in established neighborhood settings.",
     },
     {
-      name: "Eastside Communities",
-      cities: "Issaquah, Woodinville, Mercer Island",
-      insight: "Sought-after communities with excellent schools, outdoor recreation, and growing tech employment centers.",
+      name: "Clark County",
+      cities: "Vancouver, Camas, Ridgefield",
+      insight: "Strong alternative for buyers seeking value near Portland with significant growth in new developments and lifestyle amenities.",
     },
   ],
 } as const;

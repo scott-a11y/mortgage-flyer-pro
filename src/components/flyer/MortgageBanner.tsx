@@ -13,23 +13,15 @@ export function MortgageBanner({ data, shareUrl }: MortgageBannerProps) {
       {/* Main Content Area */}
       <div className="p-6">
         <div className="grid grid-cols-3 gap-6 items-center">
-          
+
           {/* LEFT: Broker */}
           <div className="flex items-center gap-3">
-            {data.broker.headshot && (
-              <img
-                src={data.broker.headshot}
-                alt={data.broker.name}
-                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
-                style={{ objectPosition: `center ${data.broker.headshotPosition ?? 15}%` }}
-              />
-            )}
             <div>
               <p className="text-white font-semibold text-sm">{data.broker.name}</p>
               <p className="text-zinc-500 text-xs">NMLS #{data.broker.nmls}</p>
               <p className="text-zinc-400 text-xs mt-1">{data.broker.phone}</p>
-              <a 
-                href="https://www.iamortgage.org" 
+              <a
+                href="https://www.iamortgage.org"
                 className="text-zinc-400 text-xs hover:text-white transition-colors"
               >
                 www.iamortgage.org
@@ -62,14 +54,14 @@ export function MortgageBanner({ data, shareUrl }: MortgageBannerProps) {
               <p className="text-zinc-500 text-xs">{data.realtor.title}</p>
               <p className="text-zinc-500 text-[11px]">{data.realtor.brokerage}</p>
               <p className="text-zinc-400 text-xs mt-1">{data.realtor.phone}</p>
-              <a 
-                href={`mailto:${data.realtor.email}`} 
+              <a
+                href={`mailto:${data.realtor.email}`}
                 className="text-zinc-400 text-xs block hover:text-white transition-colors"
               >
                 {data.realtor.email}
               </a>
               {data.realtor.website && (
-                <a 
+                <a
                   href={`https://${data.realtor.website}`}
                   className="text-zinc-400 text-xs hover:text-white transition-colors"
                 >
@@ -77,14 +69,6 @@ export function MortgageBanner({ data, shareUrl }: MortgageBannerProps) {
                 </a>
               )}
             </div>
-            {data.realtor.headshot && (
-              <img
-                src={data.realtor.headshot}
-                alt={data.realtor.name}
-                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
-                style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-              />
-            )}
           </div>
         </div>
       </div>
@@ -92,7 +76,7 @@ export function MortgageBanner({ data, shareUrl }: MortgageBannerProps) {
       {/* Footer Bar */}
       <div className="bg-zinc-800/50 px-6 py-3">
         <div className="flex items-center justify-between">
-          
+
           {/* Button */}
           <button className="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-4 py-2 rounded-full flex items-center gap-1.5 transition-colors">
             View Live Rates <ArrowRight className="w-3.5 h-3.5" />

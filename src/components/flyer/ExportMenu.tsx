@@ -40,6 +40,13 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
+        onclone: (clonedDoc) => {
+          const element = clonedDoc.body.querySelector('[data-capture="flyer"]');
+          if (element instanceof HTMLElement) {
+            element.style.transform = 'none';
+            element.style.margin = '0';
+          }
+        }
       });
       const link = document.createElement("a");
       link.download = filename || `mortgage-flyer-${Date.now()}.png`;
@@ -63,6 +70,12 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
+        onclone: (clonedDoc) => {
+          const element = clonedDoc.body.querySelector('[data-capture="flyer"]');
+          if (element instanceof HTMLElement) {
+            element.style.transform = 'none';
+          }
+        }
       });
       const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF({
@@ -108,16 +121,22 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
   const exportSocialFormat = async (format: ExportFormat) => {
     if (!previewRef.current) return;
     setIsExporting(true);
-    
+
     const config = exportFormats.find(f => f.format === format);
     if (!config) return;
-    
+
     try {
       const canvas = await html2canvas(previewRef.current, {
         scale: config.scale,
         useCORS: true,
         backgroundColor: "#ffffff",
         logging: false,
+        onclone: (clonedDoc) => {
+          const element = clonedDoc.body.querySelector('[data-capture="flyer"]');
+          if (element instanceof HTMLElement) {
+            element.style.transform = 'none';
+          }
+        }
       });
 
       // Create a new canvas with the target dimensions
@@ -125,23 +144,23 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
       targetCanvas.width = config.width;
       targetCanvas.height = config.height;
       const ctx = targetCanvas.getContext("2d");
-      
+
       if (ctx) {
         // Use white background
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, config.width, config.height);
-        
+
         // Calculate scaling to fit content
         const scale = Math.min(
           config.width / canvas.width,
           config.height / canvas.height
         );
-        
+
         const scaledWidth = canvas.width * scale;
         const scaledHeight = canvas.height * scale;
         const x = (config.width - scaledWidth) / 2;
         const y = (config.height - scaledHeight) / 2;
-        
+
         ctx.drawImage(canvas, x, y, scaledWidth, scaledHeight);
       }
 
@@ -185,7 +204,7 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
           <CreditCard className="w-4 h-4 mr-2" />
           Postcard (6×4)
         </DropdownMenuItem>
-        
+
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Social Media</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => exportSocialFormat("instagram")} disabled={isExporting}>
@@ -200,7 +219,7 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
           <Linkedin className="w-4 h-4 mr-2" />
           LinkedIn Post (1200×627)
         </DropdownMenuItem>
-        
+
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Other</DropdownMenuLabel>
         <DropdownMenuItem onClick={() => exportSocialFormat("email-sig")} disabled={isExporting}>

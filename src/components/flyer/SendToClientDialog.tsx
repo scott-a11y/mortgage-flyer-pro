@@ -95,7 +95,7 @@ ${currentData.company.website || ''}`
     try {
       const slug = generateSlug();
 
-      const { error } = await supabase
+      const { data: flyer, error } = await supabase
         .from("flyer_templates")
         .insert([
           {
@@ -112,7 +112,7 @@ ${currentData.company.website || ''}`
 
       // Track flyer generation
       track('FlyerGenerated', {
-        flyerId: data?.id,
+        flyerId: flyer?.id,
         flyerName: templateName.trim(),
         broker: currentData.broker.name,
         realtor: currentData.realtor.name,
@@ -170,11 +170,14 @@ ${currentData.company.website || ''}`
       const canvas = await html2canvas(bannerRef.current, {
         scale: 4, // Higher scale for sharper images
         useCORS: true,
-        allowTaint: true,
-        backgroundColor: null,
+        backgroundColor: "#050505",
         logging: false,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
+          const banner = clonedDoc.querySelector('[data-capture="banner"]');
+          if (banner instanceof HTMLElement) {
+            banner.style.transform = 'none';
+          }
           // Ensure images in cloned doc have crossOrigin set
           const images = clonedDoc.querySelectorAll('img');
           images.forEach((img) => {
@@ -262,7 +265,7 @@ ${currentData.company.website || ''}`
             </Button>
 
             <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground">
-              <strong>What you'll get:</strong> A live link + downloadable banner showing both your headshots, current rates, and QR code.
+              <strong>What you'll get:</strong> A live link + downloadable banner showing current rates and QR code.
             </div>
           </div>
         ) : (
@@ -309,6 +312,7 @@ ${currentData.company.website || ''}`
               <div className="rounded-lg overflow-hidden border" style={{ width: '100%' }}>
                 <div
                   ref={bannerRef}
+                  data-capture="banner"
                   style={{
                     width: 600,
                     height: 220,
@@ -330,21 +334,6 @@ ${currentData.company.website || ''}`
                   }}>
                     {/* Left - Broker */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                      {currentData.broker.headshot && (
-                        <img
-                          src={currentData.broker.headshot}
-                          alt={currentData.broker.name}
-                          crossOrigin="anonymous"
-                          style={{
-                            width: 80,
-                            height: 80,
-                            objectFit: 'cover',
-                            objectPosition: 'center top',
-                            borderRadius: 10,
-                            border: '2px solid rgba(255,255,255,0.2)'
-                          }}
-                        />
-                      )}
                       <div style={{ textAlign: 'center' }}>
                         <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{currentData.broker.name}</div>
                         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>NMLS #{currentData.broker.nmls}</div>
@@ -373,21 +362,6 @@ ${currentData.company.website || ''}`
 
                     {/* Right - Realtor */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                      {currentData.realtor.headshot && (
-                        <img
-                          src={currentData.realtor.headshot}
-                          alt={currentData.realtor.name}
-                          crossOrigin="anonymous"
-                          style={{
-                            width: 80,
-                            height: 80,
-                            objectFit: 'cover',
-                            objectPosition: 'center top',
-                            borderRadius: 10,
-                            border: '2px solid rgba(255,255,255,0.2)'
-                          }}
-                        />
-                      )}
                       <div style={{ textAlign: 'center' }}>
                         <div style={{ color: 'white', fontWeight: 700, fontSize: 13, lineHeight: 1.3 }}>{currentData.realtor.name}</div>
                         <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 9 }}>{currentData.realtor.brokerage}</div>

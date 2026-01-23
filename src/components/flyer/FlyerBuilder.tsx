@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Loader2, Share2, Sparkles } from "lucide-react";
 import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
+import { useFlyerCapture } from "@/hooks/useFlyerCapture";
 
 export function FlyerBuilder() {
   const { data, updateData, resetData, isLoading } = useFlyer();
+  const { captureImage, isExporting: isCapturing } = useFlyerCapture();
   const [isExporting, setIsExporting] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -63,14 +65,10 @@ export function FlyerBuilder() {
                 Distribute Flyer
               </h3>
               <SmartShareButton
-                onGenerateBlob={async () => {
-                  const { default: html2canvas } = await import('html2canvas');
-                  if (!previewRef.current) return null;
-                  const canvas = await html2canvas(previewRef.current, { scale: 2, useCORS: true });
-                  return new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-                }}
+                onGenerateBlob={() => captureImage(previewRef.current)}
                 title={`Rate Update: Scott Little | IA Mortgage`}
                 text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
+                isLoading={isCapturing}
               />
             </div>
 

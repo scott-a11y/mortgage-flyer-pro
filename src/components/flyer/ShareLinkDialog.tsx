@@ -135,7 +135,7 @@ export function ShareLinkDialog({ currentData }: ShareLinkDialogProps) {
               <Label htmlFor="flyer-name">Flyer Name</Label>
               <Input
                 id="flyer-name"
-                placeholder="e.g., Spring 2025 Rates - Celeste"
+                placeholder="e.g., Spring 2025 Rates - Adrian"
                 value={templateName}
                 onChange={(e) => setTemplateName(e.target.value)}
                 disabled={isCreating}

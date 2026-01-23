@@ -5,8 +5,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// HARDCODED FOR TESTING - MOVE TO ENV VAR IN PRODUCTION
-const OPENAI_API_KEY = "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";
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -38,37 +37,44 @@ Realtor: ${realtor.name}, ${realtor.title} at ${realtor.brokerage}
 Service Areas: ${regions.map((r: { name: string }) => r.name).join(', ')}
     `.trim();
 
-    const systemPrompt = `You are an expert mortgage marketing copywriter who creates compelling, professional flyer content for mortgage brokers and real estate agents. Your copy should:
-- Be concise, impactful, and action-oriented
-- Highlight the value proposition of current rates
-- Create urgency without being pushy
-- Sound professional and trustworthy
-- Be appropriate for a co-branded mortgage/realtor flyer
+    const systemPrompt = `You are an elite mortgage marketing strategist and copywriter. You create high-conversion, professional flyer content for top-tier mortgage brokers and real estate partners.
 
-Always return a JSON object with this exact structure:
+Your copy must:
+- Be sophisticated, authoritative, yet accessible.
+- Focus on "Strategic Acquisition" and "Wealth Building" rather than just "Interest Rates".
+- Use "Power Words" like: Leverage, Opportunity, Strategic, Equity, Portfolio, Acquisition.
+- Highlight the synergy between the Mortgage Broker's financial expertise and the Realtor's market knowledge.
+- Be extremely concise (respecting max word counts).
+
+Return a JSON object with this exact structure:
 {
-  "headline": "A punchy, attention-grabbing headline (max 8 words)",
-  "subheading": "A supporting subheading that expands on the value (max 15 words)",
-  "marketInsight": "A brief market insight paragraph (2-3 sentences, max 50 words)",
+  "headline": "Punchy headline (max 8 words) focusing on current opportunity",
+  "subheading": "Supporting subheading (max 15 words) bridging rates and market value",
+  "marketInsight": "Strategic market insight (max 50 words) focused on the current economic climate for buyers",
   "regionInsights": [
-    { "name": "Region Name", "insight": "Brief local market insight (max 20 words)" }
+    { 
+      "name": "Region Name", 
+      "insight": "Specific local market driver (max 25 words). E.g., 'Inventory in [City] is shifting, creating a unique window for non-contingent buyers.'" 
+    }
   ]
 }`;
 
-    const userPrompt = `Generate compelling marketing copy for a co-branded mortgage rate flyer based on this data:
+    const userPrompt = `Generate premium marketing copy for a co-branded flyer.
 
+DATA CONTEXT:
 ${rateContext}
 
+PARTNERS:
 ${professionalContext}
 
-Service Regions:
+SERVICE REGIONS:
 ${regionContext}
 
-Create engaging copy that:
-1. Highlights the current rate environment
-2. Creates a sense of opportunity
-3. Positions both the broker and realtor as trusted advisors
-4. Includes region-specific insights for each service area`;
+GOALS:
+1. Frame the current rate environment as a "Strategic Window of Opportunity".
+2. Position the broker (${broker.name}) as a liquidity expert and the realtor (${realtor.name}) as a local market authority.
+3. Ensure each region has a distinct, professional insight that feels "insider" and specific.
+4. If rates are low, focus on "Buying Power". If rates are steady, focus on "Inventory Advantage".`;
 
     console.log('Generating market insights with OpenAI...');
 

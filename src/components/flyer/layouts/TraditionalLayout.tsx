@@ -2,6 +2,8 @@ import { FlyerData } from "@/types/flyer";
 import { Phone, Mail, Globe, User, MapPin, TrendingUp } from "lucide-react";
 import { forwardRef } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { FlyerProfileImage } from "../shared/FlyerProfileImage";
+import { FlyerLegal } from "../shared/FlyerLegal";
 
 interface LayoutProps {
   data: FlyerData;
@@ -16,13 +18,14 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
     return (
       <div
         ref={ref}
-        className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col overflow-hidden"
+        data-capture="flyer"
+        className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col relative overflow-hidden font-sans"
         style={{ fontFamily: "'Georgia', serif" }}
       >
         {/* Classic Header with border */}
-        <div 
+        <div
           className="px-6 py-5 text-center"
-          style={{ 
+          style={{
             backgroundColor: "#fefefe",
             borderBottom: `3px double ${primaryColor}`
           }}
@@ -89,9 +92,9 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
 
         {/* Market Insight Quote Box */}
         <div className="px-8 py-3">
-          <div 
+          <div
             className="p-4 relative"
-            style={{ 
+            style={{
               backgroundColor: `${primaryColor}08`,
               borderLeft: `4px solid ${primaryColor}`
             }}
@@ -110,8 +113,8 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
           </h2>
           <div className="grid grid-cols-3 gap-3">
             {data.regions.map((region, idx) => (
-              <div 
-                key={idx} 
+              <div
+                key={idx}
                 className="p-3 rounded"
                 style={{ backgroundColor: `${secondaryColor}05`, border: `1px solid ${primaryColor}20` }}
               >
@@ -127,7 +130,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
         </div>
 
         {/* CTA Banner */}
-        <div 
+        <div
           className="px-6 py-3 flex items-center justify-between"
           style={{ backgroundColor: primaryColor }}
         >
@@ -140,7 +143,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <button 
+            <button
               className="font-bold py-2 px-5 rounded text-[11px] uppercase tracking-wide"
               style={{ backgroundColor: secondaryColor, color: "white" }}
             >
@@ -148,8 +151,8 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </button>
             {data.cta.showQRCode && data.cta.buttonUrl && (
               <div className="bg-white p-1.5 rounded">
-                <QRCodeSVG 
-                  value={data.cta.buttonUrl} 
+                <QRCodeSVG
+                  value={data.cta.buttonUrl}
                   size={44}
                   level="M"
                   fgColor={secondaryColor}
@@ -164,21 +167,12 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
           <div className="grid grid-cols-2 gap-4">
             {/* Broker - Side by side, no frame */}
             <div className="flex items-center gap-3 pr-4" style={{ borderRight: `1px solid ${primaryColor}40` }}>
-              {data.broker.headshot ? (
-                <img 
-                  src={data.broker.headshot} 
-                  alt={data.broker.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div 
-                  className="w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-lg"
-                  style={{ backgroundColor: `${primaryColor}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: primaryColor }} />
-                </div>
-              )}
+              <FlyerProfileImage
+                src={data.broker.headshot}
+                alt={data.broker.name}
+                position={data.broker.headshotPosition}
+                className="w-14 h-14 rounded-full border border-white/20"
+              />
               <div className="flex-1 min-w-0">
                 <p className="text-white font-bold text-[12px]">{data.broker.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.broker.title}</p>
@@ -196,21 +190,12 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
 
             {/* Realtor - Side by side, no frame */}
             <div className="flex items-center gap-3 pl-2">
-              {data.realtor.headshot ? (
-                <img 
-                  src={data.realtor.headshot} 
-                  alt={data.realtor.name}
-                  className="w-14 h-14 object-cover flex-shrink-0 rounded-lg"
-                  style={{ objectPosition: 'center top' }}
-                />
-              ) : (
-                <div 
-                  className="w-14 h-14 flex items-center justify-center flex-shrink-0 rounded-lg"
-                  style={{ backgroundColor: `${primaryColor}30` }}
-                >
-                  <User className="w-6 h-6" style={{ color: primaryColor }} />
-                </div>
-              )}
+              <FlyerProfileImage
+                src={data.realtor.headshot}
+                alt={data.realtor.name}
+                position={data.realtor.headshotPosition}
+                className="w-14 h-14 rounded-full border border-white/20"
+              />
               <div className="flex-1 min-w-0">
                 <p className="text-white font-bold text-[12px]">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
@@ -228,13 +213,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
           </div>
 
           {/* Disclaimer */}
-          <div className="mt-3 pt-2" style={{ borderTop: `1px solid ${primaryColor}30` }}>
-            <p className="text-white/30 text-[6px] text-center">
-              Equal Housing Opportunity. NMLS #{data.company.nmls}. Rates for informational purposes only, subject to change. 
-              APR reflects total loan cost. Actual rates vary. Not a commitment to lend. All loans subject to approval. 
-              Contact {data.broker.name} at {data.broker.phone} for details.
-            </p>
-          </div>
+          <FlyerLegal data={data} className="mt-3 pt-2 text-white/30 border-t border-white/10" />
         </div>
       </div>
     );

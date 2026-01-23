@@ -1,6 +1,8 @@
 import React, { forwardRef } from "react";
 import { FlyerData } from "@/types/flyer";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { FlyerProfileImage } from "../shared/FlyerProfileImage";
+import { FlyerLegal } from "../shared/FlyerLegal";
 
 interface LayoutProps {
   data: FlyerData;
@@ -13,7 +15,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
   const realtor = data.realtor;
 
   return (
-    <div ref={ref} className="w-full h-full bg-white shadow-none overflow-hidden flex flex-col relative">
+    <div ref={ref} data-capture="flyer" className="w-full h-full bg-white shadow-none overflow-hidden flex flex-col relative">
       {/* Hero Section */}
       <div className="relative h-[45%] w-full bg-slate-200">
         <img
@@ -62,21 +64,12 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
 
           {/* Main Broker Card - CENTERED */}
           <div className="bg-slate-950 text-white rounded-2xl p-6 relative overflow-hidden text-center flex flex-col items-center shadow-xl">
-            {/* Profile Image */}
-            <div className="relative mb-4">
-              {broker.headshot ? (
-                <img
-                  src={broker.headshot}
-                  alt={broker.name}
-                  className="w-24 h-24 rounded-full border-4 border-amber-500 object-cover shadow-lg bg-slate-800"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full border-4 border-slate-700 bg-slate-800 flex items-center justify-center text-xl font-bold text-slate-400">
-                  {broker.name?.charAt(0) || "S"}
-                </div>
-              )}
-            </div>
-
+            <FlyerProfileImage
+              src={broker.headshot}
+              alt={broker.name}
+              position={broker.headshotPosition}
+              className="w-20 h-20 rounded-full border-2 border-amber-500/20 mb-4 shadow-inner"
+            />
             <h3 className="text-xl font-serif text-amber-500 font-medium tracking-wide mb-1">
               {broker.name || "Scott Little"}
             </h3>
@@ -98,16 +91,19 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
           {/* Co-Brand Card (Realtor) */}
           {realtor && realtor.name && (
             <div className="bg-slate-50 rounded-xl p-4 flex items-center gap-3 border border-slate-200">
-              {realtor.headshot ? (
-                <img src={realtor.headshot} className="w-12 h-12 rounded-full object-cover border border-slate-300 bg-slate-200" alt={realtor.name} />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-xs font-bold text-slate-400">
-                  {realtor.name.charAt(0)}
-                </div>
-              )}
+              <FlyerProfileImage
+                src={realtor.headshot}
+                alt={realtor.name}
+                position={realtor.headshotPosition}
+                className="w-10 h-10 rounded-full border border-slate-200"
+              />
               <div className="text-left overflow-hidden">
                 <p className="text-xs font-bold text-slate-900 truncate">{realtor.name}</p>
-                <p className="text-[10px] text-slate-500 truncate">{realtor.brokerage || "Real Estate Professional"}</p>
+                <p className="text-[10px] text-slate-500 truncate mb-1">{realtor.brokerage || "Real Estate Professional"}</p>
+                <div className="flex flex-col gap-0.5 text-[9px] text-slate-400">
+                  <div className="flex items-center gap-1"><Phone className="w-2.5 h-2.5 opacity-50" /> {realtor.phone}</div>
+                  <div className="flex items-center gap-1"><Mail className="w-2.5 h-2.5 opacity-50" /> {realtor.email}</div>
+                </div>
               </div>
             </div>
           )}
@@ -116,9 +112,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
       </div>
 
       {/* Footer Legal */}
-      <div className="bg-slate-50 p-3 text-[9px] text-slate-400 text-center border-t border-slate-200">
-        Rates subject to change. {data.company.name} NMLS #{data.company.nmls}. Equal Housing Opportunity.
-      </div>
+      <FlyerLegal data={data} className="p-3 bg-slate-50" />
     </div>
   );
 });

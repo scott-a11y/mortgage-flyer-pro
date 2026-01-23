@@ -76,7 +76,7 @@ export interface ColorTheme {
 }
 
 // Layout template types
-export type LayoutTemplate = "modern" | "traditional" | "luxury";
+export type LayoutTemplate = "modern" | "traditional" | "luxury" | "bbys";
 
 export interface LayoutConfig {
   id: LayoutTemplate;
@@ -103,6 +103,12 @@ export const layoutTemplates: LayoutConfig[] = [
     name: "Luxury",
     description: "Premium feel, elegant styling, gold accents",
     preview: "✨"
+  },
+  {
+    id: "bbys",
+    name: "Buy Before You Sell",
+    description: "Specialized flow for sellers moving to a new home",
+    preview: "🏠"
   },
 ];
 

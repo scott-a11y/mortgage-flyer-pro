@@ -7,11 +7,10 @@ interface ImageUploaderProps {
   label: string;
   value?: string;
   onChange: (url: string) => void;
-  type: "headshot" | "logo";
   placeholder?: string;
 }
 
-export function ImageUploader({ label, value, onChange, type, placeholder }: ImageUploaderProps) {
+export function ImageUploader({ label, value, onChange, placeholder }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,23 +36,17 @@ export function ImageUploader({ label, value, onChange, type, placeholder }: Ima
       <Label className="editor-label">{label}</Label>
       <div className="flex items-center gap-3">
         {/* Preview */}
-        <div 
-          className={`flex-shrink-0 flex items-center justify-center bg-muted border rounded-lg overflow-hidden ${
-            type === "headshot" ? "w-14 h-14 rounded-full" : "w-20 h-12"
-          }`}
+        <div
+          className="flex-shrink-0 flex items-center justify-center bg-muted border rounded-lg overflow-hidden w-20 h-12"
         >
           {value ? (
-            <img 
-              src={value} 
-              alt={label} 
+            <img
+              src={value}
+              alt={label}
               className="w-full h-full object-cover"
             />
           ) : (
-            type === "headshot" ? (
-              <User className="w-6 h-6 text-muted-foreground" />
-            ) : (
-              <Building className="w-6 h-6 text-muted-foreground" />
-            )
+            <Building className="w-6 h-6 text-muted-foreground" />
           )}
         </div>
 

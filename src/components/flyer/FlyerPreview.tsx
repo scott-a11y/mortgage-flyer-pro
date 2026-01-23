@@ -1,6 +1,6 @@
 import { FlyerData, LayoutTemplate } from "@/types/flyer";
 import { forwardRef } from "react";
-import { ModernLayout, TraditionalLayout, LuxuryLayout } from "./layouts";
+import { ModernLayout, TraditionalLayout, LuxuryLayout, BBYSLayout } from "./layouts";
 
 interface FlyerPreviewProps {
   data: FlyerData;
@@ -15,6 +15,8 @@ export const FlyerPreview = forwardRef<HTMLDivElement, FlyerPreviewProps>(
         return <TraditionalLayout ref={ref} data={data} />;
       case "luxury":
         return <LuxuryLayout ref={ref} data={data} />;
+      case "bbys":
+        return <BBYSLayout ref={ref} data={data} />;
       case "modern":
       default:
         return <ModernLayout ref={ref} data={data} />;

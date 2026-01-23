@@ -6,18 +6,21 @@ interface SmartShareProps {
     onGenerateBlob: () => Promise<Blob | null>;
     title?: string;
     text?: string;
+    isLoading?: boolean;
 }
 
 export const SmartShareButton = ({
     onGenerateBlob,
     title = "Check out this new listing!",
-    text = "Contact me for the latest rates. #RealEstate #Mortgage"
+    text = "Contact me for the latest rates. #RealEstate #Mortgage",
+    isLoading = false
 }: SmartShareProps) => {
-    const [isSharing, setIsSharing] = useState(false);
+    const [isInternalLoading, setIsInternalLoading] = useState(false);
+    const isBusy = isLoading || isInternalLoading;
 
     // 1. The Magic "Native Share" Function
     const handleNativeShare = async () => {
-        setIsSharing(true);
+        setIsInternalLoading(true);
         const toastId = toast.loading("Preparing optimized image...");
 
         try {
@@ -80,7 +83,7 @@ export const SmartShareButton = ({
             toast.dismiss(toastId);
             toast.error("Could not share image");
         } finally {
-            setIsSharing(false);
+            setIsInternalLoading(false);
         }
     };
 
@@ -119,10 +122,10 @@ export const SmartShareButton = ({
             {/* The "One Tap" Hero Button */}
             <button
                 onClick={handleNativeShare}
-                disabled={isSharing}
+                disabled={isBusy}
                 className="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold py-4 px-6 rounded-xl shadow-xl flex items-center justify-center gap-3 transition-transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-                {isSharing ? (
+                {isBusy ? (
                     "Preparing..."
                 ) : (
                     <>

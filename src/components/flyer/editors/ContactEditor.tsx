@@ -50,51 +50,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
-            <ImageUploader
-              label="Headshot Photo"
-              value={data.broker.headshot}
-              onChange={(url) => updateBroker("headshot", url)}
-              type="headshot"
-              placeholder="Upload a professional headshot"
-            />
-            
-            {/* Headshot Position Slider */}
-            {data.broker.headshot && (
-              <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
-                <Label className="editor-label flex items-center gap-2">
-                  <span>Photo Position</span>
-                  <span className="text-muted-foreground text-xs font-normal">
-                    (Adjust vertical crop)
-                  </span>
-                </Label>
-                <div className="flex items-center gap-4">
-                  {/* Preview circle */}
-                  <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50">
-                    <img 
-                      src={data.broker.headshot}
-                      alt="Position preview"
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: `center ${data.broker.headshotPosition ?? 25}%` }}
-                    />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <Slider
-                      value={[data.broker.headshotPosition ?? 25]}
-                      onValueChange={(value) => updateBroker("headshotPosition", value[0])}
-                      min={0}
-                      max={100}
-                      step={5}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>Top (0%)</span>
-                      <span className="font-medium">{data.broker.headshotPosition ?? 25}%</span>
-                      <span>Bottom (100%)</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Name</Label>
@@ -131,6 +87,25 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
                 />
               </div>
             </div>
+            <div className="space-y-4">
+              <ImageUploader
+                label="Broker Headshot"
+                value={data.broker.headshot}
+                onChange={(url) => updateBroker("headshot", url)}
+                placeholder="Upload Scott's photo"
+              />
+              {data.broker.headshot && (
+                <div className="space-y-2">
+                  <Label className="editor-label">Headshot Position (Y)</Label>
+                  <Slider
+                    value={[data.broker.headshotPosition || 50]}
+                    onValueChange={([val]) => updateBroker("headshotPosition", val)}
+                    max={100}
+                    step={1}
+                  />
+                </div>
+              )}
+            </div>
             <div className="space-y-2">
               <Label className="editor-label">Email</Label>
               <Input
@@ -155,7 +130,6 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
               label="Company Logo"
               value={data.company.logo}
               onChange={(url) => updateCompany("logo", url)}
-              type="logo"
               placeholder="Upload IA Loans logo"
             />
             <div className="space-y-2">
@@ -214,67 +188,38 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
-            <div className="grid grid-cols-2 gap-4">
-              <ImageUploader
-                label="Agent Headshot"
-                value={data.realtor.headshot}
-                onChange={(url) => updateRealtor("headshot", url)}
-                type="headshot"
-                placeholder="Agent photo"
-              />
+            <div className="space-y-4">
               <ImageUploader
                 label="Brokerage Logo"
                 value={data.realtor.logo}
                 onChange={(url) => updateRealtor("logo", url)}
-                type="logo"
                 placeholder="Brokerage logo"
               />
-            </div>
-            
-            {/* Realtor Headshot Position Slider */}
-            {data.realtor.headshot && (
-              <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
-                <Label className="editor-label flex items-center gap-2">
-                  <span>Photo Position</span>
-                  <span className="text-muted-foreground text-xs font-normal">
-                    (Adjust vertical crop)
-                  </span>
-                </Label>
-                <div className="flex items-center gap-4">
-                  {/* Preview circle */}
-                  <div className="flex-shrink-0 w-16 h-16 rounded-full overflow-hidden border-2 border-primary/50">
-                    <img 
-                      src={data.realtor.headshot}
-                      alt="Position preview"
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: `center ${data.realtor.headshotPosition ?? 25}%` }}
-                    />
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <Slider
-                      value={[data.realtor.headshotPosition ?? 25]}
-                      onValueChange={(value) => updateRealtor("headshotPosition", value[0])}
-                      min={0}
-                      max={100}
-                      step={5}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-[10px] text-muted-foreground">
-                      <span>Top (0%)</span>
-                      <span className="font-medium">{data.realtor.headshotPosition ?? 25}%</span>
-                      <span>Bottom (100%)</span>
-                    </div>
-                  </div>
+              <ImageUploader
+                label="Agent Headshot"
+                value={data.realtor.headshot}
+                onChange={(url) => updateRealtor("headshot", url)}
+                placeholder="Upload photo"
+              />
+              {data.realtor.headshot && (
+                <div className="space-y-2">
+                  <Label className="editor-label">Headshot Position (Y)</Label>
+                  <Slider
+                    value={[data.realtor.headshotPosition || 50]}
+                    onValueChange={([val]) => updateRealtor("headshotPosition", val)}
+                    max={100}
+                    step={1}
+                  />
                 </div>
-              </div>
-            )}
+              )}
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="editor-label">Agent Name</Label>
                 <Input
                   value={data.realtor.name}
                   onChange={(e) => updateRealtor("name", e.target.value)}
-                  placeholder="Celeste Zarling"
+                  placeholder="Adrian Mitchell"
                 />
               </div>
               <div className="space-y-2">

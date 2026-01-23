@@ -80,6 +80,38 @@ export default function LiveFlyer() {
     }
   }, [slug]);
 
+  // Track page view for analytics
+  useEffect(() => {
+    if (!slug || !flyerData) return;
+
+    const trackPageView = async () => {
+      try {
+        const referrer = document.referrer || 'Direct';
+        const userAgent = navigator.userAgent;
+
+        // Call Supabase Edge Function to track view
+        const { error } = await supabase.functions.invoke('track-flyer-view', {
+          body: {
+            flyer_slug: slug,
+            referrer,
+            user_agent: userAgent
+          }
+        });
+
+        if (error) {
+          console.warn('Analytics tracking failed:', error);
+        }
+      } catch (err) {
+        console.warn('Analytics tracking error:', err);
+      }
+    };
+
+    // Track after a short delay to ensure page is loaded
+    const timer = setTimeout(trackPageView, 1000);
+    return () => clearTimeout(timer);
+  }, [slug, flyerData]);
+
+
   const fetchLiveRates = async (templateData: FlyerData) => {
     setIsRefreshingRates(true);
 
@@ -320,105 +352,120 @@ export default function LiveFlyer() {
   };
 
   return (
-    <>
-      <LuxuryFlyerLayout
-        officer={{
-          name: flyerData.broker.name,
-          title: flyerData.broker.title,
-          nmls: flyerData.broker.nmls,
-          image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
-          imagePosition: flyerData.broker.headshotPosition,
-          imagePositionX: flyerData.broker.headshotPositionX
-        }}
-        agent={{
-          name: flyerData.realtor.name,
-          title: flyerData.realtor.title,
-          email: flyerData.realtor.email,
-          image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-celeste.jpg",
-          imagePosition: flyerData.realtor.headshotPosition,
-          imagePositionX: flyerData.realtor.headshotPositionX
-        }}
-        rates={{
-          jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
-          conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
-          fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
-          fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
-          va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
-        }}
-        rateType={flyerData.rateType}
-        lastUpdated={lastRateUpdate
-          ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-          : flyerData.rates.dateGenerated
-        }
-      />
+    <div className="min-h-screen bg-[#050505] flex flex-col">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+      </Helmet>
 
-      {/* Hidden Social Card for Capture: 
-          Using opacity: 0 instead of visibility:hidden because the QR code canvas needs
-          to initialize with proper dimensions. visibility:hidden causes 0-width canvas.
-      */}
-      <div
-        style={{
-          position: 'absolute',
-          top: '-10000px',
-          left: 0,
-          opacity: 0,
-          pointerEvents: 'none',
-          width: 1080,
-          height: 1080
-        }}
-        aria-hidden="true"
-      >
-        <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
-      </div>
+      {/* TOP MENU BAR */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-white/5 px-4 h-16 flex items-center justify-between shadow-2xl">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+            <Share2 className="w-4 h-4 text-amber-500" />
+          </div>
+          <div className="hidden sm:block">
+            <h1 className="text-white font-medium text-sm leading-none mb-1">Mortgage Rate Flyer</h1>
+            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Live Portal</p>
+          </div>
+        </div>
 
-      {/* SMART TOOLBAR: 
-         - Mobile: Fixed at bottom, full width.
-         - Desktop: Floats in the center bottom, rounded corners.
-      */}
-      <div className="fixed bottom-0 md:bottom-6 left-0 right-0 p-4 md:p-0 z-50 flex justify-center pointer-events-none">
-        <div className="w-full max-w-md bg-slate-900/95 backdrop-blur-md border border-slate-800 p-4 md:rounded-2xl shadow-2xl pointer-events-auto">
+        <div className="flex items-center gap-2">
+          {/* Main Action */}
+          <Button
+            onClick={handleShareImage}
+            disabled={isGenerating}
+            size="sm"
+            className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-9 rounded-lg px-4 shadow-lg flex items-center gap-2 transition-all active:scale-95"
+          >
+            {isGenerating ? <Loader2 className="animate-spin w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+            <span className="hidden sm:inline">Share Flyer Image</span>
+            <span className="sm:hidden">Share</span>
+          </Button>
 
-          <div className="flex flex-col gap-3">
-
-            {/* Primary Action */}
+          {/* Secondary Actions Group */}
+          <div className="flex items-center gap-1.5 ml-1 border-l border-white/10 pl-3">
             <Button
-              onClick={handleShareImage}
-              disabled={isGenerating}
-              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-bold h-12 rounded-xl text-lg shadow-lg flex items-center justify-center gap-2"
+              onClick={handleTextClient}
+              variant="ghost"
+              size="sm"
+              className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2"
+              title="Text Link"
             >
-              {isGenerating ? <Loader2 className="animate-spin" /> : <Share2 className="w-5 h-5" />}
-              Share Flyer Image
+              <MessageCircle className="w-4 h-4 text-green-400" />
+              <span className="hidden md:inline">Text</span>
             </Button>
 
-            {/* Secondary Actions */}
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                onClick={handleTextClient}
-                variant="secondary"
-                className="bg-slate-800 text-white hover:bg-slate-700 h-11 rounded-lg border border-slate-700"
-              >
-                <MessageCircle className="w-4 h-4 mr-2 text-green-400" />
-                Text Link
-              </Button>
-
-              <Button
-                onClick={handleCopyLink}
-                variant="secondary"
-                className="bg-slate-800 text-white hover:bg-slate-700 h-11 rounded-lg border border-slate-700"
-              >
-                <LinkIcon className="w-4 h-4 mr-2 text-blue-400" />
-                Copy Link
-              </Button>
-            </div>
-
-            {/* Desktop Hint */}
-            <p className="hidden md:block text-center text-[10px] text-slate-500">
-              On desktop? 'Share' will download the image.
-            </p>
-
+            <Button
+              onClick={handleCopyLink}
+              variant="ghost"
+              size="sm"
+              className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2"
+              title="Copy Link"
+            >
+              <LinkIcon className="w-4 h-4 text-blue-400" />
+              <span className="hidden md:inline">Copy</span>
+            </Button>
           </div>
         </div>
       </div>
-    </>
+
+      <div className="flex-1 pt-20 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-x-hidden">
+        <div className="w-full max-w-[1024px] px-4 md:px-8">
+          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden">
+            <LuxuryFlyerLayout
+              officer={{
+                name: flyerData.broker.name,
+                title: flyerData.broker.title,
+                nmls: flyerData.broker.nmls,
+                phone: flyerData.broker.phone,
+                email: flyerData.broker.email,
+                image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
+                imagePosition: flyerData.broker.headshotPosition,
+                imagePositionX: flyerData.broker.headshotPositionX
+              }}
+              agent={{
+                name: flyerData.realtor.name,
+                title: flyerData.realtor.title,
+                email: flyerData.realtor.email,
+                phone: flyerData.realtor.phone,
+                brokerage: flyerData.realtor.brokerage,
+                image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-realtor.jpg",
+                imagePosition: flyerData.realtor.headshotPosition,
+                imagePositionX: flyerData.realtor.headshotPositionX
+              }}
+              rates={{
+                jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
+                conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
+                fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
+                fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
+                va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
+              }}
+              rateType={flyerData.rateType}
+              lastUpdated={lastRateUpdate
+                ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                : flyerData.rates.dateGenerated
+              }
+            />
+          </div>
+        </div>
+
+        {/* Hidden Social Card for Capture */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-10000px',
+            left: 0,
+            opacity: 0,
+            pointerEvents: 'none',
+            width: 1080,
+            height: 1080
+          }}
+          aria-hidden="true"
+        >
+          <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
+        </div>
+      </div>
+    </div>
   );
 }
