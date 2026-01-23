@@ -15,7 +15,7 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
   const realtor = data.realtor;
 
   return (
-    <div ref={ref} data-capture="flyer" className="w-full h-full bg-white shadow-none overflow-hidden flex flex-col relative">
+    <div ref={ref} data-capture="flyer" className="w-[612px] h-[792px] bg-white shadow-none overflow-hidden flex flex-col relative">
       {/* Hero Section */}
       <div className="relative h-[45%] w-full bg-slate-200">
         <img

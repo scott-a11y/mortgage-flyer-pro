@@ -1,164 +1,69 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Mortgage Flyer Generator Design System */
-
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 210 40% 20%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 210 40% 20%;
+    --card: 240 10% 4.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 210 40% 20%;
+    --popover: 240 10% 4.9%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Navy Blue Primary */
-    --primary: 210 100% 20%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
 
-    /* Light Blue Secondary */
-    --secondary: 210 100% 40%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    /* Gold/Burgundy Accent for Real Estate */
-    --accent: 28 59% 31%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 210 20% 45%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 210 100% 40%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Custom tokens for flyer */
     --flyer-navy: 210 100% 20%;
     --flyer-light-blue: 210 100% 40%;
-    /* Century 21 Gold - warm champagne gold from their branding */
     --flyer-gold: 43 38% 56%;
-    --flyer-gold-dark: 43 45% 42%;
-    --flyer-charcoal: 0 0% 15%;
-    --flyer-text-primary: 0 0% 20%;
-    --flyer-text-secondary: 0 0% 40%;
-    --flyer-bg-neutral: 0 0% 96%;
-    --flyer-bg-warm: 40 20% 97%;
-    --flyer-success: 100 50% 22%;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
-  .dark {
-    --background: 210 40% 10%;
-    --foreground: 210 20% 98%;
-
-    --card: 210 40% 12%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 210 40% 12%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 210 80% 60%;
-    --primary-foreground: 210 40% 10%;
-
-    --secondary: 210 60% 50%;
-    --secondary-foreground: 0 0% 100%;
-
-    --accent: 28 59% 45%;
-    --accent-foreground: 0 0% 100%;
-
-    --muted: 210 30% 20%;
-    --muted-foreground: 210 20% 70%;
-
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 210 30% 20%;
-    --input: 210 30% 20%;
-    --ring: 210 80% 60%;
-
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
   * {
-    @apply border-border;
+    @apply border-white/5;
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-[#0a0a0c] text-white antialiased overflow-hidden h-screen;
     font-family: 'Inter', sans-serif;
   }
 }
 
 @layer components {
-  .flyer-gradient-header {
-    background: linear-gradient(135deg, hsl(var(--flyer-navy)) 0%, hsl(210 80% 28%) 100%);
-  }
-
-  .flyer-gradient-cta {
-    background: linear-gradient(135deg, hsl(var(--flyer-light-blue)) 0%, hsl(var(--flyer-navy)) 100%);
-  }
-
-  .rate-highlight {
-    @apply text-3xl font-bold;
-    color: hsl(var(--flyer-navy));
-  }
-
-  /* Premium Glassmorphism */
-  .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0, 0, 0, 0.3)];
-  }
-
-  .glass-card-light {
-    @apply bg-white/40 backdrop-blur-md border border-white/20 shadow-lg;
-  }
-
-  /* Depth utility */
-  .premium-shadow {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Transition utility */
-  .smooth-transition {
-    @apply transition-all duration-500 ease-in-out;
-  }
-
   .editor-section {
-    @apply bg-card rounded-lg border p-4 space-y-4;
+    @apply bg-[#111114] rounded-2xl border border-white/5 p-6 space-y-4 shadow-[0_10px_40px_rgba(0, 0, 0, 0.5)];
   }
 
   .editor-label {
-    @apply text-sm font-medium text-muted-foreground;
+    @apply text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-1 block;
   }
 
-  /* Custom Scrollbar */
   .custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
@@ -166,21 +71,45 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.15);
   }
 
-  /* Responsive Flyer Scaling */
-  .flyer-preview-container {
-    perspective: 2000px;
-  }
-
-  /* Subtle background patterns */
   .bg-grid-slate-100 {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(15 23 42 / 0.04)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+    background-size: 32px 32px;
+  }
+
+  .glass-header {
+    @apply bg-[#0a0a0c]/80 backdrop-blur-2xl border-b border-white/5;
+  }
+
+  .dashboard-sidebar {
+    @apply bg-[#0a0a0c] border-r border-white/5 flex flex-col items-center py-6 gap-6 shrink-0;
+  }
+
+  .editor-panel {
+    @apply bg-[#0f0f12] border-r border-white/5 flex flex-col shrink-0 shadow-2xl;
+  }
+
+  .preview-stage {
+    @apply flex-1 bg-[#050505] relative flex flex-col overflow-hidden items-center justify-center;
+  }
+
+  /* Shadcn Overrides for Dark Dashboard */
+  button[data-state="active"] {
+    @apply bg-white/10 text-white shadow-none border-white/5 !important;
+  }
+
+  [role="tablist"] {
+    @apply bg-white/5 border border-white/5 p-1 rounded-xl !important;
+  }
+
+  [role="tab"] {
+    @apply rounded-lg transition-all duration-300 text-slate-500 hover:text-slate-300 !important;
   }
 }
