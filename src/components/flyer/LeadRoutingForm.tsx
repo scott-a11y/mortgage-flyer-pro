@@ -16,6 +16,8 @@ const leadSchema = z.object({
     phone: z.string().min(10, "Valid phone number is required"),
 });
 
+type LeadFormData = z.infer<typeof leadSchema>;
+
 interface LeadRoutingFormProps {
     stateName: string;
     isReferral: boolean;
@@ -26,11 +28,11 @@ export function LeadRoutingForm({ stateName, isReferral, flyerSlug }: LeadRoutin
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isDone, setIsDone] = useState(false);
 
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm<LeadFormData>({
         resolver: zodResolver(leadSchema)
     });
 
-    const onSubmit = async (data: any) => {
+    const onSubmit = async (data: LeadFormData) => {
         setIsSubmitting(true);
         try {
             const { error } = await supabase
@@ -95,7 +97,7 @@ export function LeadRoutingForm({ stateName, isReferral, flyerSlug }: LeadRoutin
                             className="bg-black/40 border-white/10 h-12 focus:border-amber-500/50"
                             placeholder="John"
                         />
-                        {errors.firstName && <p className="text-[10px] text-red-500 ml-1">{errors.firstName.message as string}</p>}
+                        {errors.firstName && <p className="text-[10px] text-red-500 ml-1">{errors.firstName.message}</p>}
                     </div>
                     <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-slate-500 ml-1">Last Name</label>
@@ -104,7 +106,7 @@ export function LeadRoutingForm({ stateName, isReferral, flyerSlug }: LeadRoutin
                             className="bg-black/40 border-white/10 h-12 focus:border-amber-500/50"
                             placeholder="Doe"
                         />
-                        {errors.lastName && <p className="text-[10px] text-red-500 ml-1">{errors.lastName.message as string}</p>}
+                        {errors.lastName && <p className="text-[10px] text-red-500 ml-1">{errors.lastName.message}</p>}
                     </div>
                 </div>
 
@@ -116,7 +118,7 @@ export function LeadRoutingForm({ stateName, isReferral, flyerSlug }: LeadRoutin
                         className="bg-black/40 border-white/10 h-12 focus:border-amber-500/50"
                         placeholder="john@example.com"
                     />
-                    {errors.email && <p className="text-[10px] text-red-500 ml-1">{errors.email.message as string}</p>}
+                    {errors.email && <p className="text-[10px] text-red-500 ml-1">{errors.email.message}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -127,7 +129,7 @@ export function LeadRoutingForm({ stateName, isReferral, flyerSlug }: LeadRoutin
                         className="bg-black/40 border-white/10 h-12 focus:border-amber-500/50"
                         placeholder="(555) 000-0000"
                     />
-                    {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone.message as string}</p>}
+                    {errors.phone && <p className="text-[10px] text-red-500 ml-1">{errors.phone.message}</p>}
                 </div>
 
                 <Button

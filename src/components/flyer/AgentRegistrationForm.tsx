@@ -51,7 +51,16 @@ export function AgentRegistrationForm({ onSuccess }: { onSuccess?: () => void })
     const onSubmit = async (values: AgentFormValues) => {
         setIsSubmitting(true);
         try {
-            const { error } = await supabase.from("agent_profiles").insert([values as any]);
+            const { error } = await supabase.from("agent_profiles").insert([{
+                name: values.name,
+                title: values.title,
+                phone: values.phone,
+                email: values.email,
+                brokerage: values.brokerage,
+                website: values.website || null,
+                license_number: values.license_number || null,
+                headshot_url: values.headshot_url || null,
+            }]);
             if (error) throw error;
 
             setIsSuccess(true);

@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { FlyerData } from "@/types/flyer";
-import { FlyerPreview } from "@/components/flyer/FlyerPreview";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, AlertCircle, RefreshCw, Share2, MessageCircle, Link as LinkIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -33,6 +32,49 @@ export default function LiveFlyer() {
   const pageDescription = flyerData
     ? `View today's live mortgage rates for ${flyerData.regions.map(r => r.name).join(", ")}. Co-branded by ${flyerData.broker.name} and ${flyerData.realtor.name}.`
     : "View live mortgage rates and regional market insights.";
+  // Memoized props to prevent unnecessary re-renders of LuxuryFlyerLayout
+  const officerData = useMemo(() => flyerData ? {
+    name: flyerData.broker.name,
+    title: flyerData.broker.title,
+    nmls: flyerData.broker.nmls,
+    phone: flyerData.broker.phone,
+    email: flyerData.broker.email,
+    image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
+    imagePosition: flyerData.broker.headshotPosition,
+    imagePositionX: flyerData.broker.headshotPositionX
+  } : null, [flyerData?.broker]);
+
+  const agentData = useMemo(() => flyerData ? {
+    name: flyerData.realtor.name,
+    title: flyerData.realtor.title,
+    email: flyerData.realtor.email,
+    phone: flyerData.realtor.phone,
+    brokerage: flyerData.realtor.brokerage,
+    image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-realtor.jpg",
+    imagePosition: flyerData.realtor.headshotPosition,
+    imagePositionX: flyerData.realtor.headshotPositionX
+  } : null, [flyerData?.realtor]);
+
+  const ratesData = useMemo(() => flyerData ? {
+    jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
+    conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
+    fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
+    fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
+    va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
+  } : null, [flyerData?.rates]);
+
+  const formattedLastUpdated = useMemo(() =>
+    lastRateUpdate
+      ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : flyerData?.rates.dateGenerated,
+    [lastRateUpdate, flyerData?.rates.dateGenerated]
+  );
+
+  // Helper to load demo fallback data
+  const loadDemoFallback = async () => {
+    const { defaultFlyerData } = await import('@/data/defaultFlyerData');
+    await fetchLiveRates(defaultFlyerData);
+  };
 
   const loadFlyer = async (flyerSlug: string) => {
     setIsLoading(true);
@@ -191,11 +233,18 @@ export default function LiveFlyer() {
     return window.location.href;
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(getShareUrl());
-    toast.success("Link copied to clipboard", {
-      description: "Link updated to production URL for sharing."
-    });
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(getShareUrl());
+      toast.success("Link copied to clipboard", {
+        description: "Link updated to production URL for sharing."
+      });
+    } catch (err) {
+      console.error("Copy failed:", err);
+      toast.error("Failed to copy link", {
+        description: "Please copy the URL manually from the address bar."
+      });
+    }
   };
 
   const handleShareImage = async () => {
@@ -214,7 +263,6 @@ export default function LiveFlyer() {
       const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(ua);
 
       const shouldNativeShare = isMobile && !isWindows && !isMac && !!navigator.share;
-      console.log("Sharing Strategy:", { shouldNativeShare, isMobile, isWindows, isMac, ua });
 
       const file = new File([blob], 'rate-update.png', { type: 'image/png' });
 
@@ -326,7 +374,6 @@ export default function LiveFlyer() {
 
   if (!flyerData) return null;
 
-  if (!flyerData) return null;
   const generateSocialCard = async () => {
     if (!cardRef.current) return null;
 

@@ -1,5 +1,10 @@
+/**
+ * US States where we are licensed to operate directly.
+ * Leads in these states are handled locally; others are referred to partners.
+ */
 export const LICENSED_STATES = ['OR', 'WA', 'ID'] as const;
 
+export type LicensedState = typeof LICENSED_STATES[number];
 export type ReferralType = 'local' | 'referral';
 
 export interface StateInfo {
@@ -60,6 +65,17 @@ export const US_STATES: StateInfo[] = [
     { code: 'WY', name: 'Wyoming' }
 ];
 
+/**
+ * Determines if a lead should be handled locally or referred to a partner.
+ * 
+ * @param stateCode - Two-letter US state code (e.g., 'OR', 'WA')
+ * @returns 'local' if we're licensed in the state, 'referral' otherwise
+ * 
+ * @example
+ * getReferralType('OR') // 'local' - Licensed in Oregon
+ * getReferralType('CA') // 'referral' - Not licensed in California
+ */
 export function getReferralType(stateCode: string): ReferralType {
-    return LICENSED_STATES.includes(stateCode as any) ? 'local' : 'referral';
+    return (LICENSED_STATES as readonly string[]).includes(stateCode) ? 'local' : 'referral';
 }
+

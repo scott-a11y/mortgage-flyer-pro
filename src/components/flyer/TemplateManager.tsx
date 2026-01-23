@@ -124,8 +124,7 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
               brokerage: p.brokerage || "",
               website: p.website || "",
               headshot: p.headshot_url || "",
-              license_number: p.license_number || ""
-            } as any, // Using any here to bypass strict typing for now if needed, but should match RealtorContact
+            } satisfies RealtorContact,
             colorTheme: {
               id: `custom-${p.id}`,
               name: p.brokerage || "Custom",
@@ -167,7 +166,7 @@ export function TemplateManager({ currentData, onLoadTemplate }: TemplateManager
             .insert([{
               id: newId,
               name: templateName.trim(),
-              data: templateToSave.data as any
+              data: templateToSave.data as unknown as import('@/integrations/supabase/types').Json
             }]);
           if (error) throw error;
         } catch (supaErr) {

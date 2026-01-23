@@ -5,6 +5,33 @@ import { Badge } from '@/components/ui/badge';
 import { Info, Calculator, TrendingUp, Wallet, ArrowRight } from 'lucide-react';
 import { StrategyReport } from './StrategyReport';
 
+/**
+ * Configuration constants for bridge loan calculations.
+ * These values are based on typical industry standards and may need
+ * adjustment based on specific lender requirements.
+ */
+const BRIDGE_CALC_CONFIG = {
+    /** Estimated selling costs as percentage of home value (commissions + closing) */
+    SELLING_COSTS_PERCENTAGE: 0.07,
+    /** Maximum LTV (Loan-to-Value) ratio for bridge loans */
+    MAX_BRIDGE_LTV_PERCENTAGE: 0.75,
+    /** LTV thresholds for strategic advice */
+    LTV_THRESHOLDS: {
+        EXCELLENT: 50,  // Below 50% = excellent equity position
+        STRONG: 70,     // Below 70% = strong leverage available
+    },
+    /** Slider configuration */
+    SLIDER: {
+        HOME_VALUE: { MIN: 200000, MAX: 3000000, STEP: 10000 },
+        MORTGAGE: { STEP: 10000 },
+    },
+    /** Default values */
+    DEFAULTS: {
+        HOME_VALUE: 750000,
+        MORTGAGE_BALANCE: 450000,
+    }
+} as const;
+
 interface BridgeCalculatorProps {
     stateName: string;
     officerName: string;
@@ -12,16 +39,15 @@ interface BridgeCalculatorProps {
 }
 
 export function BridgeCalculator({ stateName, officerName, agentName }: BridgeCalculatorProps) {
-    const [homeValue, setHomeValue] = useState(750000);
-    const [mortgageBalance, setMortgageBalance] = useState(450000);
+    const [homeValue, setHomeValue] = useState<number>(BRIDGE_CALC_CONFIG.DEFAULTS.HOME_VALUE);
+    const [mortgageBalance, setMortgageBalance] = useState<number>(BRIDGE_CALC_CONFIG.DEFAULTS.MORTGAGE_BALANCE);
 
     const stats = useMemo(() => {
         const grossEquity = homeValue - mortgageBalance;
-        const sellingCosts = homeValue * 0.07; // Estimated 7% for commissions and closing
+        const sellingCosts = homeValue * BRIDGE_CALC_CONFIG.SELLING_COSTS_PERCENTAGE;
         const netEquity = Math.max(0, grossEquity - sellingCosts);
 
-        // Bridge logic: Usually allowed to tap up to 75-80% LTV minus existing mortgage
-        const maxBridgeLtv = homeValue * 0.75;
+        const maxBridgeLtv = homeValue * BRIDGE_CALC_CONFIG.MAX_BRIDGE_LTV_PERCENTAGE;
         const bridgeBuyingPower = Math.max(0, maxBridgeLtv - mortgageBalance);
 
         const ltv = (mortgageBalance / homeValue) * 100;

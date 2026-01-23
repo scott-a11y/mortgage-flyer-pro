@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FlyerData } from "@/types/flyer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +41,16 @@ export function SendToClientDialog({ currentData }: SendToClientDialogProps) {
   const [isDownloading, setIsDownloading] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const clientName = templateName.split(' - ')[0] || 'there';
 
@@ -202,7 +212,7 @@ ${currentData.company.website || ''}`
 
   const handleClose = () => {
     setOpen(false);
-    setTimeout(() => {
+    closeTimeoutRef.current = setTimeout(() => {
       setShareUrl(null);
       setTemplateName("");
       setCopied(false);
