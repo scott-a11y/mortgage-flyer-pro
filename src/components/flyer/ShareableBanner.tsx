@@ -103,20 +103,19 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
 
   return (
     <div className="space-y-8 pb-12">
-      <div className="p-4 bg-muted/40 rounded-lg border space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Live Flyer Link</span>
-          <Button size="sm" variant="ghost" className="h-8 gap-2" onClick={() => {
-            navigator.clipboard.writeText(shareUrl);
-            toast.success("Link copied to clipboard!");
-          }}>
-            <Copy className="w-4 h-4" />
-            Copy Link
-          </Button>
+      <div className="p-3 bg-blue-50/50 rounded-xl border border-blue-100 flex items-center justify-between gap-3 group">
+        <div className="flex-1 min-w-0">
+          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter mb-1 block">Live Flyer Link</span>
+          <div className="text-[10px] text-slate-500 truncate font-mono bg-white/50 p-1 px-1.5 rounded border border-blue-50">
+            {shareUrl}
+          </div>
         </div>
-        <div className="text-xs text-muted-foreground break-all font-mono bg-background p-2 rounded border">
-          {shareUrl}
-        </div>
+        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-blue-100/50 text-blue-600 shrink-0" onClick={() => {
+          navigator.clipboard.writeText(shareUrl);
+          toast.success("Link copied to clipboard!");
+        }}>
+          <Copy className="w-3.5 h-3.5" />
+        </Button>
       </div>
 
       {/* Email Banner */}
