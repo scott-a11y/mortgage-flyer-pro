@@ -6,119 +6,113 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 240 10% 2%;
-    --foreground: 180 100% 50%;
-    /* Electric Cyan Foreground for accents */
+    :root {
+        --background: 240 10% 2%;
+        --foreground: 180 100% 50%;
 
-    --card: 240 10% 4%;
-    --card-foreground: 0 0% 98%;
+        --card: 240 10% 4%;
+        --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 4%;
-    --popover-foreground: 0 0% 98%;
+        --popover: 240 10% 4%;
+        --popover-foreground: 0 0% 98%;
 
-    --primary: 180 100% 50%;
-    /* Cyan */
-    --primary-foreground: 240 10% 2%;
+        --primary: 180 100% 50%;
+        --primary-foreground: 240 10% 2%;
 
-    --secondary: 240 5% 15%;
-    --secondary-foreground: 0 0% 98%;
+        --secondary: 240 5% 15%;
+        --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 5% 10%;
-    --muted-foreground: 180 20% 50%;
+        --muted: 240 5% 10%;
+        --muted-foreground: 180 20% 50%;
 
-    --accent: 180 100% 50%;
-    --accent-foreground: 240 10% 2%;
+        --accent: 180 100% 50%;
+        --accent-foreground: 240 10% 2%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 98%;
+        --destructive: 0 100% 50%;
+        --destructive-foreground: 0 0% 98%;
 
-    --border: 180 100% 50% / 0.1;
-    --input: 240 5% 10%;
-    --ring: 180 100% 50% / 0.3;
+        --border: 180 100% 50% / 0.1;
+        --input: 240 5% 10%;
+        --ring: 180 100% 50% / 0.3;
 
-    --radius: 0.25rem;
-    /* Sharper corners for industrial feel */
+        --radius: 0.25rem;
 
-    --materia-cyan: 180 100% 50%;
-    --materia-slate: 240 10% 2%;
-    --materia-glass: 240 10% 4% / 0.8;
-  }
+        --materia-cyan: 180 100% 50%;
+        --materia-slate: 240 10% 2%;
+        --materia-glass: 240 10% 4% / 0.8;
+    }
 
-  * {
-    @apply border-white/5;
-  }
+    * {
+        @apply border-white/5;
+    }
 
-  body {
-    @apply bg-[#030304] text-slate-300 antialiased overflow-hidden h-screen w-screen select-none;
-    font-family: 'Inter', sans-serif;
-  }
+    body {
+        @apply bg-[#030304] text-slate-300 antialiased overflow-hidden h-screen w-screen select-none;
+        font-family: 'Inter', sans-serif;
+    }
 }
 
 @layer components {
-  .editor-section {
-    @apply bg-[#08080a] border border-cyan-500/10 p-6 space-y-4 shadow-[0_20px_50px_rgba(0, 0, 0, 0.8)];
-  }
+    .editor-section {
+        @apply bg-[#08080a] border border-cyan-500/10 p-6 space-y-4 shadow-2xl;
+    }
 
-  .editor-label {
-    @apply text-[9px] font-bold text-cyan-500/40 uppercase tracking-[0.3em] mb-2 block font-mono;
-  }
+    .editor-label {
+        @apply text-[9px] font-bold text-cyan-500/40 uppercase tracking-[0.3em] mb-2 block font-mono;
+    }
 
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
-  }
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 3px;
+        height: 3px;
+    }
 
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-cyan-500/10;
-  }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-cyan-500/10;
+    }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    @apply bg-cyan-500/30;
-  }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        @apply bg-cyan-500/30;
+    }
 
-  .bg-grid-slate-100 {
-    background-image: linear-gradient(to right, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
+    .bg-grid-slate-100 {
+        background-image: linear-gradient(to right, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
 
-  .glass-header {
-    @apply bg-[#030304]/90 backdrop-blur-2xl border-b border-cyan-500/10 h-10;
-    /* Ultra slim height */
-  }
+    .glass-header {
+        @apply bg-[#030304]/90 backdrop-blur-2xl border-b border-cyan-500/10 h-10;
+    }
 
-  .dashboard-sidebar {
-    @apply bg-[#030304] border-r border-cyan-500/10 flex flex-col items-center py-4 gap-4 shrink-0 w-16;
-  }
+    .dashboard-sidebar {
+        @apply bg-[#030304] border-r border-cyan-500/10 flex flex-col items-center py-4 gap-4 shrink-0 w-16;
+    }
 
-  .editor-panel {
-    @apply bg-[#060608] border-r border-cyan-500/10 flex flex-col shrink-0 w-[420px] shadow-[20px_0_60px_rgba(0, 0, 0, 0.5)];
-  }
+    .editor-panel {
+        @apply bg-[#060608] border-r border-cyan-500/10 flex flex-col shrink-0 w-[420px] shadow-2xl;
+    }
 
-  .preview-stage {
-    @apply flex-1 bg-[#020202] relative flex flex-col overflow-hidden items-center justify-center;
-  }
+    .preview-stage {
+        @apply flex-1 bg-[#020202] relative flex flex-col overflow-hidden items-center justify-center;
+    }
 
-  /* Cyber UI Glows */
-  .cyan-glow {
-    @apply shadow-[0_0_15px_rgba(0, 242, 255, 0.15)];
-  }
+    .cyan-glow {
+        @apply shadow-[0_0_15px_rgba(0, 242, 255, 0.15)];
+    }
 
-  /* Shadcn Overrides for Materia Theme */
-  button[data-state="active"] {
-    @apply bg-cyan-500/10 text-cyan-400 shadow-none border-cyan-500/20 !important;
-  }
+    button[data-state="active"] {
+        @apply bg-cyan-500/10 text-cyan-400 shadow-none border-cyan-500/20 !important;
+    }
 
-  [role="tablist"] {
-    @apply bg-black/40 border border-cyan-500/10 p-1 rounded-none !important;
-  }
+    [role="tablist"] {
+        @apply bg-black/40 border border-cyan-500/10 p-1 rounded-none !important;
+    }
 
-  [role="tab"] {
-    @apply rounded-none transition-all duration-300 text-slate-500 hover:text-cyan-500/60 font-mono text-[10px] uppercase tracking-wider !important;
-  }
+    [role="tab"] {
+        @apply rounded-none transition-all duration-300 text-slate-500 hover:text-cyan-500/60 font-mono text-[10px] uppercase tracking-wider !important;
+    }
 }
