@@ -127,6 +127,9 @@ export function ShareableBanner({ data, shareUrl }: ShareableBannerProps) {
         format="email"
         isDownloading={isDownloading}
         onDownload={downloadBanner}
+        previewScale={1}
+        previewWidth={600}
+        previewHeight={200}
       >
         <div ref={emailBannerRef}>
           <EmailBanner data={data} label1={label1} value1={value1} label3={label3} rFixed15={rFixed15} />
