@@ -122,18 +122,23 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         <div className="bg-[#050505] flex-1 flex flex-col justify-end">
           <div className="px-10 pb-10 flex items-end justify-between relative">
 
-            {/* Scott Little */}
+            {/* Lender Side: IA Loans */}
             <div className="flex items-center gap-4 w-[240px]">
               <FlyerProfileImage
                 src={data.broker.headshot}
                 alt={data.broker.name}
                 position={data.broker.headshotPosition}
-                className="w-16 h-16 rounded-full border-2 border-amber-500/30 shadow-lg"
+                className="w-14 h-14 rounded-full border-2 border-amber-500/30 shadow-lg shrink-0"
               />
-              <div className="text-left">
-                <div className="text-white font-serif text-[22px] tracking-wide leading-tight">{data.broker.name}</div>
-                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold mt-1.5">{data.broker.title}</div>
-                <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1">NMLS #{data.broker.nmls} • {data.broker.phone}</div>
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="text-white font-serif text-[18px] tracking-wide leading-tight truncate">{data.broker.name}</div>
+                  {data.company.logo && (
+                    <img src={data.company.logo} alt="IA Loans" className="h-6 w-auto object-contain opacity-80" />
+                  )}
+                </div>
+                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.broker.title}</div>
+                <div className="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5 whitespace-nowrap">NMLS #{data.broker.nmls} • {data.broker.phone}</div>
               </div>
             </div>
 
@@ -149,19 +154,24 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
               <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
             </div>
 
-            {/* Adrian Mitchell */}
+            {/* Realtor Side: Co-Brander */}
             <div className="flex items-center gap-4 w-[240px] flex-row-reverse">
               <FlyerProfileImage
                 src={data.realtor.headshot}
                 alt={data.realtor.name}
                 position={data.realtor.headshotPosition}
-                className="w-16 h-16 rounded-full border-2 border-amber-500/30 shadow-lg"
+                className="w-14 h-14 rounded-full border-2 border-amber-500/30 shadow-lg shrink-0"
               />
-              <div className="text-right">
-                <div className="text-white font-serif text-[22px] tracking-wide leading-tight">{data.realtor.name}</div>
-                <div className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">{data.realtor.brokerage}</div>
-                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
-                <div className="text-[9px] text-slate-500 tracking-widest mt-1 lowercase">{data.realtor.phone} • {data.realtor.email}</div>
+              <div className="flex flex-col items-end min-w-0">
+                <div className="flex items-center justify-end gap-2 mb-1">
+                  {data.realtor.logo && (
+                    <img src={data.realtor.logo} alt="Brokerage" className="h-6 w-auto object-contain opacity-80" />
+                  )}
+                  <div className="text-white font-serif text-[18px] tracking-wide leading-tight truncate">{data.realtor.name}</div>
+                </div>
+                <div className="text-[8px] text-slate-400 font-bold uppercase truncate max-w-full mb-0.5">{data.realtor.brokerage}</div>
+                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
+                <div className="text-[8px] text-slate-500 tracking-widest mt-0.5 lowercase whitespace-nowrap">{data.realtor.phone} • {data.realtor.email}</div>
               </div>
             </div>
           </div>

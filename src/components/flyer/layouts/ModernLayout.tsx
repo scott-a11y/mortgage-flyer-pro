@@ -70,9 +70,14 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
               position={broker.headshotPosition}
               className="w-20 h-20 rounded-full border-2 border-amber-500/20 mb-4 shadow-inner"
             />
-            <h3 className="text-xl font-serif text-amber-500 font-medium tracking-wide mb-1">
-              {broker.name || "Scott Little"}
-            </h3>
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <h3 className="text-xl font-serif text-amber-500 font-medium tracking-wide">
+                {broker.name || "Scott Little"}
+              </h3>
+              {data.company.logo && (
+                <img src={data.company.logo} alt="IA Loans" className="h-5 w-auto object-contain opacity-80" />
+              )}
+            </div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">
               {broker.title || "Mortgage Broker"}
             </p>
@@ -98,7 +103,12 @@ export const ModernLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, r
                 className="w-10 h-10 rounded-full border border-slate-200"
               />
               <div className="text-left overflow-hidden">
-                <p className="text-xs font-bold text-slate-900 truncate">{realtor.name}</p>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-xs font-bold text-slate-900 truncate">{realtor.name}</p>
+                  {realtor.logo && (
+                    <img src={realtor.logo} alt="Brokerage" className="h-4 w-auto object-contain opacity-70" />
+                  )}
+                </div>
                 <p className="text-[10px] text-slate-500 truncate mb-1">{realtor.brokerage || "Real Estate Professional"}</p>
                 <div className="flex flex-col gap-0.5 text-[9px] text-slate-400">
                   <div className="flex items-center gap-1"><Phone className="w-2.5 h-2.5 opacity-50" /> {realtor.phone}</div>

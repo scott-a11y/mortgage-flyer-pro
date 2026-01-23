@@ -188,7 +188,12 @@ export const BBYSLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref
                                 className="w-20 h-20 rounded-full border-2 border-amber-500/30 group-hover:border-amber-500 transition-colors shadow-2xl"
                             />
                             <div>
-                                <h4 className="text-xl font-serif text-white group-hover:text-amber-500 transition-colors">{officer.name}</h4>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <h4 className="text-xl font-serif text-white group-hover:text-amber-500 transition-colors">{officer.name}</h4>
+                                    {data.company.logo && (
+                                        <img src={data.company.logo} alt="Lender Logo" className="h-6 w-auto object-contain opacity-70" />
+                                    )}
+                                </div>
                                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-1">{officer.title}</p>
                                 <p className="text-xs text-slate-600">NMLS #{officer.nmls} • {officer.phone}</p>
                             </div>
@@ -203,7 +208,12 @@ export const BBYSLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref
                                 className="w-20 h-20 rounded-full border-2 border-amber-500/30 group-hover:border-amber-500 transition-colors shadow-2xl"
                             />
                             <div className="md:text-right">
-                                <h4 className="text-xl font-serif text-white group-hover:text-amber-500 transition-colors">{agent.name}</h4>
+                                <div className="flex items-center justify-end gap-2 mb-1">
+                                    {data.realtor.logo && (
+                                        <img src={data.realtor.logo} alt="Brokerage Logo" className="h-6 w-auto object-contain opacity-70" />
+                                    )}
+                                    <h4 className="text-xl font-serif text-white group-hover:text-amber-500 transition-colors">{agent.name}</h4>
+                                </div>
                                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-1">{agent.brokerage}</p>
                                 <p className="text-xs text-slate-600">{agent.title} • {agent.phone}</p>
                             </div>
