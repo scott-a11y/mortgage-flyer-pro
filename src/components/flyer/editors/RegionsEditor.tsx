@@ -32,7 +32,7 @@ export function RegionsEditor({ data, onChange }: RegionsEditorProps) {
           <AccordionItem key={idx} value={`region-${idx}`}>
             <AccordionTrigger className="hover:no-underline">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-flyer-gold" />
+                <MapPin className="w-4 h-4 text-cyan-500/60" />
                 <span className="font-medium">{region.name || `Region ${idx + 1}`}</span>
               </div>
             </AccordionTrigger>

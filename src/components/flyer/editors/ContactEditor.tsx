@@ -45,7 +45,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         <AccordionItem value="broker">
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-flyer-light-blue" />
+              <User className="w-4 h-4 text-cyan-500/60" />
               <span className="font-medium">Mortgage Broker</span>
             </div>
           </AccordionTrigger>
@@ -121,7 +121,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         <AccordionItem value="company">
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-2">
-              <Building className="w-4 h-4 text-flyer-navy" />
+              <Building className="w-4 h-4 text-cyan-500/60" />
               <span className="font-medium">IA Loans Company</span>
             </div>
           </AccordionTrigger>
@@ -183,7 +183,7 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         <AccordionItem value="realtor">
           <AccordionTrigger className="hover:no-underline">
             <div className="flex items-center gap-2">
-              <Home className="w-4 h-4 text-flyer-gold" />
+              <Home className="w-4 h-4 text-cyan-500/60" />
               <span className="font-medium">Real Estate Partner</span>
             </div>
           </AccordionTrigger>
