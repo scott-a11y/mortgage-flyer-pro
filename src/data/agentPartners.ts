@@ -104,4 +104,20 @@ export const agentPartners: AgentPartnerProfile[] = [
         },
         colorTheme: brokerageThemes[7], // Sotheby's
     },
+    {
+        id: "danne-wilson",
+        name: "Danné Wilson",
+        realtor: {
+            name: "Danné Wilson",
+            title: "Real Estate Broker",
+            phone: "(971) 517-2953",
+            email: "dlwilson@gtrealty.com",
+            brokerage: "Georgetown Realty, Inc.",
+            website: "gtrealty.com",
+            logo: "",
+            headshot: "/danne-wilson-headshot.jpg",
+            headshotPosition: 25,
+        },
+        colorTheme: { id: "georgetown", name: "Georgetown Realty", primary: "#2C5F2D", secondary: "#FFFFFF", accent: "#97BC62" },
+    },
 ];
