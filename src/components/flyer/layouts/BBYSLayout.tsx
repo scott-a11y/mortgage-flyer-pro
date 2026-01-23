@@ -195,7 +195,7 @@ export const BBYSLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref
                                     )}
                                 </div>
                                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-1">{officer.title}</p>
-                                <p className="text-xs text-slate-600">NMLS #{officer.nmls} • {officer.phone}</p>
+                                <p className="text-xs text-slate-600">NMLS #{officer.nmls} • {officer.phone} • {officer.email}</p>
                             </div>
                         </div>
 
@@ -215,7 +215,7 @@ export const BBYSLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref
                                     <h4 className="text-xl font-serif text-white group-hover:text-amber-500 transition-colors">{agent.name}</h4>
                                 </div>
                                 <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mb-1">{agent.brokerage}</p>
-                                <p className="text-xs text-slate-600">{agent.title} • {agent.phone}</p>
+                                <p className="text-xs text-slate-600">{agent.title} • {agent.phone} • {agent.email}</p>
                             </div>
                         </div>
                     </div>

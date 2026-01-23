@@ -132,13 +132,15 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
               />
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="text-white font-serif text-[18px] tracking-wide leading-tight truncate">{data.broker.name}</div>
+                  <div className="text-white font-serif text-[21px] tracking-wide leading-tight truncate">{data.broker.name}</div>
                   {data.company.logo && (
                     <img src={data.company.logo} alt="IA Loans" className="h-6 w-auto object-contain opacity-80" />
                   )}
                 </div>
-                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.broker.title}</div>
-                <div className="text-[8px] text-slate-500 uppercase tracking-widest mt-0.5 whitespace-nowrap">NMLS #{data.broker.nmls} • {data.broker.phone}</div>
+                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold mt-0.5">{data.broker.title}</div>
+                <div className="text-[9px] text-slate-500 uppercase tracking-widest mt-1 whitespace-nowrap">
+                  NMLS #{data.broker.nmls} • {data.broker.phone} • {data.broker.email}
+                </div>
               </div>
             </div>
 
@@ -167,11 +169,11 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                   {data.realtor.logo && (
                     <img src={data.realtor.logo} alt="Brokerage" className="h-6 w-auto object-contain opacity-80" />
                   )}
-                  <div className="text-white font-serif text-[18px] tracking-wide leading-tight truncate">{data.realtor.name}</div>
+                  <div className="text-white font-serif text-[21px] tracking-wide leading-tight truncate">{data.realtor.name}</div>
                 </div>
-                <div className="text-[8px] text-slate-400 font-bold uppercase truncate max-w-full mb-0.5">{data.realtor.brokerage}</div>
-                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
-                <div className="text-[8px] text-slate-500 tracking-widest mt-0.5 lowercase whitespace-nowrap">{data.realtor.phone} • {data.realtor.email}</div>
+                <div className="text-[9px] text-slate-400 font-bold uppercase truncate max-w-full mb-0.5">{data.realtor.brokerage}</div>
+                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
+                <div className="text-[9px] text-slate-500 tracking-widest mt-1 lowercase whitespace-nowrap">{data.realtor.phone} • {data.realtor.email}</div>
               </div>
             </div>
           </div>
