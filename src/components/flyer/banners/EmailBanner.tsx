@@ -16,11 +16,11 @@ export function EmailBanner({ data, label1, value1, label3, rFixed15 }: EmailBan
     return (
         <div style={{ width: 600, height: 200, background: ONYX, overflow: 'hidden', position: 'relative' }} data-capture="banner">
             {/* Glow */}
-            <div style={{ position: 'absolute', top: -50, left: 200, width: 200, height: 200, background: 'rgba(212, 175, 55, 0.15)', filter: 'blur(60px)', borderRadius: '50%' }} />
+            <div style={{ position: 'absolute', top: -50, left: 200, width: 200, height: 200, background: 'rgba(212, 175, 55, 0.15)', filter: 'blur(60px)', borderRadius: '50%', zIndex: 1 }} />
 
-            <div style={{ display: 'flex', height: '100%', alignItems: 'center', padding: '0 24px', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif' }}>
+            <div style={{ display: 'flex', height: '100%', alignItems: 'center', padding: '0 24px', justifyContent: 'space-between', fontFamily: 'Inter, sans-serif', position: 'relative', zIndex: 10 }}>
                 {/* Left: Broker */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, zIndex: 10, width: 160 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: 160 }}>
                     <FlyerProfileImage
                         src={data.broker.headshot}
                         alt={data.broker.name}
@@ -54,7 +54,7 @@ export function EmailBanner({ data, label1, value1, label3, rFixed15 }: EmailBan
                 </div>
 
                 {/* Right: Realtor */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexDirection: 'row-reverse', zIndex: 10, width: 160, textAlign: 'right' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexDirection: 'row-reverse', width: 160, textAlign: 'right' }}>
                     <FlyerProfileImage
                         src={data.realtor.headshot}
                         alt={data.realtor.name}
