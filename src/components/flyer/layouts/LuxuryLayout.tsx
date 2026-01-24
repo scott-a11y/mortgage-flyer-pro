@@ -155,23 +155,21 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         </div>
 
         {/* --- FOOTER --- */}
-        <div className="bg-[#050505] flex-1 flex flex-col justify-end">
-          {/* QR Code - Bottom Left with Disclosure */}
-          <div className="px-10 pb-4 flex items-end justify-between">
-            <div className="flex flex-col items-center">
-              <div className="bg-[#050505] p-2 border border-white/10 rounded-xl mb-2 shadow-2xl">
-                {data.cta.buttonUrl && (
-                  <div className="p-1 bg-white rounded-lg overflow-hidden">
-                    <QRCodeSVG value={data.cta.buttonUrl} size={56} level="H" />
-                  </div>
-                )}
-              </div>
-              <div className="text-[7px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
+        <div className="bg-[#050505] flex-1 flex flex-col justify-end items-center">
+          {/* QR Code - Centered */}
+          <div className="flex flex-col items-center mb-4">
+            <div className="bg-[#050505] p-2 border border-white/10 rounded-xl mb-2 shadow-2xl">
+              {data.cta.buttonUrl && (
+                <div className="p-1 bg-white rounded-lg overflow-hidden">
+                  <QRCodeSVG value={data.cta.buttonUrl} size={56} level="H" />
+                </div>
+              )}
             </div>
-
-            {/* COMPLIANCE FOOTER */}
-            <FlyerLegal data={data} className="flex-1 ml-6 text-right border-none opacity-40 uppercase tracking-[0.15em]" />
+            <div className="text-[7px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
           </div>
+
+          {/* COMPLIANCE FOOTER */}
+          <FlyerLegal data={data} className="px-10 pb-4 text-center border-none opacity-40 uppercase tracking-[0.15em]" />
         </div>
       </div>
     );
