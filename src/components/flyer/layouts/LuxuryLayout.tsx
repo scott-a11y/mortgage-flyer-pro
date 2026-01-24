@@ -162,7 +162,8 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 <div className="text-white font-serif text-[22px] tracking-wide leading-tight">{data.realtor.name}</div>
                 <div className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">{data.realtor.brokerage}</div>
                 <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
-                <div className="text-[9px] text-slate-500 tracking-widest mt-1 lowercase">{data.realtor.phone} • {data.realtor.email}</div>
+                <div className="text-[9px] text-slate-500 tracking-widest mt-1">{data.realtor.phone}</div>
+                <div className="text-[9px] text-slate-500 tracking-widest">{data.realtor.website}</div>
               </div>
             </div>
           </div>
