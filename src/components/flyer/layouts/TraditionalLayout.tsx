@@ -174,12 +174,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 className="w-14 h-14 rounded-full border border-white/20"
               />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <p className="text-white font-bold text-[12px] truncate">{data.broker.name}</p>
-                  {data.company.logo && (
-                    <img src={data.company.logo} alt="Company" className="h-4 w-auto object-contain opacity-60" />
-                  )}
-                </div>
+                <p className="text-white font-bold text-[12px]">{data.broker.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.broker.title}</p>
                 <p className="text-white/60 text-[8px]">NMLS #{data.broker.nmls}</p>
                 <div className="flex items-center gap-1 mt-1">
@@ -202,12 +197,7 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 className="w-14 h-14 rounded-full border border-white/20"
               />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  {data.realtor.logo && (
-                    <img src={data.realtor.logo} alt="Brokerage" className="h-4 w-auto object-contain opacity-60" />
-                  )}
-                  <p className="text-white font-bold text-[12px] truncate">{data.realtor.name}</p>
-                </div>
+                <p className="text-white font-bold text-[12px]">{data.realtor.name}</p>
                 <p className="text-[9px]" style={{ color: primaryColor }}>{data.realtor.brokerage}</p>
                 <p className="text-white/60 text-[8px]">{data.realtor.title}</p>
                 <div className="flex items-center gap-1 mt-1">

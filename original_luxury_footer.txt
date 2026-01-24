@@ -149,7 +149,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
               <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
             </div>
 
-            {/* Realtor */}
+            {/* Adrian Mitchell */}
             <div className="flex items-center gap-4 w-[240px] flex-row-reverse">
               <FlyerProfileImage
                 src={data.realtor.headshot}
