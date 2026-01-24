@@ -50,15 +50,51 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
         <div className="absolute top-[50px] left-1/2 -translate-x-1/2 w-[400px] h-[300px] bg-[#1a1a10] blur-[60px] rounded-full pointer-events-none z-0"></div>
 
         {/* --- HEADER --- */}
-        <div className="relative z-10 px-8 pt-12 pb-8 text-center">
-          <div className="inline-flex items-center gap-2 px-6 py-1.5 rounded-full border border-white/10 mb-8 bg-[#11110a]">
+        <div className="relative z-10 px-8 pt-10 pb-6 text-center">
+          {/* Contact sections - at top */}
+          <div className="flex items-start justify-center gap-12 mb-8">
+            {/* Scott Little */}
+            <div className="flex items-start gap-3">
+              <FlyerProfileImage
+                src={data.broker.headshot}
+                alt={data.broker.name}
+                position={data.broker.headshotPosition}
+                className="w-14 h-14 rounded-full border-2 border-amber-500/30 shadow-lg"
+              />
+              <div className="text-left">
+                <div className="text-white font-serif text-[18px] tracking-wide leading-tight">{data.broker.name}</div>
+                <div className="text-[8px] text-slate-400 font-bold uppercase mb-0.5">{data.company.name}</div>
+                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.broker.title}</div>
+                <div className="text-[8px] text-slate-500 tracking-widest mt-1 lowercase">{data.broker.phone} • {data.broker.email}</div>
+              </div>
+            </div>
+
+            {/* Realtor */}
+            <div className="flex items-start gap-3">
+              <FlyerProfileImage
+                src={data.realtor.headshot}
+                alt={data.realtor.name}
+                position={data.realtor.headshotPosition}
+                className="w-14 h-14 rounded-full border-2 border-amber-500/30 shadow-lg"
+              />
+              <div className="text-left">
+                <div className="text-white font-serif text-[18px] tracking-wide leading-tight">{data.realtor.name}</div>
+                <div className="text-[8px] text-slate-400 font-bold uppercase mb-0.5">{data.realtor.brokerage}</div>
+                <div className="text-[8px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
+                <div className="text-[8px] text-slate-500 tracking-widest mt-1">{data.realtor.phone}</div>
+                <div className="text-[8px] text-slate-500 tracking-widest">{data.realtor.website}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center gap-2 px-6 py-1.5 rounded-full border border-white/10 mb-6 bg-[#11110a]">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
             <span className="text-[10px] uppercase tracking-[0.2em] text-slate-200 font-medium font-sans">
               {isGov ? 'Government Loan Update' : 'PRIVATE CLIENT MARKET UPDATE'}
             </span>
           </div>
 
-          <h1 className="text-[54px] font-serif text-white tracking-tight leading-[1.1] mb-6">
+          <h1 className="text-[48px] font-serif text-white tracking-tight leading-[1.1] mb-4">
             {isGov ? (
               <>Security & <span className="text-amber-500">Stability.</span></>
             ) : (
@@ -118,45 +154,8 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
           </div>
         </div>
 
-        {/* --- FOOTER (TEAM) --- */}
+        {/* --- FOOTER --- */}
         <div className="bg-[#050505] flex-1 flex flex-col justify-end">
-
-          {/* Contact sections - centered above */}
-          <div className="px-10 pb-6 flex items-start justify-center gap-16">
-            {/* Scott Little */}
-            <div className="flex items-start gap-4">
-              <FlyerProfileImage
-                src={data.broker.headshot}
-                alt={data.broker.name}
-                position={data.broker.headshotPosition}
-                className="w-16 h-16 rounded-full border-2 border-amber-500/30 shadow-lg"
-              />
-              <div className="text-left">
-                <div className="text-white font-serif text-[22px] tracking-wide leading-tight">{data.broker.name}</div>
-                <div className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">{data.company.name}</div>
-                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.broker.title}</div>
-                <div className="text-[9px] text-slate-500 tracking-widest mt-1 lowercase">{data.broker.phone} • {data.broker.email}</div>
-              </div>
-            </div>
-
-            {/* Realtor */}
-            <div className="flex items-start gap-4">
-              <FlyerProfileImage
-                src={data.realtor.headshot}
-                alt={data.realtor.name}
-                position={data.realtor.headshotPosition}
-                className="w-16 h-16 rounded-full border-2 border-amber-500/30 shadow-lg"
-              />
-              <div className="text-left">
-                <div className="text-white font-serif text-[22px] tracking-wide leading-tight">{data.realtor.name}</div>
-                <div className="text-[9px] text-slate-400 font-bold uppercase mb-0.5">{data.realtor.brokerage}</div>
-                <div className="text-[9px] text-amber-500 uppercase tracking-[0.2em] font-bold">{data.realtor.title}</div>
-                <div className="text-[9px] text-slate-500 tracking-widest mt-1">{data.realtor.phone}</div>
-                <div className="text-[9px] text-slate-500 tracking-widest">{data.realtor.website}</div>
-              </div>
-            </div>
-          </div>
-
           {/* QR Code - Bottom Left with Disclosure */}
           <div className="px-10 pb-4 flex items-end justify-between">
             <div className="flex flex-col items-center">
