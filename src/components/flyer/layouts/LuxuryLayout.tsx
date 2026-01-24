@@ -139,7 +139,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </div>
 
             {/* QR Code Center */}
-            <div className="flex flex-col items-center translate-y-2">
+            <div className="flex flex-col items-center translate-y-2 px-8">
               <div className="bg-[#050505] p-2 border border-white/10 rounded-xl mb-3 shadow-2xl">
                 {data.cta.buttonUrl && (
                   <div className="p-1 px-1 bg-white rounded-lg overflow-hidden">
