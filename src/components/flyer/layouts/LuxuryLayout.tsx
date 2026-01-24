@@ -123,7 +123,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
           <div className="px-10 pb-10 flex items-end justify-between relative">
 
             {/* Scott Little */}
-            <div className="flex items-end gap-4 w-[240px]">
+            <div className="flex items-start gap-4 w-[240px]">
               <FlyerProfileImage
                 src={data.broker.headshot}
                 alt={data.broker.name}
@@ -151,7 +151,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </div>
 
             {/* Realtor */}
-            <div className="flex items-end gap-4 w-[240px] flex-row-reverse">
+            <div className="flex items-start gap-4 w-[240px] flex-row-reverse">
               <FlyerProfileImage
                 src={data.realtor.headshot}
                 alt={data.realtor.name}
