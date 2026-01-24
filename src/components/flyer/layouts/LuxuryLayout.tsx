@@ -120,7 +120,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
 
         {/* --- FOOTER (TEAM) --- */}
         <div className="bg-[#050505] flex-1 flex flex-col justify-end">
-          <div className="px-10 pb-10 flex items-end justify-between relative">
+          <div className="px-10 pb-10 flex items-start justify-between relative">
 
             {/* Scott Little */}
             <div className="flex items-start gap-4 w-[240px]">
