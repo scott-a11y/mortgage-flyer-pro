@@ -120,22 +120,11 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
 
         {/* --- FOOTER (TEAM) --- */}
         <div className="bg-[#050505] flex-1 flex flex-col justify-end">
-          <div className="px-10 pb-10 flex items-end gap-8">
 
-            {/* QR Code - Bottom Left */}
-            <div className="flex flex-col items-center">
-              <div className="bg-[#050505] p-2 border border-white/10 rounded-xl mb-2 shadow-2xl">
-                {data.cta.buttonUrl && (
-                  <div className="p-1 bg-white rounded-lg overflow-hidden">
-                    <QRCodeSVG value={data.cta.buttonUrl} size={64} level="H" />
-                  </div>
-                )}
-              </div>
-              <div className="text-[8px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
-            </div>
-
+          {/* Contact sections - centered above */}
+          <div className="px-10 pb-6 flex items-start justify-center gap-16">
             {/* Scott Little */}
-            <div className="flex items-start gap-4 flex-1">
+            <div className="flex items-start gap-4">
               <FlyerProfileImage
                 src={data.broker.headshot}
                 alt={data.broker.name}
@@ -151,7 +140,7 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </div>
 
             {/* Realtor */}
-            <div className="flex items-start gap-4 flex-1">
+            <div className="flex items-start gap-4">
               <FlyerProfileImage
                 src={data.realtor.headshot}
                 alt={data.realtor.name}
@@ -168,8 +157,22 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
             </div>
           </div>
 
-          {/* COMPLIANCE FOOTER */}
-          <FlyerLegal data={data} className="pb-6 border-none opacity-40 uppercase tracking-[0.15em]" />
+          {/* QR Code - Bottom Left with Disclosure */}
+          <div className="px-10 pb-4 flex items-end justify-between">
+            <div className="flex flex-col items-center">
+              <div className="bg-[#050505] p-2 border border-white/10 rounded-xl mb-2 shadow-2xl">
+                {data.cta.buttonUrl && (
+                  <div className="p-1 bg-white rounded-lg overflow-hidden">
+                    <QRCodeSVG value={data.cta.buttonUrl} size={56} level="H" />
+                  </div>
+                )}
+              </div>
+              <div className="text-[7px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
+            </div>
+
+            {/* COMPLIANCE FOOTER */}
+            <FlyerLegal data={data} className="flex-1 ml-6 text-right border-none opacity-40 uppercase tracking-[0.15em]" />
+          </div>
         </div>
       </div>
     );
