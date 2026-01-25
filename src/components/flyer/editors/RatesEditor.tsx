@@ -131,132 +131,158 @@ export function RatesEditor({ data, onChange }: RatesEditorProps) {
         )}
       </div>
 
-      <div className="mb-6 space-y-3 p-3 bg-muted/30 rounded-lg border">
-        <Label className="text-base font-semibold">Program Type</Label>
+      <div className="mb-6 space-y-4 p-4 bg-muted/20 rounded-lg border border-cyan-500/10 shadow-inner">
+        <Label className="editor-label">Program Type</Label>
         <RadioGroup
           value={data.rateType || 'jumbo'}
-          onValueChange={(val) => onChange({ ...data, rateType: val as 'jumbo' | 'conventional' })}
-          className="flex gap-4"
+          onValueChange={(val) => onChange({ ...data, rateType: val as 'jumbo' | 'conventional' | 'government' })}
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-black/20 p-2 rounded border border-white/5">
             <RadioGroupItem value="jumbo" id="r-jumbo" />
-            <Label htmlFor="r-jumbo" className="font-normal cursor-pointer">
-              Jumbo <span className="text-muted-foreground text-xs">(Private Client)</span>
+            <Label htmlFor="r-jumbo" className="text-[11px] leading-tight cursor-pointer">
+              Jumbo <span className="text-cyan-500/40 block text-[9px] font-mono">PRIVATE CLIENT</span>
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-black/20 p-2 rounded border border-white/5">
             <RadioGroupItem value="conventional" id="r-conventional" />
-            <Label htmlFor="r-conventional" className="font-normal cursor-pointer">
-              Conventional
+            <Label htmlFor="r-conventional" className="text-[11px] leading-tight cursor-pointer">
+              Conventional <span className="text-cyan-500/40 block text-[9px] font-mono">STANDARD</span>
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 bg-black/20 p-2 rounded border border-white/5">
             <RadioGroupItem value="government" id="r-government" />
-            <Label htmlFor="r-government" className="font-normal cursor-pointer">
-              Government <span className="text-muted-foreground text-xs">(FHA/VA)</span>
+            <Label htmlFor="r-government" className="text-[11px] leading-tight cursor-pointer">
+              Government <span className="text-cyan-500/40 block text-[9px] font-mono">FHA / VA</span>
             </Label>
           </div>
         </RadioGroup>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
         <div className="space-y-2">
           <Label className="editor-label">30-Year Fixed</Label>
           <div className="flex gap-2">
-            <Input
-              value={data.rates.thirtyYearFixed}
-              onChange={(e) => updateRate("thirtyYearFixed", e.target.value)}
-              placeholder="6.75%"
-              className="flex-1"
-            />
-            <Input
-              value={data.rates.thirtyYearFixedAPR}
-              onChange={(e) => updateRate("thirtyYearFixedAPR", e.target.value)}
-              placeholder="APR"
-              className="w-20 text-xs"
-              title="APR"
-            />
+            <div className="relative flex-1">
+              <Input
+                value={data.rates.thirtyYearFixed}
+                onChange={(e) => updateRate("thirtyYearFixed", e.target.value)}
+                placeholder="6.75%"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
+            </div>
+            <div className="relative w-24">
+              <Input
+                value={data.rates.thirtyYearFixedAPR}
+                onChange={(e) => updateRate("thirtyYearFixedAPR", e.target.value)}
+                placeholder="APR"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+                title="APR"
+              />
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-cyan-500/30 font-mono">APR</span>
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">15-Year Fixed</Label>
           <div className="flex gap-2">
-            <Input
-              value={data.rates.fifteenYearFixed}
-              onChange={(e) => updateRate("fifteenYearFixed", e.target.value)}
-              placeholder="6.10%"
-              className="flex-1"
-            />
-            <Input
-              value={data.rates.fifteenYearFixedAPR}
-              onChange={(e) => updateRate("fifteenYearFixedAPR", e.target.value)}
-              placeholder="APR"
-              className="w-20 text-xs"
-              title="APR"
-            />
+            <div className="relative flex-1">
+              <Input
+                value={data.rates.fifteenYearFixed}
+                onChange={(e) => updateRate("fifteenYearFixed", e.target.value)}
+                placeholder="6.10%"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
+            </div>
+            <div className="relative w-24">
+              <Input
+                value={data.rates.fifteenYearFixedAPR}
+                onChange={(e) => updateRate("fifteenYearFixedAPR", e.target.value)}
+                placeholder="APR"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+                title="APR"
+              />
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-cyan-500/30 font-mono">APR</span>
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">30-Year Jumbo</Label>
           <div className="flex gap-2">
-            <Input
-              value={data.rates.thirtyYearJumbo}
-              onChange={(e) => updateRate("thirtyYearJumbo", e.target.value)}
-              placeholder="7.05%"
-              className="flex-1"
-            />
-            <Input
-              value={data.rates.thirtyYearJumboAPR}
-              onChange={(e) => updateRate("thirtyYearJumboAPR", e.target.value)}
-              placeholder="APR"
-              className="w-20 text-xs"
-              title="APR"
-            />
+            <div className="relative flex-1">
+              <Input
+                value={data.rates.thirtyYearJumbo}
+                onChange={(e) => updateRate("thirtyYearJumbo", e.target.value)}
+                placeholder="7.05%"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
+            </div>
+            <div className="relative w-24">
+              <Input
+                value={data.rates.thirtyYearJumboAPR}
+                onChange={(e) => updateRate("thirtyYearJumboAPR", e.target.value)}
+                placeholder="APR"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+                title="APR"
+              />
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-cyan-500/30 font-mono">APR</span>
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">5/1 ARM</Label>
           <div className="flex gap-2">
-            <Input
-              value={data.rates.fiveOneArm}
-              onChange={(e) => updateRate("fiveOneArm", e.target.value)}
-              placeholder="6.45%"
-              className="flex-1"
-            />
-            <Input
-              value={data.rates.fiveOneArmAPR}
-              onChange={(e) => updateRate("fiveOneArmAPR", e.target.value)}
-              placeholder="APR"
-              className="w-20 text-xs"
-              title="APR"
-            />
+            <div className="relative flex-1">
+              <Input
+                value={data.rates.fiveOneArm}
+                onChange={(e) => updateRate("fiveOneArm", e.target.value)}
+                placeholder="6.45%"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
+            </div>
+            <div className="relative w-24">
+              <Input
+                value={data.rates.fiveOneArmAPR}
+                onChange={(e) => updateRate("fiveOneArmAPR", e.target.value)}
+                placeholder="APR"
+                className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
+                title="APR"
+              />
+              <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-cyan-500/30 font-mono">APR</span>
+            </div>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">FHA 30-Year</Label>
-          <div className="flex gap-2">
+          <div className="relative">
             <Input
               value={data.rates.fha}
               onChange={(e) => updateRate("fha", e.target.value)}
               placeholder="5.50%"
-              className="flex-1"
+              className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
             />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
           </div>
         </div>
 
         <div className="space-y-2">
           <Label className="editor-label">VA 30-Year</Label>
-          <div className="flex gap-2">
+          <div className="relative">
             <Input
               value={data.rates.va}
               onChange={(e) => updateRate("va", e.target.value)}
               placeholder="5.50%"
-              className="flex-1"
+              className="pr-8 text-xs h-9 bg-black/40 border-cyan-500/20 focus:border-cyan-500/50"
             />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-cyan-500/30 font-mono">RATE</span>
           </div>
         </div>
       </div>
