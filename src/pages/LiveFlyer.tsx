@@ -57,15 +57,23 @@ export default function LiveFlyer() {
           const { defaultFlyerData } = await import('@/data/defaultFlyerData');
           let baseData = { ...defaultFlyerData };
 
-          const partnerId = flyerSlug.replace('scott-little-', '');
-          const partner = agentPartners.find(p => p.id === partnerId);
+          // Extract partner ID: "scott-little-adrian-mitchell" -> "adrian-mitchell"
+          // But "scott-little" alone -> "scott-little" which won't match any partner
+          if (flyerSlug !== 'scott-little') {
+            const partnerId = flyerSlug.substring('scott-little-'.length);
+            console.log("Looking for partner with ID:", partnerId);
+            const partner = agentPartners.find(p => p.id === partnerId);
 
-          if (partner) {
-            baseData = {
-              ...baseData,
-              realtor: partner.realtor,
-              colorTheme: partner.colorTheme
-            };
+            if (partner) {
+              console.log("Found partner:", partner.name);
+              baseData = {
+                ...baseData,
+                realtor: partner.realtor,
+                colorTheme: partner.colorTheme
+              };
+            } else {
+              console.warn("No partner found for ID:", partnerId);
+            }
           }
 
           await fetchLiveRates(baseData);
@@ -81,7 +89,18 @@ export default function LiveFlyer() {
       console.error("Error loading flyer:", err);
       if (flyerSlug.startsWith('scott-little')) {
         const { defaultFlyerData } = await import('@/data/defaultFlyerData');
-        await fetchLiveRates(defaultFlyerData);
+        let baseData = { ...defaultFlyerData };
+
+        // Also try to load partner in error fallback
+        if (flyerSlug !== 'scott-little') {
+          const partnerId = flyerSlug.substring('scott-little-'.length);
+          const partner = agentPartners.find(p => p.id === partnerId);
+          if (partner) {
+            baseData = { ...baseData, realtor: partner.realtor, colorTheme: partner.colorTheme };
+          }
+        }
+
+        await fetchLiveRates(baseData);
         return;
       }
       setError("Failed to load flyer");
@@ -371,9 +390,9 @@ export default function LiveFlyer() {
         </div>
       </div>
 
-      <div className="flex-1 pt-20 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-x-hidden">
-        <div className="w-full max-w-[1024px] px-4 md:px-8">
-          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden relative">
+      <div className="flex-1 pt-20 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-y-auto overflow-x-hidden">
+        <div className="w-full max-w-[1024px] px-4 md:px-8 py-8">
+          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-visible relative mx-auto" style={{ width: 'fit-content' }}>
             {flyerData.layout === "modern" && <ModernLayout data={flyerData} />}
             {flyerData.layout === "traditional" && <TraditionalLayout data={flyerData} />}
             {flyerData.layout === "bbys" && <BBYSLayout data={flyerData} />}
