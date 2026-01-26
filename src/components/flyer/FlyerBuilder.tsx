@@ -24,8 +24,10 @@ export function FlyerBuilder() {
   useEffect(() => {
     const updateScale = () => {
       if (!containerRef.current) return;
-      const containerWidth = containerRef.current.offsetWidth - 120;
-      const containerHeight = containerRef.current.offsetHeight - 120;
+      const isMobile = window.innerWidth < 1024;
+      const offset = isMobile ? 24 : 120;
+      const containerWidth = Math.max(containerRef.current.offsetWidth - offset, 300);
+      const containerHeight = Math.max(containerRef.current.offsetHeight - offset, 400);
       const flyerWidth = 612;
       const flyerHeight = 792;
 
@@ -106,7 +108,7 @@ export function FlyerBuilder() {
       </header>
 
       {/* 2. CORE INTERFACE */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden lg:overflow-hidden overflow-y-auto lg:overflow-y-hidden">
 
         {/* A. NAV_CONTROL */}
         <aside className="dashboard-sidebar z-40">
@@ -211,7 +213,7 @@ export function FlyerBuilder() {
           {/* The Specimen Holder */}
           <div
             ref={containerRef}
-            className="w-full h-full flex items-center justify-center p-20 overflow-hidden relative"
+            className="w-full h-full flex items-center justify-center p-6 lg:p-20 overflow-hidden relative"
           >
             <div
               style={{

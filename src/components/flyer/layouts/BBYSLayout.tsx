@@ -1,4 +1,5 @@
 import { ArrowUpRight, ShieldCheck, Home, Landmark, Building2, MapPin, CheckCircle2, Info } from 'lucide-react';
+import { QRCodeSVG } from "qrcode.react";
 import { useState, useEffect, forwardRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -210,7 +211,24 @@ export const BBYSLayout = forwardRef<HTMLDivElement, LayoutProps>(({ data }, ref
                         </div>
                     </div>
 
-                    <FlyerLegal data={data} className="mt-12 pt-8 border-white/5 border-t" />
+                    {/* QR Code Section */}
+                    {data.cta.showQRCode && data.cta.buttonUrl && (
+                        <div className="mt-12 flex flex-col items-center gap-3 animate-in fade-in zoom-in duration-700 delay-300">
+                            <div className="bg-white p-2.5 rounded-2xl shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                                <QRCodeSVG
+                                    value={data.cta.buttonUrl}
+                                    size={80}
+                                    level="H"
+                                    fgColor="#000000"
+                                />
+                            </div>
+                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.3em] bg-amber-500/5 px-4 py-1.5 rounded-full border border-amber-500/20">
+                                {data.cta.qrLabel || "SCAN FOR APPROVAL"}
+                            </span>
+                        </div>
+                    )}
+
+                    <FlyerLegal data={data} className="mt-12 pt-8 border-white/5 border-t text-center" />
                 </div>
             </div>
         </div>

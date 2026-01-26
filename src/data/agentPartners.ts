@@ -1,13 +1,13 @@
 import { RealtorContact, ColorTheme, brokerageThemes } from "@/types/flyer";
 
-export interface AgentPartnerProfile {
+export interface AgentPartner {
     id: string;
     name: string;
     realtor: RealtorContact;
     colorTheme: ColorTheme;
 }
 
-export const agentPartners: AgentPartnerProfile[] = [
+export const agentPartners: AgentPartner[] = [
     {
         id: "celeste-zarling",
         name: "Celeste Zarling",
@@ -35,7 +35,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "Portland Works Real Estate",
             website: "pdxworksrealestate.com",
             logo: "",
-            headshot: "/adrian-mitchell-headshot.jpg",
+            headshot: "/adrian-mitchell-headshot.png",
             headshotPosition: 15,
         },
         colorTheme: { id: "pdxworks", name: "Portland Works", primary: "#000000", secondary: "#FFFFFF", accent: "#D4AF37" },
@@ -51,7 +51,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "RE/MAX Gold",
             website: "marcuschenrealty.com",
             logo: "",
-            headshot: "/marcus-chen-headshot.jpg",
+            headshot: "/marcus-chen-headshot.png",
             headshotPosition: 10,
         },
         colorTheme: brokerageThemes[1], // RE/MAX
@@ -67,7 +67,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "Keller Williams Realty",
             website: "jenkinsgroup.com",
             logo: "",
-            headshot: "/sarah-jenkins-headshot.jpg",
+            headshot: "/sarah-jenkins-headshot.png",
             headshotPosition: 20,
         },
         colorTheme: brokerageThemes[3], // Keller Williams
@@ -83,7 +83,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "Compass",
             website: "elenasellsportland.com",
             logo: "",
-            headshot: "/elena-rodriguez-headshot.jpg",
+            headshot: "/elena-rodriguez-headshot.png",
             headshotPosition: 30,
         },
         colorTheme: brokerageThemes[5], // Compass
@@ -99,7 +99,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "Sotheby's International Realty",
             website: "davidparkrealty.com",
             logo: "",
-            headshot: "/david-park-headshot.jpg",
+            headshot: "/david-park-headshot.png",
             headshotPosition: 5,
         },
         colorTheme: brokerageThemes[7], // Sotheby's
@@ -115,7 +115,7 @@ export const agentPartners: AgentPartnerProfile[] = [
             brokerage: "Georgetown Realty, Inc.",
             website: "gtrealty.com",
             logo: "",
-            headshot: "/danne-wilson-headshot.jpg",
+            headshot: "",
             headshotPosition: 25,
         },
         colorTheme: { id: "georgetown", name: "Georgetown Realty", primary: "#2C5F2D", secondary: "#FFFFFF", accent: "#97BC62" },

@@ -89,15 +89,17 @@
     }
 
     .dashboard-sidebar {
-        @apply bg-[#030304] border-r border-cyan-500/10 flex flex-col items-center py-4 gap-4 shrink-0 w-16;
+        @apply bg-[#030304] border-r border-cyan-500/10 flex flex-col items-center py-4 gap-4 shrink-0 w-16 transition-all duration-300;
+        @apply hidden lg:flex;
     }
 
     .editor-panel {
-        @apply bg-[#060608] border-r border-cyan-500/10 flex flex-col shrink-0 w-[420px] shadow-2xl;
+        @apply bg-[#060608] border-r border-cyan-500/10 flex flex-col shrink-0 w-full lg:w-[420px] shadow-2xl transition-all duration-300;
+        @apply h-[400px] lg:h-full;
     }
 
     .preview-stage {
-        @apply flex-1 bg-[#020202] relative flex flex-col overflow-hidden items-center justify-center;
+        @apply flex-1 bg-[#020202] relative flex flex-col overflow-hidden items-center justify-center min-h-[400px];
     }
 
     .cyan-glow {
