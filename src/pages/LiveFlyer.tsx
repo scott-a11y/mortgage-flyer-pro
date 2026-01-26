@@ -390,17 +390,24 @@ export default function LiveFlyer() {
         </div>
       </div>
 
-      <div className="flex-1 pt-12 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-y-auto overflow-x-hidden">
-        <div className="w-full h-full flex items-center justify-center p-4">
+      <div className="flex-1 min-h-0 bg-[#0a0a0a] overflow-y-auto overflow-x-hidden flex flex-col items-center">
+        <div className="w-full h-full flex items-start justify-center p-4 md:p-12">
           <div
-            className="flex items-center justify-center origin-top transition-transform duration-300"
+            className="flex items-center justify-center origin-top transition-all duration-500 ease-out"
             style={{
-              transform: typeof window !== 'undefined' && window.innerWidth < 680
-                ? `scale(${(window.innerWidth - 40) / 612})`
+              transform: typeof window !== 'undefined'
+                ? (() => {
+                  const availableWidth = window.innerWidth - 48; // padding
+                  const availableHeight = window.innerHeight - 80 - 64; // padding + header
+                  const scaleW = availableWidth / 612;
+                  const scaleH = availableHeight / 792;
+                  const scale = Math.min(scaleW, scaleH, 1);
+                  return `scale(${scale})`;
+                })()
                 : 'scale(1)'
             }}
           >
-            <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden relative mx-auto" style={{ width: 612, height: 792 }}>
+            <div className="bg-[#0f0f11] rounded-[2.5rem] shadow-[0_0_80px_rgba(0,0,0,0.6)] ring-1 ring-white/10 overflow-hidden relative mx-auto" style={{ width: 612, height: 792 }}>
               {flyerData.layout === "modern" && <ModernLayout data={flyerData} />}
               {flyerData.layout === "traditional" && <TraditionalLayout data={flyerData} />}
               {flyerData.layout === "bbys" && <BBYSLayout data={flyerData} />}
