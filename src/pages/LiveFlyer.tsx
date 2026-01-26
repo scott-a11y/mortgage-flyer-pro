@@ -390,15 +390,24 @@ export default function LiveFlyer() {
         </div>
       </div>
 
-      <div className="flex-1 pt-20 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-y-auto overflow-x-hidden">
-        <div className="w-full max-w-[1024px] px-4 md:px-8 py-8">
-          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-visible relative mx-auto" style={{ width: 'fit-content' }}>
-            {flyerData.layout === "modern" && <ModernLayout data={flyerData} />}
-            {flyerData.layout === "traditional" && <TraditionalLayout data={flyerData} />}
-            {flyerData.layout === "bbys" && <BBYSLayout data={flyerData} />}
-            {(!flyerData.layout || flyerData.layout === "luxury") && (
-              <LuxuryLayout data={flyerData} />
-            )}
+      <div className="flex-1 pt-12 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-y-auto overflow-x-hidden">
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <div
+            className="flex items-center justify-center origin-top transition-transform duration-300"
+            style={{
+              transform: typeof window !== 'undefined' && window.innerWidth < 680
+                ? `scale(${(window.innerWidth - 40) / 612})`
+                : 'scale(1)'
+            }}
+          >
+            <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden relative mx-auto" style={{ width: 612, height: 792 }}>
+              {flyerData.layout === "modern" && <ModernLayout data={flyerData} />}
+              {flyerData.layout === "traditional" && <TraditionalLayout data={flyerData} />}
+              {flyerData.layout === "bbys" && <BBYSLayout data={flyerData} />}
+              {(!flyerData.layout || flyerData.layout === "luxury") && (
+                <LuxuryLayout data={flyerData} />
+              )}
+            </div>
           </div>
         </div>
 
