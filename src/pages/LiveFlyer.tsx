@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
-import LuxuryFlyerLayout from "@/components/LuxuryFlyerLayout";
+import { LuxuryLayout } from "@/components/flyer/layouts/LuxuryLayout";
+import { ModernLayout } from "@/components/flyer/layouts/ModernLayout";
+import { TraditionalLayout } from "@/components/flyer/layouts/TraditionalLayout";
+import { BBYSLayout } from "@/components/flyer/layouts/BBYSLayout";
+import { agentPartners } from "@/data/agentPartners";
 import html2canvas from "html2canvas";
 import { SocialShareCard } from "@/components/share/SocialShareCard";
-import { SmartShareButton } from "@/components/share/SmartShareButton";
 
 export default function LiveFlyer() {
   const { slug } = useParams<{ slug: string }>();
@@ -32,49 +35,6 @@ export default function LiveFlyer() {
   const pageDescription = flyerData
     ? `View today's live mortgage rates for ${flyerData.regions.map(r => r.name).join(", ")}. Co-branded by ${flyerData.broker.name} and ${flyerData.realtor.name}.`
     : "View live mortgage rates and regional market insights.";
-  // Memoized props to prevent unnecessary re-renders of LuxuryFlyerLayout
-  const officerData = useMemo(() => flyerData ? {
-    name: flyerData.broker.name,
-    title: flyerData.broker.title,
-    nmls: flyerData.broker.nmls,
-    phone: flyerData.broker.phone,
-    email: flyerData.broker.email,
-    image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
-    imagePosition: flyerData.broker.headshotPosition,
-    imagePositionX: flyerData.broker.headshotPositionX
-  } : null, [flyerData?.broker]);
-
-  const agentData = useMemo(() => flyerData ? {
-    name: flyerData.realtor.name,
-    title: flyerData.realtor.title,
-    email: flyerData.realtor.email,
-    phone: flyerData.realtor.phone,
-    brokerage: flyerData.realtor.brokerage,
-    image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-realtor.jpg",
-    imagePosition: flyerData.realtor.headshotPosition,
-    imagePositionX: flyerData.realtor.headshotPositionX
-  } : null, [flyerData?.realtor]);
-
-  const ratesData = useMemo(() => flyerData ? {
-    jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
-    conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
-    fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
-    fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
-    va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
-  } : null, [flyerData?.rates]);
-
-  const formattedLastUpdated = useMemo(() =>
-    lastRateUpdate
-      ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-      : flyerData?.rates.dateGenerated,
-    [lastRateUpdate, flyerData?.rates.dateGenerated]
-  );
-
-  // Helper to load demo fallback data
-  const loadDemoFallback = async () => {
-    const { defaultFlyerData } = await import('@/data/defaultFlyerData');
-    await fetchLiveRates(defaultFlyerData);
-  };
 
   const loadFlyer = async (flyerSlug: string) => {
     setIsLoading(true);
@@ -91,10 +51,24 @@ export default function LiveFlyer() {
       if (fetchError) throw fetchError;
 
       if (!template) {
-        if (flyerSlug === 'scott-little') {
-          console.log("Using Demo Mode fallback for scott-little");
+        // Handle special demo slugs like 'scott-little' or 'scott-little-adrian-mitchell'
+        if (flyerSlug.startsWith('scott-little')) {
+          console.log("Using Demo Mode fallback for flyer:", flyerSlug);
           const { defaultFlyerData } = await import('@/data/defaultFlyerData');
-          await fetchLiveRates(defaultFlyerData);
+          let baseData = { ...defaultFlyerData };
+
+          const partnerId = flyerSlug.replace('scott-little-', '');
+          const partner = agentPartners.find(p => p.id === partnerId);
+
+          if (partner) {
+            baseData = {
+              ...baseData,
+              realtor: partner.realtor,
+              colorTheme: partner.colorTheme
+            };
+          }
+
+          await fetchLiveRates(baseData);
           return;
         }
         setError("Flyer not found or no longer available");
@@ -105,7 +79,7 @@ export default function LiveFlyer() {
       await fetchLiveRates(templateData);
     } catch (err) {
       console.error("Error loading flyer:", err);
-      if (flyerSlug === 'scott-little') {
+      if (flyerSlug.startsWith('scott-little')) {
         const { defaultFlyerData } = await import('@/data/defaultFlyerData');
         await fetchLiveRates(defaultFlyerData);
         return;
@@ -131,7 +105,6 @@ export default function LiveFlyer() {
         const referrer = document.referrer || 'Direct';
         const userAgent = navigator.userAgent;
 
-        // Call Supabase Edge Function to track view
         const { error } = await supabase.functions.invoke('track-flyer-view', {
           body: {
             flyer_slug: slug,
@@ -148,7 +121,6 @@ export default function LiveFlyer() {
       }
     };
 
-    // Track after a short delay to ensure page is loaded
     const timer = setTimeout(trackPageView, 1000);
     return () => clearTimeout(timer);
   }, [slug, flyerData]);
@@ -157,10 +129,9 @@ export default function LiveFlyer() {
   const fetchLiveRates = async (templateData: FlyerData) => {
     setIsRefreshingRates(true);
 
-    // Detect if we should use silent simulation mode
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
     const isPlaceholder = !supabaseUrl || supabaseUrl.includes('placeholder.supabase.co');
-    const isDemo = slug === 'scott-little';
+    const isDemo = slug?.startsWith('scott-little');
 
     try {
       if (isPlaceholder) {
@@ -201,7 +172,6 @@ export default function LiveFlyer() {
     } catch (err) {
       console.error("Error fetching live rates:", err);
 
-      // Resilient Fallback: Even if fetch fails, the flyer must look perfect
       setFlyerData({
         ...templateData,
         rates: {
@@ -215,7 +185,6 @@ export default function LiveFlyer() {
       });
       setLastRateUpdate(new Date());
 
-      // Only show error toast if we're not in a fallback/demo state
       if (!isDemo && !isPlaceholder) {
         toast.error("Showing last saved rates");
       }
@@ -236,14 +205,10 @@ export default function LiveFlyer() {
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(getShareUrl());
-      toast.success("Link copied to clipboard", {
-        description: "Link updated to production URL for sharing."
-      });
+      toast.success("Link copied to clipboard");
     } catch (err) {
       console.error("Copy failed:", err);
-      toast.error("Failed to copy link", {
-        description: "Please copy the URL manually from the address bar."
-      });
+      toast.error("Failed to copy link");
     }
   };
 
@@ -255,15 +220,12 @@ export default function LiveFlyer() {
       const blob = await generateSocialCard();
       if (!blob) throw new Error("Generation failed");
 
-      // STRICT DEVICE DETECTION
-      // navigator.share on Windows/macOS is unreliable for local file blobs (Outlook/Teams/etc)
       const ua = navigator.userAgent;
       const isWindows = /Win/i.test(ua);
       const isMac = /Mac/i.test(ua) && !('ontouchend' in document);
       const isMobile = /Mobile|Android|iPhone|iPad|iPod/i.test(ua);
 
       const shouldNativeShare = isMobile && !isWindows && !isMac && !!navigator.share;
-
       const file = new File([blob], 'rate-update.png', { type: 'image/png' });
 
       if (shouldNativeShare && navigator.canShare && navigator.canShare({ files: [file] })) {
@@ -271,10 +233,9 @@ export default function LiveFlyer() {
         await navigator.share({
           files: [file],
           title: `Rate Update: ${flyerData?.broker.name}`,
-          text: `Check out today's live rates from ${flyerData?.broker.name} at ${flyerData?.company.name}.`,
+          text: `Check out today's live rates from ${flyerData?.broker.name}.`,
         });
       } else {
-        // Desktop / Fallback (Windows/macOS)
         let copied = false;
         try {
           if (navigator.clipboard && window.ClipboardItem) {
@@ -287,7 +248,6 @@ export default function LiveFlyer() {
           console.warn("Clipboard failed:", clipErr);
         }
 
-        // 2. Trigger Download (with delay for browser compatibility)
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -295,33 +255,25 @@ export default function LiveFlyer() {
         link.style.display = 'none';
         document.body.appendChild(link);
 
-        // Small delay ensures download works reliably
         setTimeout(() => {
           link.click();
-          // Wait longer before cleanup to allow browser download to start
           setTimeout(() => {
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-          }, 2000); // Increased from 100ms to 2000ms
+          }, 2000);
         }, 100);
 
         toast.dismiss(toastId);
         if (copied) {
-          toast.success("Image Ready!", {
-            description: "Copied to clipboard + downloading to your computer."
-          });
+          toast.success("Image Ready!", { description: "Copied to clipboard + downloading." });
         } else {
-          toast.success("Downloading...", {
-            description: "Check your Downloads folder for the flyer image."
-          });
+          toast.success("Downloading...");
         }
       }
     } catch (err) {
       console.error("Sharing failed:", err);
       toast.dismiss(toastId);
-      toast.error("Could not share image", {
-        description: "Please try 'Copy Link' instead."
-      });
+      toast.error("Could not share image");
     } finally {
       setIsGenerating(false);
     }
@@ -343,11 +295,7 @@ export default function LiveFlyer() {
           >
             <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
             <h2 className="text-xl font-medium mb-2">Fetching Live Rates</h2>
-            <p className="text-white/40 text-sm">Securing today's latest market data from Freddie Mac...</p>
-            <div className="mt-6 flex flex-col gap-2">
-              <Skeleton className="h-4 w-full bg-white/5" />
-              <Skeleton className="h-4 w-3/4 bg-white/5" />
-            </div>
+            <p className="text-white/40 text-sm">Securing today's latest market data...</p>
           </motion.div>
         </div>
       </div>
@@ -360,9 +308,6 @@ export default function LiveFlyer() {
         <div className="text-center space-y-4 max-w-md p-8 border border-white/10 rounded-3xl bg-white/5 backdrop-blur-xl">
           <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
           <h1 className="text-xl font-semibold">{error}</h1>
-          <p className="text-white/40">
-            This flyer link may have expired or been removed. Please contact your loan officer for a fresh link.
-          </p>
           <Button variant="outline" onClick={() => window.location.reload()} className="mt-4 border-white/10 hover:bg-white/5">
             <RefreshCw className="w-4 h-4 mr-2" />
             Try Again
@@ -376,25 +321,15 @@ export default function LiveFlyer() {
 
   const generateSocialCard = async () => {
     if (!cardRef.current) return null;
-
-    // Helper: Wait for images to load
     const images = Array.from(cardRef.current.querySelectorAll('img')) as HTMLImageElement[];
     await Promise.all(images.map(img => {
       if (img.complete) return Promise.resolve();
       return new Promise((resolve) => {
         img.onload = resolve;
-        img.onerror = resolve; // Continue even if error
+        img.onerror = resolve;
       });
     }));
-
-    // Generate Canvas
-    const canvas = await html2canvas(cardRef.current, {
-      scale: 2, // 2x is enough for social (2160x2160)
-      useCORS: true,
-      backgroundColor: null,
-      logging: false,
-    });
-
+    const canvas = await html2canvas(cardRef.current, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
     return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
   };
 
@@ -418,38 +353,17 @@ export default function LiveFlyer() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Main Action */}
-          <Button
-            onClick={handleShareImage}
-            disabled={isGenerating}
-            size="sm"
-            className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-9 rounded-lg px-4 shadow-lg flex items-center gap-2 transition-all active:scale-95"
-          >
+          <Button onClick={handleShareImage} disabled={isGenerating} size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-9 rounded-lg px-4 shadow-lg flex items-center gap-2 transition-all active:scale-95">
             {isGenerating ? <Loader2 className="animate-spin w-4 h-4" /> : <Share2 className="w-4 h-4" />}
             <span className="hidden sm:inline">Share Flyer Image</span>
-            <span className="sm:hidden">Share</span>
           </Button>
 
-          {/* Secondary Actions Group */}
           <div className="flex items-center gap-1.5 ml-1 border-l border-white/10 pl-3">
-            <Button
-              onClick={handleTextClient}
-              variant="ghost"
-              size="sm"
-              className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2"
-              title="Text Link"
-            >
+            <Button onClick={handleTextClient} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2">
               <MessageCircle className="w-4 h-4 text-green-400" />
               <span className="hidden md:inline">Text</span>
             </Button>
-
-            <Button
-              onClick={handleCopyLink}
-              variant="ghost"
-              size="sm"
-              className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2"
-              title="Copy Link"
-            >
+            <Button onClick={handleCopyLink} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2">
               <LinkIcon className="w-4 h-4 text-blue-400" />
               <span className="hidden md:inline">Copy</span>
             </Button>
@@ -459,57 +373,17 @@ export default function LiveFlyer() {
 
       <div className="flex-1 pt-20 pb-12 flex flex-col items-center bg-[#0a0a0a] overflow-x-hidden">
         <div className="w-full max-w-[1024px] px-4 md:px-8">
-          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden">
-            <LuxuryFlyerLayout
-              officer={{
-                name: flyerData.broker.name,
-                title: flyerData.broker.title,
-                nmls: flyerData.broker.nmls,
-                phone: flyerData.broker.phone,
-                email: flyerData.broker.email,
-                image: typeof flyerData.broker.headshot === 'string' ? flyerData.broker.headshot : "/placeholder-scott.jpg",
-                imagePosition: flyerData.broker.headshotPosition,
-                imagePositionX: flyerData.broker.headshotPositionX
-              }}
-              agent={{
-                name: flyerData.realtor.name,
-                title: flyerData.realtor.title,
-                email: flyerData.realtor.email,
-                phone: flyerData.realtor.phone,
-                brokerage: flyerData.realtor.brokerage,
-                image: typeof flyerData.realtor.headshot === 'string' ? flyerData.realtor.headshot : "/placeholder-realtor.jpg",
-                imagePosition: flyerData.realtor.headshotPosition,
-                imagePositionX: flyerData.realtor.headshotPositionX
-              }}
-              rates={{
-                jumbo: flyerData.rates.thirtyYearJumbo.replace('%', ''),
-                conventional: flyerData.rates.thirtyYearFixed.replace('%', ''),
-                fifteenYear: flyerData.rates.fifteenYearFixed.replace('%', ''),
-                fha: flyerData.rates.fha ? flyerData.rates.fha.replace('%', '') : '5.50',
-                va: flyerData.rates.va ? flyerData.rates.va.replace('%', '') : '5.50'
-              }}
-              rateType={flyerData.rateType}
-              lastUpdated={lastRateUpdate
-                ? lastRateUpdate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-                : flyerData.rates.dateGenerated
-              }
-            />
+          <div className="bg-[#0f0f11] rounded-3xl shadow-2xl ring-1 ring-white/10 overflow-hidden relative">
+            {flyerData.layout === "modern" && <ModernLayout data={flyerData} />}
+            {flyerData.layout === "traditional" && <TraditionalLayout data={flyerData} />}
+            {flyerData.layout === "bbys" && <BBYSLayout data={flyerData} />}
+            {(!flyerData.layout || flyerData.layout === "luxury") && (
+              <LuxuryLayout data={flyerData} />
+            )}
           </div>
         </div>
 
-        {/* Hidden Social Card for Capture */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '-10000px',
-            left: 0,
-            opacity: 0,
-            pointerEvents: 'none',
-            width: 1080,
-            height: 1080
-          }}
-          aria-hidden="true"
-        >
+        <div style={{ position: 'absolute', top: '-10000px', left: 0, opacity: 0, pointerEvents: 'none', width: 1080, height: 1080 }} aria-hidden="true">
           <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
         </div>
       </div>

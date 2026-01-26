@@ -8,6 +8,7 @@ import { RotateCcw, Loader2, Share2, Sparkles, Layout, Database, Activity, Termi
 import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
 import { AgentToolkit } from "./AgentToolkit";
+import { agentPartners } from "@/data/agentPartners";
 import { useFlyerCapture } from "@/hooks/useFlyerCapture";
 
 export function FlyerBuilder() {
@@ -159,7 +160,18 @@ export function FlyerBuilder() {
                   <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono italic">// Partner_Payload</h4>
                   <AgentToolkit
                     data={data}
-                    shareUrl={typeof window !== 'undefined' ? `${window.location.origin}/live/${encodeURIComponent(data.broker.name.toLowerCase().replace(/\s+/g, '-'))}` : ''}
+                    shareUrl={typeof window !== 'undefined' ? (
+                      (() => {
+                        const baseUrl = window.location.origin;
+                        const brokerSlug = data.broker.name.toLowerCase().replace(/\s+/g, '-');
+                        // Find if active realtor is a known partner
+                        const partner = agentPartners.find(p => p.realtor.name === data.realtor.name);
+                        if (partner) {
+                          return `${baseUrl}/live/${brokerSlug}-${partner.id}`;
+                        }
+                        return `${baseUrl}/live/${brokerSlug}`;
+                      })()
+                    ) : ''}
                     onLoadTemplate={updateData}
                   />
                 </div>
