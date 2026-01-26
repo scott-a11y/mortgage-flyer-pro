@@ -31,6 +31,7 @@ export interface CTAInfo {
   buttonText: string;
   buttonUrl: string;
   showQRCode: boolean;
+  qrLabel?: string;
 }
 
 export interface BrokerContact {

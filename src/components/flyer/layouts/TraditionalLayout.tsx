@@ -150,13 +150,20 @@ export const TraditionalLayout = forwardRef<HTMLDivElement, LayoutProps>(
               {data.cta.buttonText}
             </button>
             {data.cta.showQRCode && data.cta.buttonUrl && (
-              <div className="bg-white p-1.5 rounded">
-                <QRCodeSVG
-                  value={data.cta.buttonUrl}
-                  size={44}
-                  level="M"
-                  fgColor={secondaryColor}
-                />
+              <div className="flex flex-col items-center gap-1">
+                <div className="bg-white p-1.5 rounded">
+                  <QRCodeSVG
+                    value={data.cta.buttonUrl}
+                    size={44}
+                    level="M"
+                    fgColor={secondaryColor}
+                  />
+                </div>
+                {data.cta.qrLabel && (
+                  <span className="text-[6px] font-bold uppercase tracking-wider" style={{ color: `${secondaryColor}99` }}>
+                    {data.cta.qrLabel}
+                  </span>
+                )}
               </div>
             )}
           </div>

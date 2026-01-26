@@ -48,6 +48,7 @@ export const defaultFlyerData: FlyerData = {
     buttonText: "Start My Pre-Qualification",
     buttonUrl: "https://1731464.my1003app.com/130371/register",
     showQRCode: true,
+    qrLabel: "Scan for Pre-Approval",
   },
   broker: {
     name: "Scott Little",

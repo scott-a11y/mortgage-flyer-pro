@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw, Loader2, Share2, Sparkles, Layout, Database, Activity, Terminal } from "lucide-react";
 import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
+import { AgentToolkit } from "./AgentToolkit";
 import { useFlyerCapture } from "@/hooks/useFlyerCapture";
 
 export function FlyerBuilder() {
@@ -151,17 +152,29 @@ export function FlyerBuilder() {
           )}
 
           {activeTab === "broadcast" && (
-            <div className="p-6 flex flex-col h-full">
+            <div className="p-6 flex flex-col h-full overflow-y-auto custom-scrollbar">
               <h3 className="text-[9px] font-bold text-cyan-500 uppercase tracking-[0.3em] font-mono mb-6">Distribution_Control</h3>
-              <div className="space-y-6">
-                <div className="p-6 border border-cyan-500/10 bg-cyan-500/[0.02] rounded-sm">
-                  <p className="text-[11px] text-slate-400 mb-4 leading-relaxed">Execute broadcast to social and CRM channels. Ensure all legal disclosures are attached.</p>
-                  <SmartShareButton
-                    onGenerateBlob={() => captureImage(previewRef.current)}
-                    title={`Rate Update: Scott Little | IA Mortgage`}
-                    text={`Check out the latest mortgage rates from Scott Little at IA Mortgage. #MortgageRates #RealEstate`}
-                    isLoading={isCapturing}
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono italic">// Partner_Payload</h4>
+                  <AgentToolkit
+                    data={data}
+                    shareUrl={typeof window !== 'undefined' ? `${window.location.origin}/live/${encodeURIComponent(data.broker.name.toLowerCase().replace(/\s+/g, '-'))}` : ''}
+                    onLoadTemplate={updateData}
                   />
+                </div>
+
+                <div className="space-y-4 pt-4 border-t border-cyan-500/10">
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono italic">// Direct_Broadcast</h4>
+                  <div className="p-6 border border-cyan-500/10 bg-cyan-500/[0.02] rounded-sm">
+                    <p className="text-[11px] text-slate-400 mb-4 leading-relaxed font-mono uppercase tracking-tighter">Execute broad-spectrum post to social channels. All legal disclosures included.</p>
+                    <SmartShareButton
+                      onGenerateBlob={() => captureImage(previewRef.current)}
+                      title={`Rate Update: ${data.broker.name} | ${data.company.name}`}
+                      text={`Check out the latest mortgage rates from ${data.broker.name} at ${data.company.name}. #MortgageRates #RealEstate`}
+                      isLoading={isCapturing}
+                    />
+                  </div>
                 </div>
               </div>
             </div>

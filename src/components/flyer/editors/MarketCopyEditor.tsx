@@ -177,6 +177,18 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
             </p>
           </div>
 
+          <div className="space-y-2">
+            <Label className="editor-label">QR Code Label</Label>
+            <Input
+              value={data.cta.qrLabel || ""}
+              onChange={(e) => updateCTA("qrLabel", e.target.value)}
+              placeholder="SCAN ME"
+            />
+            <p className="text-[10px] text-muted-foreground">
+              A short description shown below the QR code.
+            </p>
+          </div>
+
           <div className="flex items-center justify-between p-3 rounded-lg border bg-muted/30">
             <div className="flex items-center gap-2">
               <QrCode className="w-4 h-4 text-muted-foreground" />

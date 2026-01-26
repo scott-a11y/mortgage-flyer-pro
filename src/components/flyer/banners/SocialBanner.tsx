@@ -71,7 +71,9 @@ export function SocialBanner({ data, rJumbo, rFixed15, shareUrl }: SocialBannerP
                 </div>
                 <div style={{ textAlign: 'center' }}>
                     <QRCodeSVG value={shareUrl} size={60} fgColor="white" bgColor="transparent" />
-                    <div style={{ color: '#444', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', marginTop: 8 }}>Scan Me</div>
+                    <div style={{ color: '#444', fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', marginTop: 8 }}>
+                        {data.cta.qrLabel || "Scan Me"}
+                    </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexDirection: 'row-reverse', textAlign: 'right' }}>
                     <FlyerProfileImage

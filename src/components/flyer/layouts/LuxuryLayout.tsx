@@ -165,7 +165,9 @@ export const LuxuryLayout = forwardRef<HTMLDivElement, LayoutProps>(
                 </div>
               )}
             </div>
-            <div className="text-[7px] text-slate-500 uppercase tracking-[0.3em] font-sans">SCAN ME</div>
+            <div className="text-[7px] text-slate-500 uppercase tracking-[0.3em] font-sans">
+              {data.cta.qrLabel || "SCAN ME"}
+            </div>
           </div>
 
           {/* COMPLIANCE FOOTER */}

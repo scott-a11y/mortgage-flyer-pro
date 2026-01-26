@@ -37,8 +37,11 @@ export function StoriesBanner({ data, rJumbo, rFixed15, shareUrl }: StoriesBanne
 
             {/* Footer */}
             <div style={{ padding: '100px 80px', textAlign: 'center' }}>
-                <div style={{ display: 'inline-block', background: 'white', padding: 20, borderRadius: 20, marginBottom: 40 }}>
+                <div style={{ display: 'inline-block', background: 'white', padding: 20, borderRadius: 20, marginBottom: 20 }}>
                     <QRCodeSVG value={shareUrl} size={100} />
+                </div>
+                <div style={{ color: '#444', fontSize: 20, letterSpacing: 4, textTransform: 'uppercase', marginBottom: 40, fontWeight: 600 }}>
+                    {data.cta.qrLabel || "Scan Me"}
                 </div>
                 <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 40, color: 'white' }}>{data.broker.name} <span style={{ color: '#555', fontFamily: 'Inter' }}>x</span> {data.realtor.name}</div>
             </div>

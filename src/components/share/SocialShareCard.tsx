@@ -283,7 +283,9 @@ export const SocialShareCard = forwardRef<HTMLDivElement, SocialShareCardProps>(
                     <div style={{ border: '1px solid rgba(255,255,255,0.1)', padding: 12, background: 'rgba(255,255,255,0.02)', borderRadius: 12, marginBottom: 8 }}>
                         <QRCodeSVG value={shareUrl} size={80} fgColor="white" bgColor="transparent" />
                     </div>
-                    <div style={{ color: '#444', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>Scan Me</div>
+                    <div style={{ color: '#444', fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', fontWeight: 600 }}>
+                        {data.cta.qrLabel || "Scan Me"}
+                    </div>
                 </div>
 
                 {/* ADRIAN */}
