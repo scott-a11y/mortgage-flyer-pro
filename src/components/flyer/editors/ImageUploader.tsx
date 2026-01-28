@@ -2,15 +2,17 @@ import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, User, Building } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ImageUploaderProps {
   label: string;
   value?: string;
   onChange: (url: string) => void;
   placeholder?: string;
+  className?: string;
 }
 
-export function ImageUploader({ label, value, onChange, placeholder }: ImageUploaderProps) {
+export function ImageUploader({ label, value, onChange, placeholder, className }: ImageUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +34,7 @@ export function ImageUploader({ label, value, onChange, placeholder }: ImageUplo
   };
 
   return (
-    <div className="space-y-2">
+    <div className={cn("space-y-2", className)}>
       <Label className="editor-label">{label}</Label>
       <div className="flex items-center gap-3">
         {/* Preview */}

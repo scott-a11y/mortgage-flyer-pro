@@ -3,8 +3,13 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { FlyerData } from "@/types/flyer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Building, User, Home } from "lucide-react";
+import { Building, User, Home, Save, RotateCcw } from "lucide-react";
 import { ImageUploader } from "./ImageUploader";
+import { useFlyer } from "@/context/FlyerContext";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { AgentPartner } from "@/data/agentPartners";
+import { cn } from "@/lib/utils";
 
 interface ContactEditorProps {
   data: FlyerData;
@@ -12,6 +17,34 @@ interface ContactEditorProps {
 }
 
 export function ContactEditor({ data, onChange }: ContactEditorProps) {
+  const { partners, savePartner, saveBrokerDefaults, saveCompanyDefaults } = useFlyer();
+
+  const activePartner = partners.find(p => p.realtor.name === data.realtor.name);
+
+  const hasChanges = activePartner && (
+    activePartner.realtor.title !== data.realtor.title ||
+    activePartner.realtor.phone !== data.realtor.phone ||
+    activePartner.realtor.email !== data.realtor.email ||
+    activePartner.realtor.brokerage !== data.realtor.brokerage ||
+    activePartner.realtor.website !== data.realtor.website ||
+    activePartner.realtor.headshot !== data.realtor.headshot ||
+    activePartner.realtor.logo !== data.realtor.logo
+  );
+
+  const handleSyncToRegistry = () => {
+    if (!activePartner) return;
+
+    const updatedPartner: AgentPartner = {
+      ...activePartner,
+      realtor: {
+        ...data.realtor
+      }
+    };
+
+    savePartner(updatedPartner);
+    toast.success(`Updated ${data.realtor.name} in global registry`);
+  };
+
   const updateBroker = (field: keyof FlyerData["broker"], value: string | number) => {
     onChange({
       ...data,
@@ -44,9 +77,23 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         {/* Broker Info */}
         <AccordionItem value="broker">
           <AccordionTrigger className="hover:no-underline">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-cyan-500/60" />
-              <span className="font-medium">Mortgage Broker</span>
+            <div className="flex items-center justify-between w-full pr-4">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-cyan-500/60" />
+                <span className="font-medium">Mortgage Broker</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  saveBrokerDefaults(data.broker);
+                }}
+                className="h-6 px-2 text-[9px] text-cyan-500 hover:text-cyan-400 hover:bg-cyan-500/10 gap-1 font-bold uppercase transition-all opacity-40 hover:opacity-100"
+              >
+                <Save className="w-3 h-3" />
+                Set Default
+              </Button>
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
@@ -120,9 +167,23 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         {/* Company Info */}
         <AccordionItem value="company">
           <AccordionTrigger className="hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Building className="w-4 h-4 text-cyan-500/60" />
-              <span className="font-medium">IA Loans Company</span>
+            <div className="flex items-center justify-between w-full pr-4">
+              <div className="flex items-center gap-2">
+                <Building className="w-4 h-4 text-cyan-500/60" />
+                <span className="font-medium">IA Loans Company</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  saveCompanyDefaults(data.company);
+                }}
+                className="h-6 px-2 text-[9px] text-cyan-500 hover:text-cyan-400 hover:bg-cyan-500/10 gap-1 font-bold uppercase transition-all opacity-40 hover:opacity-100"
+              >
+                <Save className="w-3 h-3" />
+                Set Default
+              </Button>
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">
@@ -182,9 +243,25 @@ export function ContactEditor({ data, onChange }: ContactEditorProps) {
         {/* Realtor Info */}
         <AccordionItem value="realtor">
           <AccordionTrigger className="hover:no-underline">
-            <div className="flex items-center gap-2">
-              <Home className="w-4 h-4 text-cyan-500/60" />
-              <span className="font-medium">Real Estate Partner</span>
+            <div className="flex items-center justify-between w-full pr-4">
+              <div className="flex items-center gap-2">
+                <Home className="w-4 h-4 text-cyan-500/60" />
+                <span className="font-medium">Real Estate Partner</span>
+              </div>
+              {hasChanges && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSyncToRegistry();
+                  }}
+                  className="h-6 px-2 text-[9px] text-amber-500 hover:text-amber-400 hover:bg-amber-500/10 gap-1 font-bold uppercase"
+                >
+                  <Save className="w-3 h-3" />
+                  Save to Registry
+                </Button>
+              )}
             </div>
           </AccordionTrigger>
           <AccordionContent className="space-y-4 pt-2">

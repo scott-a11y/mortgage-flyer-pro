@@ -15,6 +15,8 @@ import { BBYSLayout } from "@/components/flyer/layouts/BBYSLayout";
 import { agentPartners } from "@/data/agentPartners";
 import html2canvas from "html2canvas";
 import { SocialShareCard } from "@/components/share/SocialShareCard";
+import { LiveRateRefresher } from "@/components/flyer/LiveRateRefresher";
+import { LiveContactCard } from "@/components/flyer/LiveContactCard";
 
 export default function LiveFlyer() {
   const { slug } = useParams<{ slug: string }>();
@@ -231,6 +233,16 @@ export default function LiveFlyer() {
     }
   };
 
+  const handleRatesUpdated = (newRates: FlyerData["rates"]) => {
+    if (flyerData) {
+      setFlyerData({
+        ...flyerData,
+        rates: newRates
+      });
+      setLastRateUpdate(new Date());
+    }
+  };
+
   const handleShareImage = async () => {
     setIsGenerating(true);
     const toastId = toast.loading("Capturing flyer...");
@@ -357,40 +369,51 @@ export default function LiveFlyer() {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
+        <meta name="theme-color" content="#0a0a0a" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </Helmet>
 
       {/* TOP MENU BAR */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-white/5 px-4 h-16 flex items-center justify-between shadow-2xl">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-            <Share2 className="w-4 h-4 text-amber-500" />
-          </div>
-          <div className="hidden sm:block">
-            <h1 className="text-white font-medium text-sm leading-none mb-1">Mortgage Rate Flyer</h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Live Portal</p>
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a]/80 backdrop-blur-lg border-b border-white/5 px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between shadow-2xl">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Live Rate Badge */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-gradient-to-r from-amber-500/20 to-amber-600/10 border border-amber-500/30 rounded-lg px-2 sm:px-3 py-1.5 flex items-center gap-2"
+          >
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <div className="text-right">
+              <p className="text-[9px] text-amber-500/60 uppercase tracking-wider font-bold leading-none">Live Rate</p>
+              <p className="text-sm sm:text-lg font-bold text-white leading-none mt-0.5">{flyerData.rates.thirtyYearFixed.replace('%', '')}<span className="text-amber-500 text-xs">%</span></p>
+            </div>
+          </motion.div>
+          <div className="hidden sm:block border-l border-white/10 pl-3">
+            <h1 className="text-white font-medium text-sm leading-none mb-1">{flyerData.broker.name}</h1>
+            <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">x {flyerData.realtor.name}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button onClick={handleShareImage} disabled={isGenerating} size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-9 rounded-lg px-4 shadow-lg flex items-center gap-2 transition-all active:scale-95">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <Button onClick={handleShareImage} disabled={isGenerating} size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-bold h-8 sm:h-9 rounded-lg px-2.5 sm:px-4 shadow-lg flex items-center gap-1.5 sm:gap-2 transition-all active:scale-95">
             {isGenerating ? <Loader2 className="animate-spin w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-            <span className="hidden sm:inline">Share Flyer Image</span>
+            <span className="hidden sm:inline text-xs">Share Image</span>
           </Button>
 
-          <div className="flex items-center gap-1.5 ml-1 border-l border-white/10 pl-3">
-            <Button onClick={handleTextClient} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2">
+          <div className="flex items-center gap-1 border-l border-white/10 pl-2 sm:pl-3">
+            <Button onClick={handleTextClient} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-8 sm:h-9 w-8 sm:w-9 rounded-lg flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-green-400" />
-              <span className="hidden md:inline">Text</span>
             </Button>
-            <Button onClick={handleCopyLink} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-9 w-9 sm:w-auto sm:px-3 rounded-lg flex items-center gap-2">
+            <Button onClick={handleCopyLink} variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 h-8 sm:h-9 w-8 sm:w-9 rounded-lg flex items-center justify-center">
               <LinkIcon className="w-4 h-4 text-blue-400" />
-              <span className="hidden md:inline">Copy</span>
             </Button>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 bg-[#0a0a0a] overflow-y-auto overflow-x-hidden flex flex-col items-center">
+      <div className="flex-1 min-h-0 bg-[#0a0a0a] overflow-y-auto overflow-x-hidden flex flex-col items-center pt-14 sm:pt-16">
         <div className="w-full h-full flex items-start justify-center p-4 md:p-12">
           <div
             className="flex items-center justify-center origin-top transition-all duration-500 ease-out"
@@ -422,6 +445,17 @@ export default function LiveFlyer() {
           <SocialShareCard ref={cardRef} data={flyerData} shareUrl={getShareUrl()} />
         </div>
       </div>
+
+      {/* Live Rate Refresher - For agents to pull latest rates */}
+      <LiveRateRefresher
+        data={flyerData}
+        onRatesUpdated={handleRatesUpdated}
+        shareUrl={getShareUrl()}
+        onShareImage={handleShareImage}
+      />
+
+      {/* Mobile Contact Card */}
+      <LiveContactCard data={flyerData} />
     </div>
   );
 }
