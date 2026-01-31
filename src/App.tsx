@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import LiveFlyer from "./pages/LiveFlyer";
 import NotFound from "./pages/NotFound";
 import { FlyerProvider } from "@/context/FlyerContext";
+import { PropertyFlyerBuilder } from "@/components/flyer/PropertyFlyerBuilder";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
               <Route path="/flyer/:slug" element={<LiveFlyer />} />
               <Route path="/live/:slug" element={<LiveFlyer />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

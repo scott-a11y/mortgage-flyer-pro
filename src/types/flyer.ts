@@ -128,7 +128,7 @@ export interface FlyerData {
 
 // Predefined brokerage color themes
 export const brokerageThemes: ColorTheme[] = [
-  { id: "century21", name: "Century 21", primary: "#B5A26E", secondary: "#1C1C1C", accent: "#D4AF37" },
+  { id: "century21", name: "CENTURY 21", primary: "#252526", secondary: "#F2A900", accent: "#FFFFFF" },
   { id: "remax", name: "RE/MAX", primary: "#DC1C2E", secondary: "#003DA5", accent: "#FFFFFF" },
   { id: "coldwell", name: "Coldwell Banker", primary: "#012169", secondary: "#C8102E", accent: "#FFFFFF" },
   { id: "keller", name: "Keller Williams", primary: "#B40101", secondary: "#1C1C1C", accent: "#FFFFFF" },
