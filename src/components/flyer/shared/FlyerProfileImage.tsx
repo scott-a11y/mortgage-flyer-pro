@@ -34,12 +34,11 @@ export function FlyerProfileImage({ src, alt, position = 50, className, style }:
     return (
         <div className={cn("overflow-hidden flex-shrink-0", className)} style={style}>
             <img
-                src={src}
+                src={`${src}?v=${Date.now()}`}
                 alt={alt}
                 className="w-full h-full object-cover"
                 style={{ objectPosition: `center ${position}%` }}
                 onError={() => setError(true)}
-                crossOrigin="anonymous"
             />
         </div>
     );

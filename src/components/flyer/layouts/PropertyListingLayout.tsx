@@ -1,47 +1,33 @@
 import { FlyerData, ColorTheme } from "@/types/flyer";
 import { PropertyListing, formatCurrency, calculateTotalMonthlyPayment } from "@/types/property";
 import { forwardRef } from "react";
-import { QRCodeSVG } from "qrcode.react";
-import { FlyerProfileImage } from "../shared/FlyerProfileImage";
-import { FlyerLegal } from "../shared/FlyerLegal";
+import { QRCodeCanvas } from "qrcode.react";
 import {
     Bed,
     Bath,
     Maximize,
     Trees,
-    Calendar,
     Car,
-    Home,
     MapPin,
-    Phone,
-    Mail,
     Clock,
     CheckCircle,
-    Shield,
-    Star
+    Shield
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-interface PropertyLayoutProps {
+interface PropertyListingLayoutProps {
     data: FlyerData;
     property: PropertyListing;
-    colorTheme?: ColorTheme;
+    colorTheme: ColorTheme;
+    heroImagePosition?: number; // 0-100 (top to bottom)
+    className?: string;
 }
 
-export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyLayoutProps>(
-    ({ data, property, colorTheme }, ref) => {
-        // Use provided color theme or fall back to Navy Blue / Gold
-        const theme = colorTheme || data.colorTheme || {
-            id: "navy-gold",
-            name: "Navy Gold",
-            primary: "#1e3a5f",
-            secondary: "#d4af37",
-            accent: "#ffffff"
-        };
+export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingLayoutProps>(
+    ({ data, property, colorTheme, heroImagePosition = 40, className }, ref) => {
+        const primaryColor = colorTheme?.primary || "#252526";
+        const accentColor = colorTheme?.secondary || "#F2A900";
 
-        const primaryColor = theme.primary;
-        const accentColor = theme.secondary;
-
-        // Calculate estimated payment
         const financing = property.financing || {
             listPrice: property.specs.listPrice,
             downPaymentPercent: 20,
@@ -52,345 +38,251 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyLayoutPr
 
         const paymentBreakdown = calculateTotalMonthlyPayment(financing);
 
-        // Feature icons for visual interest
-        const getFeatureIcon = (feature: string, index: number) => {
-            const icons = [CheckCircle, Star, Shield, CheckCircle, Star, Shield, CheckCircle, Star, Shield, CheckCircle, Star, Shield, CheckCircle];
-            const Icon = icons[index % icons.length];
-            return <Icon className="w-2.5 h-2.5 flex-shrink-0" style={{ color: accentColor }} />;
-        };
+        // Split bullet points into two columns
+        const bulletPoints = property.features.bulletPoints;
+        const midpoint = Math.ceil(bulletPoints.length / 2);
+        const leftColumn = bulletPoints.slice(0, midpoint);
+        const rightColumn = bulletPoints.slice(midpoint);
 
         return (
             <div
                 ref={ref}
+                id="capture-root"
                 data-capture="flyer"
-                className="bg-white w-[612px] h-[792px] shadow-2xl flex flex-col relative overflow-hidden"
-                style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}
+                className={cn(
+                    "bg-white shadow-2xl mx-auto overflow-hidden flex flex-col print:shadow-none",
+                    className
+                )}
+                style={{
+                    width: "612px",
+                    height: "792px",
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    color: "#1a1a1a",
+                    lineHeight: "1.3",
+                    WebkitPrintColorAdjust: "exact",
+                    printColorAdjust: "exact",
+                }}
             >
-                {/* ═══════════════════════════════════════════════════════════════════
-            HERO SECTION - Full Bleed Image with Gradient Overlay
-            ═══════════════════════════════════════════════════════════════════ */}
-                <div className="relative h-[220px] overflow-hidden">
-                    {/* Hero Image */}
-                    {property.images.hero ? (
+                {/* HERO SECTION - House fully visible */}
+                <div
+                    className="relative w-full flex-shrink-0"
+                    style={{ height: "200px" }}
+                >
+                    {property.images.hero && (
                         <img
                             src={property.images.hero}
-                            alt="Property Exterior"
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <div
-                            className="w-full h-full"
-                            style={{
-                                background: `linear-gradient(135deg, ${primaryColor} 0%, ${primaryColor}dd 50%, ${accentColor}40 100%)`
-                            }}
+                            alt="Property Hero"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            style={{ objectPosition: `center ${heroImagePosition}%` }}
                         />
                     )}
 
-                    {/* Gradient Overlays for text legibility */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
+                    {/* Top gradient for title readability */}
+                    <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
 
-                    {/* Top Bar - Badges */}
-                    <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4">
-                        {/* Open House Badge */}
-                        {property.openHouse && (
-                            <div
-                                className="flex items-center gap-2 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm"
-                                style={{ backgroundColor: `${accentColor}ee` }}
-                            >
-                                <Clock className="w-3.5 h-3.5" style={{ color: primaryColor }} />
-                                <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: primaryColor }}>
-                                    Open House Today
-                                </span>
-                            </div>
-                        )}
-
-                        {/* Price Tag */}
-                        <div
-                            className="px-4 py-2 rounded-lg shadow-xl backdrop-blur-sm ml-auto"
-                            style={{ backgroundColor: "rgba(255,255,255,0.95)" }}
+                    {/* Title at top-left */}
+                    <div className="absolute top-3 left-4 right-4 z-10">
+                        <h1
+                            className="text-[17px] font-black text-white uppercase leading-tight"
+                            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}
                         >
-                            <div className="text-[9px] uppercase tracking-wider font-medium" style={{ color: primaryColor }}>
-                                Listed at
-                            </div>
-                            <span className="text-2xl font-black tracking-tight" style={{ color: primaryColor }}>
-                                {formatCurrency(property.specs.listPrice)}
-                            </span>
-                        </div>
-                    </div>
-
-                    {/* Headline Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                        <h1 className="text-[22px] font-black text-white leading-tight mb-1 drop-shadow-lg">
                             {property.features.headline}
                         </h1>
-                        <p className="text-[11px] text-white/90 font-medium drop-shadow mb-2">
+                        <p
+                            className="text-[9px] text-white/90 font-medium mt-1"
+                            style={{ textShadow: "0 1px 4px rgba(0,0,0,0.6)" }}
+                        >
                             {property.features.subheadline}
                         </p>
-                        <div className="flex items-center gap-1.5 text-white/80">
-                            <MapPin className="w-3 h-3" />
-                            <span className="text-[10px] font-medium">
-                                {property.specs.address} • {property.specs.city}, {property.specs.state} {property.specs.zip}
-                            </span>
-                            <span className="text-white/50 mx-1">|</span>
-                            <span className="text-[10px] text-white/60">MLS# {property.specs.mlsNumber}</span>
-                        </div>
                     </div>
                 </div>
 
-                {/* ═══════════════════════════════════════════════════════════════════
-            PROPERTY SPECS BAR - Key Stats at a Glance
-            ═══════════════════════════════════════════════════════════════════ */}
+                {/* SLIM STATS BAR - Below hero, not overlapping */}
                 <div
-                    className="flex items-center justify-center gap-6 px-5 py-2.5"
+                    className="flex justify-between items-center px-6 py-2 flex-shrink-0"
                     style={{ backgroundColor: primaryColor }}
                 >
                     {[
-                        { icon: Bed, value: property.specs.bedrooms, label: "Beds" },
-                        { icon: Bath, value: property.specs.bathrooms, label: "Baths" },
-                        { icon: Maximize, value: property.specs.squareFootage.toLocaleString(), label: "Sq Ft" },
-                        { icon: Trees, value: property.specs.lotSize, label: "" },
-                        { icon: Car, value: property.specs.garage.replace(" Attached", ""), label: "" },
-                        { icon: Calendar, value: property.specs.yearBuilt, label: "Built" },
+                        { icon: Bed, value: property.specs.bedrooms || 0, label: "Beds" },
+                        { icon: Bath, value: property.specs.bathrooms || 0, label: "Baths" },
+                        { icon: Maximize, value: (property.specs.squareFootage || 0).toLocaleString(), label: "SF" },
+                        { icon: Trees, value: "0.5", label: "Acres" },
+                        { icon: Car, value: "3-Car", label: "Garage" },
                     ].map((stat, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 text-white">
-                            <stat.icon className="w-3.5 h-3.5 opacity-70" />
-                            <span className="text-[11px] font-bold">{stat.value}</span>
-                            {stat.label && <span className="text-[9px] opacity-60">{stat.label}</span>}
+                            <stat.icon className="w-3.5 h-3.5" style={{ color: accentColor }} />
+                            <span className="text-[12px] font-black">{stat.value}</span>
+                            <span className="text-[8px] font-medium opacity-60 uppercase">{stat.label}</span>
                         </div>
                     ))}
                 </div>
 
-                {/* ═══════════════════════════════════════════════════════════════════
-            MAIN CONTENT - Two Column Layout
-            ═══════════════════════════════════════════════════════════════════ */}
-                <div className="flex flex-1 bg-gray-50">
-                    {/* LEFT COLUMN - Features & Images */}
-                    <div className="flex-1 p-4 overflow-hidden flex flex-col">
-                        {/* Feature Highlights */}
-                        <div className="mb-3">
-                            <h2
-                                className="text-[10px] font-black uppercase tracking-[0.15em] mb-2 flex items-center gap-2"
-                                style={{ color: primaryColor }}
-                            >
-                                <div className="w-8 h-px" style={{ backgroundColor: accentColor }} />
-                                Property Highlights
-                            </h2>
+                {/* ADDRESS & PRICE BAR */}
+                <div className="flex items-center justify-between px-5 py-2 bg-white border-b border-gray-100 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5 text-gray-400" />
+                        <div>
+                            <div className="text-[11px] font-bold text-gray-900">{property.specs.address}</div>
+                            <div className="text-[8px] font-medium text-gray-500 uppercase tracking-wide">
+                                {property.specs.city}, {property.specs.state} • MLS# {property.specs.mlsNumber}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-[7px] font-bold text-gray-400 uppercase tracking-widest">Listed At</div>
+                        <div className="text-[18px] font-black leading-none" style={{ color: primaryColor }}>
+                            {formatCurrency(property.specs.listPrice)}
+                        </div>
+                    </div>
+                </div>
 
-                            <div className="grid grid-cols-2 gap-x-3 gap-y-1">
-                                {property.features.bulletPoints.slice(0, 10).map((feature, idx) => (
-                                    <div key={idx} className="flex items-start gap-1.5">
-                                        {getFeatureIcon(feature, idx)}
-                                        <span className="text-[8.5px] text-gray-700 leading-tight">{feature}</span>
+                {/* MAIN CONTENT */}
+                <div className="flex-1 grid grid-cols-[1.4fr_1fr] p-3 gap-3 bg-white overflow-hidden min-h-0">
+                    {/* LEFT COLUMN */}
+                    <div className="flex flex-col gap-3 overflow-hidden">
+                        {/* Property Highlights */}
+                        <section>
+                            <h3 className="text-[9px] font-black uppercase tracking-[0.15em] mb-2 flex items-center gap-2" style={{ color: primaryColor }}>
+                                <span className="w-4 h-[2px]" style={{ backgroundColor: accentColor }} />
+                                Property Highlights
+                            </h3>
+                            <div className="grid grid-cols-2 gap-x-3">
+                                {/* Left Column */}
+                                <div className="space-y-1.5">
+                                    {leftColumn.map((bullet, idx) => (
+                                        <div key={idx} className="flex items-start gap-1.5">
+                                            <CheckCircle className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" style={{ color: accentColor }} />
+                                            <span className="text-[8px] leading-tight font-medium text-gray-700">{bullet}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                {/* Right Column */}
+                                <div className="space-y-1.5">
+                                    {rightColumn.map((bullet, idx) => (
+                                        <div key={idx} className="flex items-start gap-1.5">
+                                            <CheckCircle className="w-2.5 h-2.5 mt-0.5 flex-shrink-0" style={{ color: accentColor }} />
+                                            <span className="text-[8px] leading-tight font-medium text-gray-700">{bullet}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Interior Features */}
+                        <section className="mt-auto">
+                            <h3 className="text-[9px] font-black uppercase tracking-[0.15em] mb-2 flex items-center gap-2" style={{ color: primaryColor }}>
+                                <span className="w-4 h-[2px]" style={{ backgroundColor: accentColor }} />
+                                Interior Features
+                            </h3>
+                            <div className="grid grid-cols-3 gap-2">
+                                {property.images.secondary?.slice(0, 3).map((img, idx) => (
+                                    <div key={idx} className="aspect-[4/3] rounded-md overflow-hidden border border-gray-200">
+                                        <img src={img} className="w-full h-full object-cover" alt={`Interior ${idx + 1}`} />
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* RIGHT COLUMN */}
+                    <div className="flex flex-col gap-3 overflow-hidden">
+                        {/* Financing Details */}
+                        <div className="bg-slate-900 rounded-lg p-3 text-white flex-shrink-0">
+                            <div className="flex items-center gap-1.5 mb-2">
+                                <Shield className="w-3 h-3" style={{ color: accentColor }} />
+                                <h3 className="text-[8px] font-black uppercase tracking-wider text-white/60">Financing Details</h3>
+                            </div>
+
+                            <div className="text-center mb-3">
+                                <div className="text-[7px] text-white/50 uppercase font-bold tracking-wide">Est. Monthly Payment*</div>
+                                <div className="text-[24px] font-black leading-none mt-1">{formatCurrency(paymentBreakdown.total)}</div>
+                                <div className="text-[7px] text-white/40 mt-1 font-medium">
+                                    {financing.downPaymentPercent}% Down • {financing.interestRate}% Rate
+                                </div>
+                            </div>
+
+                            <div className="border-t border-white/10 pt-2 space-y-1">
+                                {[
+                                    { label: "Principal & Interest", value: paymentBreakdown.principalInterest },
+                                    { label: "Property Tax", value: paymentBreakdown.propertyTax },
+                                    { label: "Insurance", value: paymentBreakdown.insurance },
+                                    ...(paymentBreakdown.hoa > 0 ? [{ label: "HOA Dues", value: paymentBreakdown.hoa }] : [])
+                                ].map((item, idx) => (
+                                    <div key={idx} className="flex justify-between items-center text-[8px]">
+                                        <span className="text-white/60">{item.label}</span>
+                                        <span className="font-bold text-white tabular-nums">{formatCurrency(item.value)}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Secondary Images Gallery */}
-                        {property.images.secondary.length > 0 && (
-                            <div className="mt-auto">
-                                <h3
-                                    className="text-[9px] font-bold uppercase tracking-wider mb-2 flex items-center gap-2"
-                                    style={{ color: primaryColor }}
-                                >
-                                    <div className="w-6 h-px" style={{ backgroundColor: accentColor }} />
-                                    Interior Features
-                                </h3>
-                                <div className="grid grid-cols-3 gap-1.5">
-                                    {property.images.secondary.slice(0, 3).map((img, idx) => (
-                                        <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-md">
-                                            <img
-                                                src={img}
-                                                alt={`Interior ${idx + 1}`}
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                                            <div className="absolute bottom-1 left-1.5 text-[7px] font-medium text-white drop-shadow">
-                                                {idx === 0 ? "Kitchen" : idx === 1 ? "Primary Bath" : "Forest View"}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* RIGHT COLUMN - Financing & Open House */}
-                    <div
-                        className="w-[185px] p-4 flex flex-col"
-                        style={{ backgroundColor: primaryColor }}
-                    >
-                        {/* Financing Section */}
-                        <div className="mb-4">
-                            <div className="flex items-center gap-1.5 mb-2">
-                                <Home className="w-3.5 h-3.5" style={{ color: accentColor }} />
-                                <span className="text-[9px] font-bold uppercase tracking-wider text-white">
-                                    Financing Options
-                                </span>
-                            </div>
-
-                            {/* Main Payment Display */}
-                            <div className="text-center py-3 px-2 bg-white/10 rounded-xl mb-2 backdrop-blur-sm">
-                                <div className="text-[8px] text-white/60 uppercase tracking-wider mb-0.5">
-                                    Est. Monthly Payment*
-                                </div>
-                                <div className="text-[28px] font-black text-white leading-none">
-                                    {formatCurrency(paymentBreakdown.total)}
-                                </div>
-                                <div className="text-[7px] text-white/50 mt-1">
-                                    {financing.downPaymentPercent}% down • {financing.interestRate}% / {(financing.interestRate + 0.25).toFixed(3)}% APR
-                                </div>
-                                <div className="text-[6px] text-white/40 mt-0.5">
-                                    30-Year Fixed Rate
-                                </div>
-                            </div>
-
-                            {/* Payment Breakdown */}
-                            <div className="space-y-1 text-[8px] mb-3">
-                                <div className="flex justify-between text-white/60">
-                                    <span>Principal & Interest</span>
-                                    <span className="text-white font-medium">{formatCurrency(paymentBreakdown.principalInterest)}</span>
-                                </div>
-                                <div className="flex justify-between text-white/60">
-                                    <span>Est. Property Tax</span>
-                                    <span className="text-white font-medium">{formatCurrency(paymentBreakdown.propertyTax)}</span>
-                                </div>
-                                <div className="flex justify-between text-white/60">
-                                    <span>Est. Insurance</span>
-                                    <span className="text-white font-medium">{formatCurrency(paymentBreakdown.insurance)}</span>
-                                </div>
-                                {paymentBreakdown.hoa > 0 && (
-                                    <div className="flex justify-between text-white/60">
-                                        <span>HOA Dues</span>
-                                        <span className="text-white font-medium">{formatCurrency(paymentBreakdown.hoa)}</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Open House Card */}
+                        {/* Schedule */}
                         {property.openHouse && (
-                            <div
-                                className="p-3 rounded-xl mb-3"
-                                style={{ backgroundColor: `${accentColor}20`, border: `1px solid ${accentColor}40` }}
-                            >
+                            <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5 flex-shrink-0">
                                 <div className="flex items-center gap-1.5 mb-1">
-                                    <Clock className="w-3 h-3" style={{ color: accentColor }} />
-                                    <span className="text-[9px] font-bold text-white uppercase tracking-wide">
-                                        Open House
-                                    </span>
+                                    <Clock className="w-3 h-3 text-gray-400" />
+                                    <span className="text-[7px] font-black uppercase tracking-wider text-gray-400">Schedule</span>
                                 </div>
-                                <div className="text-[10px] font-bold text-white">
-                                    {property.openHouse.date}
-                                </div>
-                                <div className="text-[9px] text-white/70">
-                                    {property.openHouse.startTime} – {property.openHouse.endTime}
-                                </div>
+                                <div className="font-bold text-[10px] text-gray-900">{property.openHouse.date}</div>
+                                <div className="text-[9px] text-gray-500 font-medium">{property.openHouse.startTime} - {property.openHouse.endTime}</div>
                             </div>
                         )}
 
-                        {/* QR Code & CTA */}
-                        <div className="mt-auto text-center">
-                            <div className="text-[8px] text-white/70 mb-2">
-                                Scan for Pre-Approval
+                        {/* QR Code */}
+                        <div className="flex-1 flex flex-col items-center justify-center bg-gray-50 rounded-lg p-2 border border-gray-100">
+                            <div className="bg-white p-1.5 rounded border border-gray-100 shadow-sm">
+                                <QRCodeCanvas value={data.cta.buttonUrl} size={50} level="H" fgColor={primaryColor} />
                             </div>
-                            {data.cta.buttonUrl && (
-                                <div className="inline-block p-2 bg-white rounded-xl shadow-lg">
-                                    <QRCodeSVG
-                                        value={data.cta.buttonUrl}
-                                        size={56}
-                                        level="H"
-                                        fgColor={primaryColor}
-                                    />
-                                </div>
-                            )}
-                            <div className="text-[7px] text-white/50 mt-1.5 uppercase tracking-widest">
-                                {data.cta.qrLabel || "Get Rates Today"}
-                            </div>
+                            <div className="text-[7px] font-bold uppercase text-gray-400 tracking-wide mt-1.5">Scan for Rates</div>
                         </div>
                     </div>
                 </div>
 
-                {/* ═══════════════════════════════════════════════════════════════════
-            FOOTER - Dual Contact Cards
-            ═══════════════════════════════════════════════════════════════════ */}
-                <div
-                    className="px-4 py-3"
-                    style={{ backgroundColor: primaryColor }}
-                >
-                    <div className="flex gap-3">
-                        {/* Listing Agent Card */}
-                        <div className="flex-1 flex items-center gap-2.5 p-2 rounded-lg" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
-                            <FlyerProfileImage
+                {/* FOOTER - Mirrored Agent Cards */}
+                <div className="h-[85px] flex-shrink-0 px-3 py-1.5 print:break-inside-avoid" style={{ backgroundColor: primaryColor, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
+                    <div className="grid grid-cols-2 gap-2 h-full">
+                        {/* Listing Agent */}
+                        <div className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/10">
+                            <img
                                 src={data.realtor.headshot}
                                 alt={data.realtor.name}
-                                position={data.realtor.headshotPosition}
-                                className="w-12 h-12 rounded-full border-2 shadow-lg"
-                                style={{ borderColor: accentColor }}
+                                className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                style={{ border: `2px solid ${accentColor}` }}
                             />
-                            <div className="min-w-0 flex-1">
-                                <div className="text-[7px] uppercase tracking-wider font-medium" style={{ color: accentColor }}>
-                                    Your Listing Agent
-                                </div>
-                                <div className="text-white font-bold text-[11px] leading-tight">{data.realtor.name}</div>
-                                <div className="text-[8px] text-white/60 leading-tight">{data.realtor.brokerage}</div>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <div className="flex items-center gap-0.5">
-                                        <Phone className="w-2 h-2" style={{ color: accentColor }} />
-                                        <span className="text-white text-[8px]">{data.realtor.phone}</span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-0.5">
-                                    <Mail className="w-2 h-2" style={{ color: accentColor }} />
-                                    <span className="text-white text-[7px]">{data.realtor.email}</span>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Listing Agent</div>
+                                <div className="text-[11px] font-black text-white leading-tight">{data.realtor.name}</div>
+                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.realtor.brokerage}</div>
+                                <div className="mt-1 pt-1 border-t border-white/10">
+                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.realtor.phone}</div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Lender Card */}
-                        <div className="flex-1 flex items-center gap-2.5 p-2 rounded-lg" style={{ backgroundColor: "rgba(255,255,255,0.08)" }}>
-                            <FlyerProfileImage
+                        {/* Loan Officer */}
+                        <div className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/10">
+                            <img
                                 src={data.broker.headshot}
                                 alt={data.broker.name}
-                                position={data.broker.headshotPosition}
-                                className="w-12 h-12 rounded-full border-2 shadow-lg"
-                                style={{ borderColor: accentColor }}
+                                className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+                                style={{ border: `2px solid ${accentColor}` }}
                             />
-                            <div className="min-w-0 flex-1">
-                                <div className="text-[7px] uppercase tracking-wider font-medium" style={{ color: accentColor }}>
-                                    Preferred Lender
-                                </div>
-                                <div className="text-white font-bold text-[11px] leading-tight">{data.broker.name}</div>
-                                <div className="text-[8px] text-white/60 leading-tight">{data.company.name}</div>
-                                <div className="text-[7px] font-medium mt-0.5" style={{ color: accentColor }}>
-                                    NMLS# {data.broker.nmls}
-                                </div>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <div className="flex items-center gap-0.5">
-                                        <Phone className="w-2 h-2" style={{ color: accentColor }} />
-                                        <span className="text-white text-[8px]">{data.broker.phone}</span>
-                                    </div>
-                                    <div className="flex items-center gap-0.5">
-                                        <Mail className="w-2 h-2" style={{ color: accentColor }} />
-                                        <span className="text-white text-[7px]">{data.broker.email}</span>
-                                    </div>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Loan Officer</div>
+                                <div className="text-[11px] font-black text-white leading-tight">{data.broker.name}</div>
+                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.company.name}</div>
+                                <div className="mt-1 pt-1 border-t border-white/10">
+                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.broker.phone}</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Legal Footer with Licensing */}
-                <div className="px-4 py-2 bg-gray-100 border-t border-gray-200">
-                    <div className="text-center text-gray-500 text-[6px] leading-relaxed">
-                        <div className="font-medium mb-0.5">
-                            {data.company.name} | NMLS# {data.company.nmls} | {data.broker.name}, NMLS# {data.broker.nmls}
-                        </div>
-                        <div>
-                            *Payment estimate includes principal, interest, taxes, and insurance. Actual payment may vary based on credit, property type, and loan terms.
-                            Rate shown is for illustrative purposes only. APR reflects cost of credit including fees. Equal Housing Lender.
-                        </div>
+                {/* LEGAL FOOTER */}
+                <div className="h-[20px] flex-shrink-0 bg-white border-t border-gray-100 flex items-center justify-center px-4">
+                    <div className="text-[7px] text-gray-400 font-medium text-center">
+                        Rates subject to change. {data.company.name} NMLS #{data.company.nmls}. Equal Housing Opportunity. • VERIFIED PRO MARKETING
                     </div>
                 </div>
             </div>

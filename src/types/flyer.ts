@@ -40,6 +40,7 @@ export interface BrokerContact {
   phone: string;
   email: string;
   nmls: string;
+  company?: string;
   headshot?: string;
   headshotPosition?: number; // 0-100, vertical position for circular crop
   headshotPositionX?: number; // 0-100, horizontal position for circular crop

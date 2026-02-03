@@ -121,3 +121,8 @@ export function formatCurrency(amount: number): string {
 export function formatPercentage(rate: number): string {
     return `${rate.toFixed(3)}%`;
 }
+
+// Format number with locale-aware separators (e.g., 2,760 sq ft)
+export function formatNumber(value: number): string {
+    return new Intl.NumberFormat('en-US').format(value);
+}

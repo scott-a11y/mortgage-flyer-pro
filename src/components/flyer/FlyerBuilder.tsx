@@ -4,7 +4,8 @@ import { EditorTabs } from "./EditorTabs";
 import { TemplateManager } from "./TemplateManager";
 import { ExportMenu } from "./ExportMenu";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Loader2, Share2, Sparkles, Layout, Database, Activity, Terminal } from "lucide-react";
+import { RotateCcw, Loader2, Share2, Sparkles, Layout, Database, Activity, Terminal, LayoutGrid } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useFlyer } from "@/context/FlyerContext";
 import { SmartShareButton } from "../share/SmartShareButton";
 import { AgentToolkit } from "./AgentToolkit";
@@ -67,12 +68,12 @@ export function FlyerBuilder() {
       {/* 1. GLOBAL TASKBAR (Materia Style) */}
       <header className="glass-header z-50 flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-5 h-5 flex items-center justify-center border border-cyan-500/40 rounded-sm">
-              <span className="text-cyan-500 font-bold text-[9px] font-mono">MF</span>
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-5 h-5 flex items-center justify-center border border-cyan-500/40 rounded-sm group-hover:border-cyan-500/80 transition-color">
+              <LayoutGrid className="w-3 h-3 text-cyan-500" />
             </div>
-            <span className="text-white font-black text-[10px] uppercase tracking-[0.2em] font-mono">Flyer.Engine.v2</span>
-          </div>
+            <span className="text-white font-black text-[10px] uppercase tracking-[0.2em] font-mono group-hover:text-cyan-400 transition-colors">Suite Dashboard</span>
+          </Link>
 
           <div className="h-3 w-px bg-cyan-500/10 mx-1" />
 

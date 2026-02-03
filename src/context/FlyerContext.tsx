@@ -38,10 +38,19 @@ export function FlyerProvider({ children }: { children: React.ReactNode }) {
 
         if (brokerSaved || companySaved) {
             try {
+                let broker = brokerSaved ? JSON.parse(brokerSaved) : undefined;
+                const company = companySaved ? JSON.parse(companySaved) : undefined;
+
+                // Auto-repair old headshot paths in defaults
+                if (broker && broker.headshot?.endsWith('-headshot.jpg')) {
+                    broker.headshot = broker.headshot.replace('.jpg', '.png');
+                    localStorage.setItem(BROKER_DEFAULTS_KEY, JSON.stringify(broker));
+                }
+
                 setData(prev => ({
                     ...prev,
-                    broker: brokerSaved ? JSON.parse(brokerSaved) : prev.broker,
-                    company: companySaved ? JSON.parse(companySaved) : prev.company,
+                    broker: broker || prev.broker,
+                    company: company || prev.company,
                 }));
             } catch (e) { }
         }

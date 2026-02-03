@@ -92,10 +92,10 @@ export const InstagramStoryBanner = forwardRef<HTMLDivElement, SocialBannerProps
                 <div className="absolute top-1/2 left-4 right-4 -translate-y-1/2">
                     <div className="flex justify-center gap-6 py-4 px-6 rounded-2xl backdrop-blur-md" style={{ backgroundColor: "rgba(255,255,255,0.15)" }}>
                         {[
-                            { icon: Bed, value: property.specs.bedrooms, label: "Beds" },
-                            { icon: Bath, value: property.specs.bathrooms, label: "Baths" },
-                            { icon: Maximize, value: property.specs.squareFootage.toLocaleString(), label: "SF" },
-                            { icon: Trees, value: property.specs.lotSize, label: "" },
+                            { icon: Bed, value: property.specs.bedrooms || 0, label: "Beds" },
+                            { icon: Bath, value: property.specs.bathrooms || 0, label: "Baths" },
+                            { icon: Maximize, value: (property.specs.squareFootage || 0).toLocaleString(), label: "SF" },
+                            { icon: Trees, value: property.specs.lotSize || "", label: "" },
                         ].map((stat, idx) => (
                             <div key={idx} className="text-center text-white">
                                 <stat.icon className="w-5 h-5 mx-auto mb-1 opacity-80" />
@@ -245,9 +245,9 @@ export const FacebookBanner = forwardRef<HTMLDivElement, SocialBannerProps>(
                     {/* Specs */}
                     <div className="flex gap-4 mb-4">
                         {[
-                            { value: property.specs.bedrooms, label: "Beds" },
-                            { value: property.specs.bathrooms, label: "Baths" },
-                            { value: `${property.specs.squareFootage.toLocaleString()} SF`, label: "" },
+                            { value: property.specs.bedrooms || 0, label: "Beds" },
+                            { value: property.specs.bathrooms || 0, label: "Baths" },
+                            { value: `${(property.specs.squareFootage || 0).toLocaleString()} SF`, label: "" },
                         ].map((stat, idx) => (
                             <div key={idx} className="text-white">
                                 <div className="text-lg font-bold">{stat.value}</div>
@@ -360,11 +360,11 @@ export const LinkedInBanner = forwardRef<HTMLDivElement, SocialBannerProps>(
 
                         {/* Specs Row */}
                         <div className="flex items-center gap-4 text-white mb-4">
-                            <span className="text-sm"><strong>{property.specs.bedrooms}</strong> Beds</span>
+                            <span className="text-sm"><strong>{property.specs.bedrooms || 0}</strong> Beds</span>
                             <span className="text-white/30">•</span>
-                            <span className="text-sm"><strong>{property.specs.bathrooms}</strong> Baths</span>
+                            <span className="text-sm"><strong>{property.specs.bathrooms || 0}</strong> Baths</span>
                             <span className="text-white/30">•</span>
-                            <span className="text-sm"><strong>{property.specs.squareFootage.toLocaleString()}</strong> SF</span>
+                            <span className="text-sm"><strong>{(property.specs.squareFootage || 0).toLocaleString()}</strong> SF</span>
                         </div>
 
                         {/* Contact */}

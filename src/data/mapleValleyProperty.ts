@@ -55,7 +55,7 @@ export const mapleValleyProperty: PropertyListing = {
         endTime: "4:00 PM"
     },
     images: {
-        hero: "/maple-valley-hero.png",
+        hero: "/maple-valley-hero.jpg",
         secondary: [
             "/maple-valley-kitchen.png",
             "/maple-valley-bathroom.png",
@@ -64,7 +64,7 @@ export const mapleValleyProperty: PropertyListing = {
     },
     financing: {
         listPrice: 1099000,
-        downPaymentPercent: 20,
+        downPaymentPercent: 10,
         interestRate: 6.5,
         loanTermYears: 30,
         hoa: 13
@@ -119,15 +119,15 @@ export const celesteZarlingFlyerData: FlyerData = {
     broker: {
         name: "Scott Little",
         title: "Mortgage Broker",
-        phone: "(503) 891-8181",
+        phone: "(360) 606-1106",
         email: "scott@ialoans.com",
         nmls: "1858045",
-        headshot: "/scott-little-headshot.jpg",
-        headshotPosition: 25
+        headshot: "/scott-little-headshot.png",
+        headshotPosition: 50
     },
     company: {
         name: "IA Loans",
-        phone1: "(503) 891-8181",
+        phone1: "(360) 606-1106",
         phone2: "",
         email: "info@ialoans.com",
         website: "ialoans.com",
@@ -137,12 +137,12 @@ export const celesteZarlingFlyerData: FlyerData = {
     realtor: {
         name: "Celeste Zarling",
         title: "Real Estate Professional",
-        phone: "425-474-2895",
+        phone: "(425) 420-4887",
         email: "CZtransactions@c21nwr.com",
         brokerage: "CENTURY 21 North Homes Realty",
         website: "www.century21northhomes.com",
         headshot: "/celeste-zarling-headshot.jpg",
-        headshotPosition: 40,
+        headshotPosition: 50,
         logo: ""
     },
     colorTheme: mapleValleyTheme,

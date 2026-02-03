@@ -20,7 +20,7 @@ export const agentPartners: AgentPartner[] = [
             website: "www.century21northhomes.com",
             logo: "",
             headshot: "/celeste-zarling-headshot.jpg",
-            headshotPosition: 40,
+            headshotPosition: 50,
         },
         colorTheme: brokerageThemes[0], // Century 21
     },

@@ -5,9 +5,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import LiveFlyer from "./pages/LiveFlyer";
+import LivePropertyFlyer from "./pages/LivePropertyFlyer";
 import NotFound from "./pages/NotFound";
 import { FlyerProvider } from "@/context/FlyerContext";
-import { PropertyFlyerBuilder } from "@/components/flyer/PropertyFlyerBuilder";
+import MarketingDashboard from "./pages/MarketingDashboard";
+import PropertyFlyerBuilder from "@/components/flyer/PropertyFlyerBuilder";
+import { FlyerBuilder } from "@/components/flyer/FlyerBuilder";
 
 const queryClient = new QueryClient();
 
@@ -20,8 +23,11 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<PropertyFlyerBuilder />} />
+              <Route path="/builder" element={<PropertyFlyerBuilder />} />
+              <Route path="/rate-engine" element={<FlyerBuilder />} />
               <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
+              <Route path="/property-live/:slug" element={<LivePropertyFlyer />} />
               <Route path="/flyer/:slug" element={<LiveFlyer />} />
               <Route path="/live/:slug" element={<LiveFlyer />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

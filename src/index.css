@@ -47,7 +47,7 @@
     }
 
     body {
-        @apply bg-[#030304] text-slate-300 antialiased overflow-hidden h-screen w-screen select-none;
+        @apply bg-[#030304] text-slate-300 antialiased min-h-screen;
         font-family: 'Inter', sans-serif;
     }
 }
@@ -116,5 +116,173 @@
 
     [role="tab"] {
         @apply rounded-none transition-all duration-300 text-slate-500 hover:text-cyan-500/60 font-mono text-[10px] uppercase tracking-wider !important;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FLYER BUILDER - Responsive Layout Utilities
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* Flyer Canvas - Maintains aspect ratio and never clips */
+    .flyer-canvas {
+        aspect-ratio: 8.5 / 11;
+        max-width: 100%;
+        width: auto;
+        margin: 0 auto;
+    }
+
+    .flyer-canvas.instagram {
+        aspect-ratio: 1080 / 1920;
+    }
+
+    .flyer-canvas.facebook {
+        aspect-ratio: 1200 / 630;
+    }
+
+    .flyer-canvas.linkedin {
+        aspect-ratio: 1200 / 627;
+    }
+
+    /* Hero Image Container - Never clips the property photo */
+    .hero-image-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .hero-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    /* Controls Sidebar - Independent scroll with stable gutter */
+    .controls-sidebar {
+        scrollbar-gutter: stable;
+    }
+
+    .controls-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .controls-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .controls-sidebar::-webkit-scrollbar-thumb {
+        @apply bg-amber-500/20 rounded-full;
+    }
+
+    .controls-sidebar::-webkit-scrollbar-thumb:hover {
+        @apply bg-amber-500/40;
+    }
+
+    /* Preview Area - Smooth scroll with hidden scrollbar on mobile */
+    .preview-scroll {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .preview-scroll::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .preview-scroll::-webkit-scrollbar-track {
+        @apply bg-slate-800/20 rounded-full;
+    }
+
+    .preview-scroll::-webkit-scrollbar-thumb {
+        @apply bg-slate-600/50 rounded-full;
+    }
+
+    .preview-scroll::-webkit-scrollbar-thumb:hover {
+        @apply bg-slate-500/60;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS - Flyer Builder Layout
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tablet and below - Stack layout */
+@media (max-width: 1024px) {
+    .builder-container {
+        flex-direction: column;
+    }
+
+    .controls-sidebar {
+        flex: 1 1 auto;
+        width: 100%;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .preview-area {
+        flex: 1 1 auto;
+        width: 100%;
+        min-height: 60vh;
+    }
+}
+
+/* Mobile - Compact format tabs */
+@media (max-width: 768px) {
+    .format-tabs {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .format-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .format-tabs button {
+        flex-shrink: 0;
+    }
+}
+
+/* Print Styles for High Quality Flyers */
+@media print {
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    #capture-root {
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Ensure images print at full quality */
+    img {
+        max-width: 100% !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Hide screen-only elements */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Ensure text is crisp */
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    span,
+    div {
+        orphans: 3;
+        widows: 3;
     }
 }
