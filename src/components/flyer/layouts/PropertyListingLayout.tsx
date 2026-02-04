@@ -252,42 +252,42 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
 
                 {/* FOOTER - Fixed height agent cards */}
                 <div style={{ height: `${FOOTER_HEIGHT}px`, flexShrink: 0, backgroundColor: primaryColor, padding: '8px 12px', WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', height: '100%' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', height: '100%' }}>
                         {/* Listing Agent */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <div style={{ flex: '1 1 45%', display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', minWidth: '200px' }}>
                             <img
                                 src={data.realtor.headshot}
                                 alt={data.realtor.name}
-                                style={{ width: '56px', height: '56px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, border: `2px solid ${accentColor}` }}
+                                style={{ width: '52px', height: '52px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, border: `2px solid ${accentColor}` }}
                             />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontSize: '5px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', lineHeight: 1, marginBottom: '3px' }}>Listing Agent</div>
-                                <div style={{ fontSize: '10px', fontWeight: 900, color: 'white', lineHeight: 1.2, marginBottom: '2px' }}>{data.realtor.name}</div>
-                                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '4px' }}>{data.realtor.brokerage}</div>
-                                <div style={{ paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                                    <div style={{ fontSize: '9px', fontWeight: 900, color: accentColor, lineHeight: 1.3 }}>{data.realtor.phone}</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', maxWidth: '180px', lineHeight: 1.2, wordBreak: 'break-word' }}>
+                                <div style={{ fontSize: '5px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', whiteSpace: 'normal' }}>Listing Agent</div>
+                                <div style={{ fontSize: '10px', fontWeight: 900, color: 'white', whiteSpace: 'normal' }}>{data.realtor.name}</div>
+                                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'normal' }}>{data.realtor.brokerage}</div>
+                                <div style={{ width: '100%', paddingTop: '3px', marginTop: '2px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <div style={{ fontSize: '9px', fontWeight: 900, color: accentColor, whiteSpace: 'normal' }}>{data.realtor.phone}</div>
                                     {data.realtor.email && (
-                                        <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.3, marginTop: '1px' }}>{data.realtor.email}</div>
+                                        <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.8)', whiteSpace: 'normal', marginTop: '1px' }}>{data.realtor.email}</div>
                                     )}
                                 </div>
                             </div>
                         </div>
 
                         {/* Loan Officer */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                        <div style={{ flex: '1 1 45%', display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: 'rgba(255,255,255,0.05)', padding: '8px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', minWidth: '200px' }}>
                             <img
                                 src={data.broker.headshot}
                                 alt={data.broker.name}
-                                style={{ width: '56px', height: '56px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, border: `2px solid ${accentColor}` }}
+                                style={{ width: '52px', height: '52px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0, border: `2px solid ${accentColor}` }}
                             />
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontSize: '5px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', lineHeight: 1, marginBottom: '3px' }}>Loan Officer</div>
-                                <div style={{ fontSize: '10px', fontWeight: 900, color: 'white', lineHeight: 1.2, marginBottom: '2px' }}>{data.broker.name}</div>
-                                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: '4px' }}>{data.company.name}</div>
-                                <div style={{ paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                                    <div style={{ fontSize: '9px', fontWeight: 900, color: accentColor, lineHeight: 1.3 }}>{data.broker.phone}</div>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', maxWidth: '180px', lineHeight: 1.2, wordBreak: 'break-word' }}>
+                                <div style={{ fontSize: '5px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(255,255,255,0.5)', whiteSpace: 'normal' }}>Loan Officer</div>
+                                <div style={{ fontSize: '10px', fontWeight: 900, color: 'white', whiteSpace: 'normal' }}>{data.broker.name}</div>
+                                <div style={{ fontSize: '6px', color: 'rgba(255,255,255,0.7)', fontWeight: 600, textTransform: 'uppercase', whiteSpace: 'normal' }}>{data.company.name}</div>
+                                <div style={{ width: '100%', paddingTop: '3px', marginTop: '2px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                                    <div style={{ fontSize: '9px', fontWeight: 900, color: accentColor, whiteSpace: 'normal' }}>{data.broker.phone}</div>
                                     {data.broker.email && (
-                                        <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.8)', lineHeight: 1.3, marginTop: '1px' }}>{data.broker.email}</div>
+                                        <div style={{ fontSize: '7px', color: 'rgba(255,255,255,0.8)', whiteSpace: 'normal', marginTop: '1px' }}>{data.broker.email}</div>
                                     )}
                                 </div>
                             </div>
