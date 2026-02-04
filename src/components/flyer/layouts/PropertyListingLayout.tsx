@@ -44,29 +44,41 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
         const leftColumn = bulletPoints.slice(0, midpoint);
         const rightColumn = bulletPoints.slice(midpoint);
 
+        // Fixed section heights to ensure total = 792px exactly
+        // Hero: 200px, Stats: 36px, Address: 44px, Content: 387px, Footer: 85px, Legal: 20px, Buffer: 20px
+        const HERO_HEIGHT = 200;
+        const STATS_HEIGHT = 36;
+        const ADDRESS_HEIGHT = 44;
+        const FOOTER_HEIGHT = 85;
+        const LEGAL_HEIGHT = 20;
+        const CONTENT_HEIGHT = 792 - HERO_HEIGHT - STATS_HEIGHT - ADDRESS_HEIGHT - FOOTER_HEIGHT - LEGAL_HEIGHT;
+
         return (
             <div
                 ref={ref}
                 id="capture-root"
                 data-capture="flyer"
                 className={cn(
-                    "bg-white shadow-2xl mx-auto overflow-hidden flex flex-col print:shadow-none",
+                    "bg-white shadow-2xl mx-auto flex flex-col print:shadow-none",
                     className
                 )}
                 style={{
                     width: "612px",
                     height: "792px",
+                    maxHeight: "792px",
+                    overflow: "hidden",
                     fontFamily: "Inter, system-ui, sans-serif",
                     color: "#1a1a1a",
                     lineHeight: "1.3",
                     WebkitPrintColorAdjust: "exact",
                     printColorAdjust: "exact",
+                    boxSizing: "border-box",
                 }}
             >
-                {/* HERO SECTION - House fully visible */}
+                {/* HERO SECTION - Fixed height */}
                 <div
-                    className="relative w-full flex-shrink-0"
-                    style={{ height: "200px" }}
+                    className="relative w-full"
+                    style={{ height: `${HERO_HEIGHT}px`, flexShrink: 0 }}
                 >
                     {property.images.hero && (
                         <img
@@ -97,10 +109,10 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                     </div>
                 </div>
 
-                {/* SLIM STATS BAR - Below hero, not overlapping */}
+                {/* SLIM STATS BAR - Fixed height */}
                 <div
-                    className="flex justify-between items-center px-6 py-2 flex-shrink-0"
-                    style={{ backgroundColor: primaryColor }}
+                    className="flex justify-between items-center px-6"
+                    style={{ backgroundColor: primaryColor, height: `${STATS_HEIGHT}px`, flexShrink: 0 }}
                 >
                     {[
                         { icon: Bed, value: property.specs.bedrooms || 0, label: "Beds" },
@@ -117,8 +129,8 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                     ))}
                 </div>
 
-                {/* ADDRESS & PRICE BAR */}
-                <div className="flex items-center justify-between px-5 py-2 bg-white border-b border-gray-100 flex-shrink-0">
+                {/* ADDRESS & PRICE BAR - Fixed height */}
+                <div className="flex items-center justify-between px-5 bg-white border-b border-gray-100" style={{ height: `${ADDRESS_HEIGHT}px`, flexShrink: 0 }}>
                     <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5 text-gray-400" />
                         <div>
@@ -136,8 +148,8 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                     </div>
                 </div>
 
-                {/* MAIN CONTENT */}
-                <div className="flex-1 grid grid-cols-[1.4fr_1fr] p-3 gap-3 bg-white overflow-hidden min-h-0">
+                {/* MAIN CONTENT - Calculated height to fill remaining space */}
+                <div className="grid grid-cols-[1.4fr_1fr] p-3 gap-3 bg-white" style={{ height: `${CONTENT_HEIGHT}px`, flexShrink: 0, overflow: "hidden" }}>
                     {/* LEFT COLUMN */}
                     <div className="flex flex-col gap-3 overflow-hidden">
                         {/* Property Highlights */}
@@ -238,8 +250,8 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                     </div>
                 </div>
 
-                {/* FOOTER - Mirrored Agent Cards */}
-                <div className="h-[85px] flex-shrink-0 px-3 py-1.5 print:break-inside-avoid" style={{ backgroundColor: primaryColor, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
+                {/* FOOTER - Fixed height agent cards */}
+                <div className="px-3 py-1.5 print:break-inside-avoid" style={{ height: `${FOOTER_HEIGHT}px`, flexShrink: 0, backgroundColor: primaryColor, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
                     <div className="grid grid-cols-2 gap-2 h-full">
                         {/* Listing Agent */}
                         <div className="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/10">
@@ -279,8 +291,8 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                     </div>
                 </div>
 
-                {/* LEGAL FOOTER */}
-                <div className="h-[20px] flex-shrink-0 bg-white border-t border-gray-100 flex items-center justify-center px-4">
+                {/* LEGAL FOOTER - Fixed height */}
+                <div className="bg-white border-t border-gray-100 flex items-center justify-center px-4" style={{ height: `${LEGAL_HEIGHT}px`, flexShrink: 0 }}>
                     <div className="text-[7px] text-gray-400 font-medium text-center">
                         Rates subject to change. {data.company.name} NMLS #{data.company.nmls}. Equal Housing Opportunity. • VERIFIED PRO MARKETING
                     </div>

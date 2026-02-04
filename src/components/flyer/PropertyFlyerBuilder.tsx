@@ -313,15 +313,18 @@ export default function PropertyFlyerBuilder({
             // Wait for any layout recalculation
             await new Promise(resolve => setTimeout(resolve, 100));
 
-            // Capture the already-rendered element (images are already loaded!)
+            // Capture the already-rendered element at its natural size
+            // The layout is already constrained to 612x792, so we capture it at full size
             const canvas = await html2canvas(element, {
-                scale: 3,
+                scale: 3, // Higher scale for crisp print quality
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: "#ffffff",
                 logging: false,
-                width: 612,
-                height: 792,
+                // Use element's actual dimensions to avoid clipping
+                windowWidth: 612,
+                windowHeight: 792,
+                // Don't constrain - let it capture the full element
             });
 
             // Restore scaling
