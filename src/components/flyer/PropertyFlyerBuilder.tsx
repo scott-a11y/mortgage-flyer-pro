@@ -294,6 +294,7 @@ export default function PropertyFlyerBuilder({
 
     const handlePrint = async () => {
         if (!flyerRef.current) return;
+        if (isExporting) return; // Prevent double-click
         setIsExporting(true);
         toast.info("Generating PDF...");
 
