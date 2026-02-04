@@ -45,11 +45,11 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
         const rightColumn = bulletPoints.slice(midpoint);
 
         // Fixed section heights to ensure total = 792px exactly
-        // Hero: 200px, Stats: 36px, Address: 44px, Content: 387px, Footer: 85px, Legal: 20px, Buffer: 20px
+        // Hero: 200px, Stats: 36px, Address: 44px, Content: 397px, Footer: 95px, Legal: 20px
         const HERO_HEIGHT = 200;
         const STATS_HEIGHT = 36;
         const ADDRESS_HEIGHT = 44;
-        const FOOTER_HEIGHT = 85;
+        const FOOTER_HEIGHT = 95; // Increased to fit email addresses
         const LEGAL_HEIGHT = 20;
         const CONTENT_HEIGHT = 792 - HERO_HEIGHT - STATS_HEIGHT - ADDRESS_HEIGHT - FOOTER_HEIGHT - LEGAL_HEIGHT;
 
@@ -263,10 +263,13 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                             />
                             <div className="flex-1 min-w-0">
                                 <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Listing Agent</div>
-                                <div className="text-[11px] font-black text-white leading-tight">{data.realtor.name}</div>
-                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.realtor.brokerage}</div>
-                                <div className="mt-1 pt-1 border-t border-white/10">
-                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.realtor.phone}</div>
+                                <div className="text-[10px] font-black text-white leading-tight">{data.realtor.name}</div>
+                                <div className="text-[6px] text-white/70 font-semibold uppercase truncate">{data.realtor.brokerage}</div>
+                                <div className="mt-0.5 pt-0.5 border-t border-white/10 space-y-0.5">
+                                    <div className="text-[9px] font-black" style={{ color: accentColor }}>{data.realtor.phone}</div>
+                                    {data.realtor.email && (
+                                        <div className="text-[7px] text-white/80 truncate">{data.realtor.email}</div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -281,10 +284,13 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                             />
                             <div className="flex-1 min-w-0">
                                 <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Loan Officer</div>
-                                <div className="text-[11px] font-black text-white leading-tight">{data.broker.name}</div>
-                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.company.name}</div>
-                                <div className="mt-1 pt-1 border-t border-white/10">
-                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.broker.phone}</div>
+                                <div className="text-[10px] font-black text-white leading-tight">{data.broker.name}</div>
+                                <div className="text-[6px] text-white/70 font-semibold uppercase truncate">{data.company.name}</div>
+                                <div className="mt-0.5 pt-0.5 border-t border-white/10 space-y-0.5">
+                                    <div className="text-[9px] font-black" style={{ color: accentColor }}>{data.broker.phone}</div>
+                                    {data.broker.email && (
+                                        <div className="text-[7px] text-white/80 truncate">{data.broker.email}</div>
+                                    )}
                                 </div>
                             </div>
                         </div>
