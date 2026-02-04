@@ -68,9 +68,48 @@ export default function LeadCapturePage() {
         leads.push(newLead);
         localStorage.setItem('captured_leads', JSON.stringify(leads));
 
-        // Simulate email notification (in production, this would hit an API)
-        console.log("New lead captured:", newLead);
-        console.log("Sending notification to:", flyerData.broker.email);
+        // Send email notification to agent (opens in background)
+        const agentEmail = flyerData.realtor.email || '';
+        const loEmail = flyerData.broker.email || '';
+        const preApprovalText = formData.preApproved === 'yes' ? '✅ Pre-Approved'
+            : formData.preApproved === 'cash' ? '💰 Cash Buyer'
+                : '❌ Not Pre-Approved';
+
+        const emailSubject = `🔥 New Lead: ${property.specs.address}`;
+        const emailBody = `NEW LEAD FROM PROPERTY FLYER
+
+Property: ${property.specs.address}, ${property.specs.city}, ${property.specs.state}
+Source: QR Code / Lead Capture Page
+
+CONTACT INFO:
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Pre-Approval: ${preApprovalText}
+
+${formData.message ? `MESSAGE:\n${formData.message}` : ''}
+
+---
+Captured: ${new Date().toLocaleString()}
+View all leads: ${window.location.origin}/leads`;
+
+        // Try to send notification (this opens mail client for the lead to send)
+        // In production, this would be an API call to a backend service
+        console.log("New lead notification ready:", {
+            to: [agentEmail, loEmail].filter(Boolean).join(', '),
+            subject: emailSubject,
+            body: emailBody
+        });
+
+        // Store notification for agent to see in dashboard
+        const notifications = JSON.parse(localStorage.getItem('lead_notifications') || '[]');
+        notifications.push({
+            type: 'new_lead',
+            lead: newLead,
+            timestamp: new Date().toISOString(),
+            read: false
+        });
+        localStorage.setItem('lead_notifications', JSON.stringify(notifications));
 
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1000));

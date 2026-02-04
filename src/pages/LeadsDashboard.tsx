@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw } from "lucide-react";
+import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw, MessageCircle, ExternalLink, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -75,6 +75,34 @@ export default function LeadsDashboard() {
             hour: 'numeric',
             minute: '2-digit'
         });
+    };
+
+    const handleContactLead = (lead: Lead, method: 'call' | 'text' | 'email') => {
+        const property = lead.property || 'your property';
+
+        switch (method) {
+            case 'call':
+                window.open(`tel:${lead.phone}`, '_blank');
+                toast.success(`Calling ${lead.name}...`);
+                break;
+            case 'text':
+                const textMsg = `Hi ${lead.name}! Thanks for your interest in ${property}. I'd love to schedule a showing at your convenience. When works best for you?`;
+                window.open(`sms:${lead.phone}?body=${encodeURIComponent(textMsg)}`, '_blank');
+                break;
+            case 'email':
+                const subject = `Re: ${property} - Following Up`;
+                const body = `Hi ${lead.name},
+
+Thank you for your interest in ${property}!
+
+I'd love to schedule a showing at your convenience. Please let me know what times work best for you, and I'll make the arrangements.
+
+Looking forward to connecting!
+
+Best regards`;
+                window.open(`mailto:${lead.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+                break;
+        }
     };
 
     return (
@@ -185,20 +213,47 @@ export default function LeadsDashboard() {
                                                 {lead.message && (
                                                     <p className="mt-2 text-sm text-slate-500 italic">"{lead.message}"</p>
                                                 )}
+                                                <div className="mt-2 text-xs text-slate-600">{lead.property}</div>
                                             </div>
-                                            <div className="text-right">
-                                                <div className="flex items-center gap-1 text-xs text-slate-500 mb-2">
+                                            <div className="text-right space-y-2">
+                                                <div className="flex items-center gap-1 text-xs text-slate-500">
                                                     <Calendar className="w-3 h-3" />
                                                     {formatDate(lead.timestamp)}
                                                 </div>
-                                                <Button
-                                                    onClick={() => handleDeleteLead(i)}
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="text-slate-500 hover:text-red-400 h-7"
-                                                >
-                                                    <Trash2 className="w-3 h-3" />
-                                                </Button>
+                                                <div className="flex gap-1">
+                                                    <Button
+                                                        onClick={() => handleContactLead(lead, 'call')}
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="h-7 px-2 border-slate-700 text-slate-300 hover:bg-green-500/20 hover:text-green-400 hover:border-green-500/50"
+                                                    >
+                                                        <Phone className="w-3 h-3" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleContactLead(lead, 'text')}
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="h-7 px-2 border-slate-700 text-slate-300 hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/50"
+                                                    >
+                                                        <MessageCircle className="w-3 h-3" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleContactLead(lead, 'email')}
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="h-7 px-2 border-slate-700 text-slate-300 hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/50"
+                                                    >
+                                                        <Mail className="w-3 h-3" />
+                                                    </Button>
+                                                    <Button
+                                                        onClick={() => handleDeleteLead(i)}
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="h-7 px-2 text-slate-600 hover:text-red-400"
+                                                    >
+                                                        <Trash2 className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
                                     </motion.div>
