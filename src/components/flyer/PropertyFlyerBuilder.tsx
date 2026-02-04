@@ -301,47 +301,77 @@ export default function PropertyFlyerBuilder({
         try {
             const element = flyerRef.current;
 
-            // Find and temporarily disable the scaling wrapper
-            const scalingWrapper = element.parentElement;
-            const originalScale = scalingWrapper?.style.scale || '';
-            const originalTransform = scalingWrapper?.style.transform || '';
+            // Create a temporary container for capturing at exact dimensions
+            const captureContainer = document.createElement('div');
+            captureContainer.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 612px;
+                height: 792px;
+                overflow: hidden;
+                z-index: -9999;
+                pointer-events: none;
+                background: white;
+            `;
+            document.body.appendChild(captureContainer);
 
-            if (scalingWrapper) {
-                scalingWrapper.style.scale = '1';
-                scalingWrapper.style.transform = 'none';
-            }
+            // Clone the flyer element
+            const clone = element.cloneNode(true) as HTMLElement;
+            clone.style.cssText = `
+                width: 612px;
+                height: 792px;
+                max-height: 792px;
+                overflow: hidden;
+                transform: none;
+                margin: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+            `;
+            captureContainer.appendChild(clone);
 
-            // Wait for any layout recalculation
-            await new Promise(resolve => setTimeout(resolve, 100));
+            // Wait for images to load in the clone
+            const images = clone.querySelectorAll('img');
+            await Promise.all(
+                Array.from(images).map(img => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise(resolve => {
+                        img.onload = resolve;
+                        img.onerror = resolve;
+                    });
+                })
+            );
 
-            // Capture the already-rendered element at its natural size
-            // The layout is already constrained to 612x792, so we capture it at full size
-            const canvas = await html2canvas(element, {
-                scale: 3, // Higher scale for crisp print quality
+            // Small delay for layout
+            await new Promise(resolve => setTimeout(resolve, 150));
+
+            // Capture the clone at exact dimensions
+            const canvas = await html2canvas(clone, {
+                scale: 2, // 2x for good quality without being too large
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: "#ffffff",
                 logging: false,
-                // Use element's actual dimensions to avoid clipping
-                windowWidth: 612,
-                windowHeight: 792,
-                // Don't constrain - let it capture the full element
+                width: 612,
+                height: 792,
+                x: 0,
+                y: 0,
             });
 
-            // Restore scaling
-            if (scalingWrapper) {
-                scalingWrapper.style.scale = originalScale;
-                scalingWrapper.style.transform = originalTransform;
-            }
+            // Clean up the temporary container
+            document.body.removeChild(captureContainer);
 
-            // Generate PDF
+            // Generate PDF at exact letter size
             const imgData = canvas.toDataURL("image/png", 1.0);
             const pdf = new jsPDF({
                 orientation: "portrait",
-                unit: "in",
-                format: "letter",
+                unit: "pt", // Use points for precise sizing
+                format: [612, 792], // Exact letter size in points
             });
-            pdf.addImage(imgData, "PNG", 0, 0, 8.5, 11);
+
+            // Add image at exact dimensions
+            pdf.addImage(imgData, "PNG", 0, 0, 612, 792);
             pdf.save(`${property.specs.address.replace(/\s+/g, "_")}_flyer.pdf`);
             toast.success("PDF ready!");
         } catch (error) {
