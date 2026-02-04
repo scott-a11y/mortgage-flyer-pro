@@ -251,45 +251,45 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                 </div>
 
                 {/* FOOTER - Fixed height agent cards */}
-                <div className="px-3 py-1.5 print:break-inside-avoid" style={{ height: `${FOOTER_HEIGHT}px`, flexShrink: 0, backgroundColor: primaryColor, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
-                    <div className="grid grid-cols-2 gap-2 h-full">
+                <div className="px-3 py-2 print:break-inside-avoid" style={{ height: `${FOOTER_HEIGHT}px`, flexShrink: 0, backgroundColor: primaryColor, WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}>
+                    <div className="grid grid-cols-2 gap-3 h-full">
                         {/* Listing Agent */}
-                        <div className="flex items-center gap-3 bg-white/5 p-2.5 rounded-lg border border-white/10">
+                        <div className="flex items-center gap-2.5 bg-white/5 p-2 rounded-lg border border-white/10">
                             <img
                                 src={data.realtor.headshot}
                                 alt={data.realtor.name}
-                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                                 style={{ border: `2px solid ${accentColor}` }}
                             />
-                            <div className="flex-1 min-w-0">
-                                <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Listing Agent</div>
-                                <div className="text-[11px] font-black text-white leading-tight">{data.realtor.name}</div>
-                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.realtor.brokerage}</div>
-                                <div className="mt-1 pt-1 border-t border-white/10">
-                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.realtor.phone}</div>
+                            <div className="flex-1 min-w-0 space-y-0.5">
+                                <div className="text-[5px] font-bold uppercase tracking-wider text-white/50 leading-none">Listing Agent</div>
+                                <div className="text-[10px] font-black text-white leading-tight">{data.realtor.name}</div>
+                                <div className="text-[6px] text-white/70 font-semibold uppercase truncate leading-tight">{data.realtor.brokerage}</div>
+                                <div className="pt-1 border-t border-white/10 space-y-0.5">
+                                    <div className="text-[9px] font-black leading-tight" style={{ color: accentColor }}>{data.realtor.phone}</div>
                                     {data.realtor.email && (
-                                        <div className="text-[8px] text-white/80">{data.realtor.email}</div>
+                                        <div className="text-[7px] text-white/80 leading-tight">{data.realtor.email}</div>
                                     )}
                                 </div>
                             </div>
                         </div>
 
                         {/* Loan Officer */}
-                        <div className="flex items-center gap-3 bg-white/5 p-2.5 rounded-lg border border-white/10">
+                        <div className="flex items-center gap-2.5 bg-white/5 p-2 rounded-lg border border-white/10">
                             <img
                                 src={data.broker.headshot}
                                 alt={data.broker.name}
-                                className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                                className="w-14 h-14 rounded-lg object-cover flex-shrink-0"
                                 style={{ border: `2px solid ${accentColor}` }}
                             />
-                            <div className="flex-1 min-w-0">
-                                <div className="text-[6px] font-bold uppercase tracking-wider text-white/50">Loan Officer</div>
-                                <div className="text-[11px] font-black text-white leading-tight">{data.broker.name}</div>
-                                <div className="text-[7px] text-white/70 font-semibold uppercase truncate">{data.company.name}</div>
-                                <div className="mt-1 pt-1 border-t border-white/10">
-                                    <div className="text-[10px] font-black" style={{ color: accentColor }}>{data.broker.phone}</div>
+                            <div className="flex-1 min-w-0 space-y-0.5">
+                                <div className="text-[5px] font-bold uppercase tracking-wider text-white/50 leading-none">Loan Officer</div>
+                                <div className="text-[10px] font-black text-white leading-tight">{data.broker.name}</div>
+                                <div className="text-[6px] text-white/70 font-semibold uppercase truncate leading-tight">{data.company.name}</div>
+                                <div className="pt-1 border-t border-white/10 space-y-0.5">
+                                    <div className="text-[9px] font-black leading-tight" style={{ color: accentColor }}>{data.broker.phone}</div>
                                     {data.broker.email && (
-                                        <div className="text-[8px] text-white/80">{data.broker.email}</div>
+                                        <div className="text-[7px] text-white/80 leading-tight">{data.broker.email}</div>
                                     )}
                                 </div>
                             </div>
