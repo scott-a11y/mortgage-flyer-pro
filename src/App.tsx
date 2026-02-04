@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import LiveFlyer from "./pages/LiveFlyer";
 import LivePropertyFlyer from "./pages/LivePropertyFlyer";
+import LeadCapturePage from "./pages/LeadCapturePage";
+import LeadsDashboard from "./pages/LeadsDashboard";
 import NotFound from "./pages/NotFound";
 import { FlyerProvider } from "@/context/FlyerContext";
 import MarketingDashboard from "./pages/MarketingDashboard";
@@ -28,6 +30,8 @@ const App = () => {
               <Route path="/rate-engine" element={<FlyerBuilder />} />
               <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
               <Route path="/property-live/:slug" element={<LivePropertyFlyer />} />
+              <Route path="/lead/:slug" element={<LeadCapturePage />} />
+              <Route path="/leads" element={<LeadsDashboard />} />
               <Route path="/flyer/:slug" element={<LiveFlyer />} />
               <Route path="/live/:slug" element={<LiveFlyer />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
