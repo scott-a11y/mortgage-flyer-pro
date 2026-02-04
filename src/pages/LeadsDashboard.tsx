@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw, MessageCircle, ExternalLink, Bell } from "lucide-react";
+import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw, MessageCircle, ExternalLink, Bell, BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { notificationService, useNotifications } from "@/services/notificationService";
 
 interface Lead {
     name: string;
@@ -18,6 +19,9 @@ interface Lead {
 
 export default function LeadsDashboard() {
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+    const { requestPermission, getUnreadCount, markAllRead } = useNotifications();
     const [stats, setStats] = useState({
         totalViews: 0,
         totalLeads: 0,
@@ -51,7 +55,24 @@ export default function LeadsDashboard() {
 
     useEffect(() => {
         loadData();
+        // Check notification permission
+        if (typeof window !== 'undefined' && 'Notification' in window) {
+            setNotificationsEnabled(Notification.permission === 'granted');
+        }
+        setUnreadCount(getUnreadCount());
     }, []);
+
+    const handleEnableNotifications = async () => {
+        const granted = await requestPermission();
+        setNotificationsEnabled(granted);
+        if (granted) {
+            toast.success('🔔 Notifications enabled! You\'ll get alerts for new leads.');
+            markAllRead();
+            setUnreadCount(0);
+        } else {
+            toast.error('Notifications blocked. Enable in browser settings.');
+        }
+    };
 
     const handleDeleteLead = (index: number) => {
         const updated = leads.filter((_, i) => i !== index);
@@ -118,11 +139,39 @@ Best regards`;
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-black">Lead Dashboard</h1>
+                            <h1 className="text-2xl font-black flex items-center gap-2">
+                                Lead Dashboard
+                                {unreadCount > 0 && (
+                                    <span className="px-2 py-0.5 text-xs rounded-full bg-red-500 text-white animate-pulse">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </h1>
                             <p className="text-sm text-slate-400">Track leads from your property flyers</p>
                         </div>
                     </div>
                     <div className="flex gap-2">
+                        {!notificationsEnabled ? (
+                            <Button
+                                onClick={handleEnableNotifications}
+                                variant="outline"
+                                size="sm"
+                                className="gap-2 border-amber-500/50 text-amber-400 hover:bg-amber-500/10"
+                            >
+                                <BellRing className="w-4 h-4" />
+                                Enable Alerts
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-2 border-green-500/50 text-green-400 cursor-default"
+                                disabled
+                            >
+                                <Bell className="w-4 h-4" />
+                                Alerts On
+                            </Button>
+                        )}
                         <Button onClick={loadData} variant="outline" size="sm" className="gap-2 border-slate-700">
                             <RefreshCw className="w-4 h-4" />
                             Refresh

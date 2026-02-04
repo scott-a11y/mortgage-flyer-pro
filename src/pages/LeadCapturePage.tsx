@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { notificationService } from "@/services/notificationService";
 
 interface LeadFormData {
     name: string;
@@ -101,18 +102,19 @@ View all leads: ${window.location.origin}/leads`;
             body: emailBody
         });
 
-        // Store notification for agent to see in dashboard
-        const notifications = JSON.parse(localStorage.getItem('lead_notifications') || '[]');
-        notifications.push({
-            type: 'new_lead',
-            lead: newLead,
+        // Trigger real-time notification (browser push + sound)
+        await notificationService.notifyNewLead({
+            leadName: formData.name,
+            leadEmail: formData.email,
+            leadPhone: formData.phone,
+            property: property.specs.address,
+            preApproved: formData.preApproved,
+            message: formData.message,
             timestamp: new Date().toISOString(),
-            read: false
         });
-        localStorage.setItem('lead_notifications', JSON.stringify(notifications));
 
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Brief delay for UX
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         setIsSubmitting(false);
         setIsSubmitted(true);
