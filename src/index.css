@@ -5,6 +5,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Utility: hide scrollbars while keeping scroll functionality */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
 @layer base {
     :root {
         --background: 240 10% 2%;
@@ -198,6 +207,15 @@
 
     .preview-scroll::-webkit-scrollbar-thumb:hover {
         @apply bg-slate-500/60;
+    }
+    /* Hide scrollbar utility */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
     }
 }
 

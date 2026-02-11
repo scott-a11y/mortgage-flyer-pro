@@ -304,13 +304,13 @@ export default function PropertyFlyerBuilder({
             // Create a temporary container for capturing at exact dimensions
             const captureContainer = document.createElement('div');
             captureContainer.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
+                position: absolute;
+                top: -10000px;
+                left: -10000px;
                 width: 612px;
                 height: 792px;
                 overflow: hidden;
-                z-index: -9999;
+                visibility: hidden;
                 pointer-events: none;
                 background: white;
             `;
@@ -407,12 +407,20 @@ export default function PropertyFlyerBuilder({
             await navigator.clipboard.writeText(url);
             toast.success("Short link copied!");
         } catch (err) {
-            console.error("Supabase error:", err);
-            // Fallback to MLS-based URL
-            const mlsNumber = property.specs.mlsNumber || "flyer";
-            const url = `${window.location.origin}/builder#${mlsNumber}`;
-            navigator.clipboard.writeText(url);
-            toast.error("Database error - copied basic link instead");
+            console.error("Supabase share error (non-critical):", err);
+            // Fallback: encode essential config directly in URL params
+            const sharePayload = {
+                address: property.specs.address,
+                city: property.specs.city,
+                state: property.specs.state,
+                price: property.specs.listPrice,
+                rate: flyerData.rates?.thirtyYearFixed,
+                dp: downPayment,
+            };
+            const encoded = btoa(JSON.stringify(sharePayload));
+            const url = `${window.location.origin}/builder?cfg=${encoded}`;
+            await navigator.clipboard.writeText(url);
+            toast.success("Share link copied! (local sharing mode)");
         }
     };
 
@@ -450,7 +458,7 @@ export default function PropertyFlyerBuilder({
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide max-w-[60vw] lg:max-w-none">
                         {/* Property Quick Summary */}
                         <div className="hidden xl:flex items-center gap-3 px-4 py-2 bg-slate-700/30 rounded-xl border border-slate-600/30">
                             <MapPin className="w-4 h-4 text-amber-500" />
@@ -461,23 +469,23 @@ export default function PropertyFlyerBuilder({
                         </div>
 
                         {/* Quick Stats */}
-                        <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 bg-slate-700/50 rounded-xl border border-slate-600/50">
-                            <div className="text-center">
+                        <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 bg-slate-700/50 rounded-xl border border-slate-600/50 flex-shrink-0">
+                            <div className="text-center whitespace-nowrap">
                                 <div className="text-[9px] text-slate-500 uppercase tracking-wider">Price</div>
                                 <div className="text-sm font-bold text-amber-500">{formatCurrency(property.specs.listPrice)}</div>
                             </div>
-                            <div className="w-px h-8 bg-slate-600" />
-                            <div className="text-center">
+                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
+                            <div className="text-center whitespace-nowrap">
                                 <div className="text-[9px] text-slate-500 uppercase tracking-wider">Monthly</div>
                                 <div className="text-sm font-bold text-white">{formatCurrency(payment.total)}</div>
                             </div>
-                            <div className="w-px h-8 bg-slate-600" />
-                            <div className="text-center">
+                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
+                            <div className="text-center whitespace-nowrap">
                                 <div className="text-[9px] text-slate-500 uppercase tracking-wider">Rate</div>
                                 <div className="text-sm font-bold text-white">{interestRate}%</div>
                             </div>
-                            <div className="w-px h-8 bg-slate-600" />
-                            <div className="text-center">
+                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
+                            <div className="text-center whitespace-nowrap">
                                 <div className="text-[9px] text-slate-500 uppercase tracking-wider">Specs</div>
                                 <div className="text-sm font-bold text-white">{property.specs.bedrooms}bd/{property.specs.bathrooms}ba • {formatNumber(property.specs.squareFootage || 0)}sf</div>
                             </div>
@@ -1395,12 +1403,12 @@ export default function PropertyFlyerBuilder({
           EXPORT MODAL
           ═══════════════════════════════════════════════════════════════════ */}
             {showExport && (
-                <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
-                    <div className="bg-slate-900 rounded-[32px] p-8 max-w-2xl w-full border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300" onClick={() => setShowExport(false)}>
+                    <div className="bg-slate-900 rounded-[32px] max-w-2xl w-full border border-white/10 shadow-[0_32px_128px_rgba(0,0,0,0.8)] relative overflow-hidden max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
                         {/* Abstract Background Decoration */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-[80px] -mr-32 -mt-32 pointer-events-none" />
 
-                        <div className="flex items-center justify-between mb-8 relative">
+                        <div className="flex items-center justify-between p-8 pb-6 relative flex-shrink-0">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20">
                                     <Sparkles className="w-6 h-6 text-slate-950" />
@@ -1418,6 +1426,7 @@ export default function PropertyFlyerBuilder({
                             </button>
                         </div>
 
+                        <div className="overflow-y-auto flex-1 px-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                             {formatTabs.map(tab => (
                                 <button
@@ -1462,8 +1471,9 @@ export default function PropertyFlyerBuilder({
                                 <div className="text-slate-600 text-xs font-medium">Responsive Layout</div>
                             </button>
                         </div>
+                        </div>
 
-                        <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="p-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 flex-shrink-0">
                             <p className="text-[10px] text-slate-500 font-medium uppercase tracking-[0.2em]">Ready for distribution</p>
                             <div className="flex gap-2">
                                 <button
