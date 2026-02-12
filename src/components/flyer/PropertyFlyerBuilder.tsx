@@ -493,7 +493,7 @@ export default function PropertyFlyerBuilder({
 
                         {/* View Web Version Link */}
                         <Link
-                            to="/"
+                            to="/dashboard"
                             className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-bold rounded-xl transition-all border border-white/5 group"
                         >
                             <LayoutGrid className="w-4 h-4 text-amber-500" />

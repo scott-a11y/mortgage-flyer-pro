@@ -68,7 +68,7 @@ export function FlyerBuilder() {
       {/* 1. GLOBAL TASKBAR (Materia Style) */}
       <header className="glass-header z-50 flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-4">
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/dashboard" className="flex items-center gap-3 group">
             <div className="w-5 h-5 flex items-center justify-center border border-cyan-500/40 rounded-sm group-hover:border-cyan-500/80 transition-color">
               <LayoutGrid className="w-3 h-3 text-cyan-500" />
             </div>

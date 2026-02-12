@@ -4,14 +4,14 @@ description: Comprehensive QA testing checklist for Mortgage Flyer Pro
 
 # 🧪 Mortgage Flyer Pro — Browser End-to-End Testing Prompt
 
-Open **http://localhost:8080/** in Chrome. Follow each step in order. If any step fails, stop and report the step number and what you saw.
+Open **http://localhost:8080/builder** in Chrome. Follow each step in order. If any step fails, stop and report the step number and what you saw.
 
 ---
 
 ## Test 1: Page Load
-1. Navigate to `http://localhost:8080/`
+1. Navigate to `http://localhost:8080/builder`
 2. **Expected**: Dark gradient background loads. Header bar appears with "IA Loans Flyer Builder" title, property address chip, price/rate stats, and amber "Export All" button.
-3. **Expected**: Two-panel layout — control tabs on the LEFT, preview on the RIGHT.
+3. **Expected**: Two-panel layout — control sections on the LEFT, preview on the RIGHT.
 4. Open DevTools (F12) → Console tab. **Expected**: No red errors.
 
 ---
@@ -144,20 +144,21 @@ Open each URL and verify it loads without errors:
 
 | # | URL | Expected |
 |---|-----|----------|
-| 1 | `http://localhost:8080/` | Flyer Builder |
-| 2 | `http://localhost:8080/builder` | Flyer Builder (same) |
-| 3 | `http://localhost:8080/rate-engine` | Rate Engine Builder |
-| 4 | `http://localhost:8080/leads` | Leads Dashboard |
-| 5 | `http://localhost:8080/not-a-page` | 404 Not Found page |
+| 1 | `http://localhost:8080/` | Marketing Dashboard ("Mortgage Marketing Suite") |
+| 2 | `http://localhost:8080/dashboard` | Marketing Dashboard (same) |
+| 3 | `http://localhost:8080/builder` | Flyer Builder |
+| 4 | `http://localhost:8080/rate-engine` | Rate Engine Builder |
+| 5 | `http://localhost:8080/leads` | Leads Dashboard |
+| 6 | `http://localhost:8080/not-a-page` | 404 Not Found page |
 
 ---
 
 ## Test 15: Console Health Check
-1. Go back to `http://localhost:8080/`
+1. Go back to `http://localhost:8080/builder`
 2. Open DevTools → Console
-3. Click through ALL 4 control tabs
+3. Scroll through all 4 sidebar sections
 4. Switch through ALL 4 preview formats
-5. Open and close the Export Modal
+5. Open and close the Export Modal (using all 3 close methods)
 6. **Expected**: Zero red errors in the console throughout all interactions
 7. **Expected**: No "Cannot read properties of undefined" errors
 8. **Expected**: No React key warnings or hydration errors
@@ -168,9 +169,10 @@ Open each URL and verify it loads without errors:
 
 If short on time, just do these 6 checks:
 
-1. ✅ Page loads at `localhost:8080` — no blank screen, no error overlay
-2. ✅ Scroll through all 4 sections in left panel — no crash
-3. ✅ Move interest rate slider — preview updates live
-4. ✅ Switch to Instagram format — vertical preview renders
-5. ✅ Open Export Modal — modal appears, close button works
-6. ✅ F12 Console — zero red errors
+1. ✅ `localhost:8080/` shows Marketing Dashboard — no blank screen
+2. ✅ `localhost:8080/builder` shows Flyer Builder — no error overlay
+3. ✅ Scroll through all 4 sections in left panel — no crash
+4. ✅ Move interest rate slider — preview updates live
+5. ✅ Switch to Instagram format — vertical preview renders
+6. ✅ Open Export Modal — modal appears, all 3 close methods work
+7. ✅ F12 Console — zero red errors
