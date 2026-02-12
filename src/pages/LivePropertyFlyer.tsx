@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PropertyListingLayout } from "@/components/flyer/layouts/PropertyListingLayout";
-import { mapleValleyProperty, celesteZarlingFlyerData } from "@/data/mapleValleyProperty";
+import { getPropertyBySlug } from "@/data/propertyData";
 import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -11,8 +11,11 @@ import { motion } from "framer-motion";
 export default function LivePropertyFlyer() {
     const { slug } = useParams<{ slug: string }>();
     const [isLoading, setIsLoading] = useState(true);
-    const [property, setProperty] = useState(mapleValleyProperty);
-    const [flyerData, setFlyerData] = useState(celesteZarlingFlyerData);
+
+    // Initial data from slug
+    const slugData = getPropertyBySlug(slug);
+    const [property, setProperty] = useState(slugData.property);
+    const [flyerData, setFlyerData] = useState(slugData.flyerData);
 
     useEffect(() => {
         // Try to load synced data from builder first
@@ -20,9 +23,14 @@ export default function LivePropertyFlyer() {
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
-                if (parsed.property) setProperty(parsed.property);
-                if (parsed.flyerData) setFlyerData(parsed.flyerData);
-                console.log("Synced live data loaded from storage");
+                // Only sync if the address matches (prevents cross-property mess)
+                if (parsed.property?.specs?.address === property.specs.address) {
+                    if (parsed.property) setProperty(parsed.property);
+                    if (parsed.flyerData) setFlyerData(parsed.flyerData);
+                    console.log("Synced live data loaded from storage");
+                } else {
+                    console.log("Storage address mismatch - sticking with default slug data");
+                }
             } catch (e) {
                 console.error("Sync data parse error:", e);
             }

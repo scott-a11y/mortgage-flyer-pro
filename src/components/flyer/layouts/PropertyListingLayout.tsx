@@ -118,13 +118,13 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                         { icon: Bed, value: property.specs.bedrooms || 0, label: "Beds" },
                         { icon: Bath, value: property.specs.bathrooms || 0, label: "Baths" },
                         { icon: Maximize, value: (property.specs.squareFootage || 0).toLocaleString(), label: "SF" },
-                        { icon: Trees, value: "0.5", label: "Acres" },
-                        { icon: Car, value: "3-Car", label: "Garage" },
+                        { icon: Trees, value: property.specs.lotSize?.replace(" Acres", "") || "0.5", label: "Acres" },
+                        { icon: Car, value: property.specs.garage?.split(" ")[0] || "2-Car", label: "Garage" },
                     ].map((stat, idx) => (
                         <div key={idx} className="flex items-center gap-1.5 text-white">
                             <stat.icon className="w-3.5 h-3.5" style={{ color: accentColor }} />
-                            <span className="text-[12px] font-black">{stat.value}</span>
-                            <span className="text-[8px] font-medium opacity-60 uppercase">{stat.label}</span>
+                            <span className="text-[11px] font-black">{stat.value}</span>
+                            <span className="text-[7.5px] font-medium opacity-60 uppercase">{stat.label}</span>
                         </div>
                     ))}
                 </div>

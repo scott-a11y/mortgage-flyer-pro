@@ -1,5 +1,4 @@
-// Notification Service for Lead Alerts
-// Supports: Browser Push, Email (EmailJS), SMS (Twilio ready)
+import emailjs from '@emailjs/browser';
 
 interface LeadNotification {
     leadName: string;
@@ -137,25 +136,12 @@ class NotificationService {
     }
 
     private async sendEmailNotification(lead: LeadNotification): Promise<void> {
-        // EmailJS integration (optional)
-        // To enable: npm install @emailjs/browser
-        // And configure at https://www.emailjs.com/
-
         if (!this.config.emailjsServiceId || !this.config.emailjsTemplateId || !this.config.emailjsPublicKey) {
             console.log('[NotificationService] EmailJS not configured - skipping email notification');
             return;
         }
 
         try {
-            // Dynamic import to avoid requiring the package if not installed
-            // @ts-ignore - optional dependency
-            const emailjs = await import('@emailjs/browser').catch(() => null);
-
-            if (!emailjs) {
-                console.log('[NotificationService] EmailJS not installed - run: npm install @emailjs/browser');
-                return;
-            }
-
             await emailjs.send(
                 this.config.emailjsServiceId,
                 this.config.emailjsTemplateId,
