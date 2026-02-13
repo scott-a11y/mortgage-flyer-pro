@@ -9,7 +9,7 @@ import { ReferralEducation } from '../ReferralEducation';
 import { StrategyRoadmap } from '../StrategyRoadmap';
 import { BridgeCalculator } from '../BridgeCalculator';
 import { StrategyComparison } from '../StrategyComparison';
-import { RegionalPulse } from '../RegionalPulse';
+import RegionalPulse from '../RegionalPulse';
 import { LeadRoutingForm } from '../LeadRoutingForm';
 import { SuccessGallery } from '../SuccessGallery';
 import { AgentExpertise } from '../AgentExpertise';

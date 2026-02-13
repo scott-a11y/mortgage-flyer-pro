@@ -53,6 +53,29 @@ export interface PropertyListing {
     financing?: MortgageCalculation;
 }
 
+export interface TourInsight {
+    id: string;
+    type: 'pro' | 'con' | 'vibe' | 'highlight';
+    category: 'arrival' | 'kitchen' | 'primary' | 'outdoors' | 'general';
+    content: string;
+    reactions?: number;
+}
+
+export interface BuyerExperience {
+    id: string;
+    listing: PropertyListing;
+    agentTake: string;
+    tourInsights: TourInsight[];
+    localGems: {
+        name: string;
+        category: string;
+        note: string;
+        distance?: string;
+    }[];
+    buyerName?: string;
+    strategyType: 'cash-flow' | 'low-down' | 'wealth-builder';
+}
+
 // Utility function to calculate monthly mortgage payment
 export function calculateMonthlyPayment(
     principal: number,

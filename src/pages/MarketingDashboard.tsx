@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     FileText,
@@ -10,37 +11,94 @@ import {
     ArrowRight,
     Home,
     Smartphone,
-    Rocket
+    Rocket,
+    Eye,
+    Zap,
+    LayoutDashboard,
+    UserCircle2
 } from "lucide-react";
+import { motion } from "framer-motion";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import RegionalPulse from "@/components/flyer/RegionalPulse";
 
 export default function MarketingDashboard() {
     const navigate = useNavigate();
+    const [stats, setStats] = useState({
+        totalViews: 0,
+        activeLeads: 0,
+        assets: 12
+    });
+
+    useEffect(() => {
+        // Sync stats from local storage (matching LeadsDashboard logic)
+        let totalViews = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key?.startsWith('lead_views_')) {
+                totalViews += parseInt(localStorage.getItem(key) || '0');
+            }
+        }
+        const leads = JSON.parse(localStorage.getItem('captured_leads') || '[]');
+        setStats({
+            totalViews,
+            activeLeads: leads.length,
+            assets: 12 // Mock asset count
+        });
+    }, []);
 
     const tools = [
         {
             id: "listing-studio",
             title: "Listing Studio",
-            description: "High-fidelity listing flyers and social media kits. Create professional marketing sheets for any property in seconds.",
+            description: "High-fidelity listing flyers and social media kits for your property inventory.",
             icon: FileText,
             color: "from-amber-400 to-amber-600",
             path: "/builder",
-            badge: "Studio",
+            badge: "Active",
             features: ["Print Flyers", "Social Posts", "Live Sync"]
+        },
+        {
+            id: "buyer-experience",
+            title: "Buyer's Experience",
+            description: "Premium property detailing & interactive tours for high-value buyer clients.",
+            icon: Sparkles,
+            color: "from-purple-400 to-purple-600",
+            path: "/buyer-agent",
+            badge: "Exclusive",
+            features: ["Agent Insights", "Local Gems", "Buyer Tours"]
         },
         {
             id: "rate-watch",
             title: "Rate Watch",
-            description: "Professional mortgage toolkit for live rate tracking, matrix management, and secure broadcasting to your partners.",
+            description: "Professional mortgage toolkit for live rate tracking and matrix management.",
             icon: LineChart,
             color: "from-cyan-400 to-cyan-600",
             path: "/rate-engine",
             badge: "Pro",
-            features: ["Cyber Matrix", "Uplink Sync", "Legal Disclosures"]
+            features: ["Cyber Matrix", "Uplink Sync", "Disclosures"]
+        },
+        {
+            id: "leads-hub",
+            title: "Leads Dashboard",
+            description: "Centralized lead tracking and real-time conversion monitoring for all flyers.",
+            icon: Users,
+            color: "from-emerald-400 to-emerald-600",
+            path: "/leads",
+            badge: `${stats.activeLeads} Unread`,
+            features: ["Conversion Stats", "Contact Sync", "Alerts"]
         }
     ];
 
+    const activeAssets = [
+        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live" },
+        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live" },
+        { name: "Luxury Estate Collection", type: "Buyer Tour", views: 42, status: "Draft" }
+    ];
+
     return (
-        <div className="min-h-screen bg-[#030304] text-slate-300 selection:bg-amber-500/30 font-sans">
+        <div className="min-h-screen bg-[#030304] text-slate-300 selection:bg-amber-500/30 font-sans pb-20 overflow-x-hidden">
             {/* Background Atmosphere */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/10 rounded-full blur-[120px] opacity-40" />
@@ -48,94 +106,133 @@ export default function MarketingDashboard() {
                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-50" />
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-20">
-                {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+            <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 lg:py-16">
+                {/* Unified Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                     <div className="space-y-4">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20">
-                            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/80">Enterprise Marketing Cloud</span>
+                            <LayoutDashboard className="w-3.5 h-3.5 text-amber-500" />
+                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-500/80">Command Center v3.0</span>
                         </div>
                         <h1 className="text-5xl lg:text-7xl font-black text-white tracking-tighter leading-none">
-                            Mortgage <br />
+                            Unified <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-white">Marketing Suite</span>
                         </h1>
-                        <p className="text-lg text-slate-400 max-w-xl font-medium leading-relaxed">
-                            Welcome, Scott. Your unified command center for high-fidelity property assets and real-time financing tools.
-                        </p>
                     </div>
 
-                    <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
-                        <div className="p-3 bg-amber-500/20 rounded-xl">
-                            <Rocket className="w-6 h-6 text-amber-500" />
-                        </div>
-                        <div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">System Status</div>
-                            <div className="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                                All Systems Operational
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xl">
+                            <div className="p-3 bg-emerald-500/20 rounded-xl">
+                                <Rocket className="w-6 h-6 text-emerald-500" />
+                            </div>
+                            <div>
+                                <div className="text-[10px] font-black uppercase tracking-widest text-slate-500">Global Sync Status</div>
+                                <div className="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                    Rates Live & Broadcasting
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Main Grid Options */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-                    {tools.map((tool) => (
-                        <button
-                            key={tool.id}
-                            onClick={() => navigate(tool.path)}
-                            className="group relative flex flex-col p-8 bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/20 rounded-[32px] transition-all duration-500 text-left overflow-hidden"
-                        >
-                            {/* Accent Glow */}
-                            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-20 blur-[60px] transition-opacity duration-500`} />
-
-                            <div className="flex items-center justify-between mb-8">
-                                <div className={`p-4 bg-gradient-to-br ${tool.color} rounded-2xl shadow-lg ring-1 ring-white/20 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                                    <tool.icon className="w-8 h-8 text-black" />
+                {/* Performance HUD */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    {[
+                        { label: 'Total Engagement', value: stats.totalViews.toLocaleString(), sub: 'Across 12 assets', icon: Eye, color: 'text-blue-400' },
+                        { label: 'Active Leads', value: stats.activeLeads, sub: 'Conversion rate 2.4%', icon: Users, color: 'text-amber-500' },
+                        { label: 'Cloud Capacity', value: '84%', sub: '2.1GB used of 2.5GB', icon: Zap, color: 'text-purple-400' }
+                    ].map((item, i) => (
+                        <Card key={i} className="bg-white/[0.03] border-white/10 p-6 backdrop-blur-xl group hover:bg-white/[0.05] transition-all">
+                            <div className="flex items-start justify-between">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{item.label}</p>
+                                    <h4 className="text-3xl font-black text-white tracking-tighter">{item.value}</h4>
+                                    <p className="text-xs text-slate-500 font-medium">{item.sub}</p>
                                 </div>
-                                <div className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-slate-500 group-hover:text-white transition-colors">
-                                    {tool.badge}
+                                <div className={`p-3 rounded-xl bg-white/5 ${item.color} group-hover:scale-110 transition-transform`}>
+                                    <item.icon className="w-5 h-5" />
                                 </div>
                             </div>
-
-                            <div className="space-y-3 relative z-10">
-                                <h3 className="text-2xl font-black text-white tracking-tight flex items-center gap-2">
-                                    {tool.title}
-                                    <ArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300 text-amber-500" />
-                                </h3>
-                                <p className="text-slate-400 font-medium leading-relaxed">
-                                    {tool.description}
-                                </p>
-                            </div>
-
-                            <div className="mt-8 pt-8 border-t border-white/5 flex flex-wrap gap-2">
-                                {tool.features.map((feature, idx) => (
-                                    <span key={idx} className="px-2.5 py-1 bg-white/[0.02] border border-white/5 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-                                        {feature}
-                                    </span>
-                                ))}
-                            </div>
-                        </button>
+                        </Card>
                     ))}
                 </div>
 
-                {/* Footer Quick Links */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    <div className="p-6 bg-white/[0.01] border border-white/5 rounded-2xl flex flex-col gap-2">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Live Support</div>
-                        <div className="text-sm font-bold text-white">Need help presenting?</div>
-                        <p className="text-xs text-slate-500">Contact the support team for personalized training on the suite.</p>
+                {/* Primary Launchpad */}
+                <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] mb-8 flex items-center gap-4">
+                    Product Suite
+                    <div className="h-px flex-1 bg-white/5" />
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+                    {tools.map((tool) => (
+                        <motion.button
+                            whileHover={{ y: -5 }}
+                            key={tool.id}
+                            onClick={() => navigate(tool.path)}
+                            className="group relative flex flex-col p-6 bg-white/[0.02] hover:bg-white/[0.08] border border-white/5 hover:border-white/20 rounded-[2rem] transition-all duration-500 text-left overflow-hidden h-full"
+                        >
+                            <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${tool.color} opacity-0 group-hover:opacity-10 blur-[40px] transition-opacity duration-500`} />
+
+                            <div className="flex items-center justify-between mb-6">
+                                <div className={`p-3 bg-gradient-to-br ${tool.color} rounded-xl shadow-lg ring-1 ring-white/10`}>
+                                    <tool.icon className="w-5 h-5 text-black" />
+                                </div>
+                                <Badge variant="outline" className="border-white/10 bg-white/5 text-[9px] uppercase tracking-widest font-black text-slate-400 group-hover:text-white transition-colors">
+                                    {tool.badge}
+                                </Badge>
+                            </div>
+
+                            <div className="space-y-2 relative z-10 flex-1">
+                                <h3 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                                    {tool.title}
+                                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transform translate-x-[-10px] group-hover:translate-x-0 transition-all duration-300 text-amber-500" />
+                                </h3>
+                                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                                    {tool.description}
+                                </p>
+                            </div>
+                        </motion.button>
+                    ))}
+                </div>
+
+                {/* Active Campaigns Explorer */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    <div className="lg:col-span-2 space-y-6">
+                        <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-4">
+                            Active Assets
+                            <div className="h-px flex-1 bg-white/5" />
+                        </h2>
+                        <div className="grid grid-cols-1 gap-3">
+                            {activeAssets.map((asset, i) => (
+                                <div key={i} className="flex items-center justify-between p-4 bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 rounded-2xl transition-all group cursor-pointer">
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-2 rounded-lg bg-white/5">
+                                            <Globe className="w-4 h-4 text-slate-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-white tracking-tight">{asset.name}</p>
+                                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{asset.type}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-8">
+                                        <div className="text-right">
+                                            <p className="text-sm font-black text-white">{asset.views}</p>
+                                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Views</p>
+                                        </div>
+                                        <Badge className={`bg-white/5 border-white/10 ${asset.status === 'Live' ? 'text-emerald-500' : 'text-slate-500'}`}>
+                                            {asset.status}
+                                        </Badge>
+                                        <Button variant="ghost" size="icon" className="group-hover:text-amber-500 transition-colors">
+                                            <Share2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="p-6 bg-white/[0.01] border border-white/5 rounded-2xl flex flex-col gap-2">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Asset Cloud</div>
-                        <div className="text-sm font-bold text-white">2.4 GB Storage Used</div>
-                        <p className="text-xs text-slate-500">Your high-fidelity assets are securely stored in the cloud.</p>
-                    </div>
-                    <div className="p-6 bg-white/[0.01] border border-white/5 rounded-2xl flex flex-col gap-2">
-                        <div className="text-[10px] font-black uppercase tracking-widest text-slate-600 mb-2">Next Gen</div>
-                        <div className="text-sm font-bold text-white">v3.0.4 Early Access</div>
-                        <p className="text-xs text-slate-500">AI-powered property descriptions coming in March 2026.</p>
+
+                    <div className="space-y-6">
+                        <RegionalPulse />
                     </div>
                 </div>
             </div>

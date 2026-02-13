@@ -1,92 +1,75 @@
-import { Signal, Activity, TrendingUp, MapPin, Search } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
+import { motion } from "framer-motion";
+import { TrendingUp, TrendingDown, Minus, Map, MapPin, Building2, Calendar } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 interface RegionalPulseProps {
     stateCode?: string;
 }
 
-export function RegionalPulse({ stateCode = 'National' }: RegionalPulseProps) {
-    const isLicensed = ['OR', 'WA', 'ID'].includes(stateCode);
+export default function RegionalPulse({ stateCode = 'PNW' }: RegionalPulseProps) {
+    const counties = [
+        { name: "King County", price: "$945k", trend: "up", change: "+2.4%", inventory: "1.4mo" },
+        { name: "Snohomish", price: "$780k", trend: "down", change: "-0.8%", inventory: "1.2mo" },
+        { name: "Pierce", price: "$565k", trend: "up", change: "+1.2%", inventory: "1.8mo" }
+    ];
 
     return (
-        <div className="py-20 px-8 md:px-16 border-b border-white/5 bg-[#0a0a0c]">
-            <div className="max-w-4xl mx-auto space-y-12">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div className="space-y-4">
-                        <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 bg-emerald-500/5 uppercase tracking-widest text-[10px] font-bold">
-                            Market Intelligence
-                        </Badge>
-                        <h2 className="text-3xl font-serif text-white flex items-center gap-3">
-                            Regional Pulse: <span className="text-emerald-500 italic">{stateCode}</span>
-                        </h2>
-                    </div>
-                    <div className="flex items-center gap-4 bg-white/5 p-2 rounded-full border border-white/10 px-4">
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
-                            <Signal className="w-3 h-3 text-emerald-500" />
-                            Live Data Link Active
-                        </div>
-                    </div>
-                </div>
+        <div className="space-y-6">
+            <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-4">
+                Regional Market Pulse: {stateCode}
+                <div className="h-px flex-1 bg-white/5" />
+            </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-white/5 border-white/10 p-6 space-y-4 hover:bg-white/[0.08] transition-all">
-                        <div className="flex items-center justify-between">
-                            <TrendingUp className="w-5 h-5 text-emerald-500" />
-                            <div className="text-[10px] font-bold text-emerald-500 uppercase">+2.4% MoM</div>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-medium mb-1">Inventory Flow</h4>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                                New listings in {stateCode} are moving 12% faster than the national average, making bridge strategies critical.
-                            </p>
-                        </div>
-                    </Card>
-
-                    <Card className="bg-white/5 border-white/10 p-6 space-y-4 hover:bg-white/[0.08] transition-all">
-                        <div className="flex items-center justify-between">
-                            <Activity className="w-5 h-5 text-blue-400" />
-                            <div className="text-[10px] font-bold text-blue-400 uppercase">Steady</div>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-medium mb-1">Offer Velocity</h4>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                                Multi-offer scenarios represent 65% of transactions. Non-contingent buyers are winning at a 3x higher rate.
-                            </p>
-                        </div>
-                    </Card>
-
-                    <Card className="bg-white/5 border-white/10 p-6 space-y-4 hover:bg-white/[0.08] transition-all">
-                        <div className="flex items-center justify-between">
-                            <MapPin className="w-5 h-5 text-amber-500" />
-                            <div className="text-[10px] font-bold text-amber-500 uppercase">Hot Market</div>
-                        </div>
-                        <div>
-                            <h4 className="text-white font-medium mb-1">Local Hot-Spots</h4>
-                            <p className="text-xs text-slate-500 leading-relaxed">
-                                Urban sectors are seeing a surge in "Buy Before Sell" demand as sellers trade up for more space.
-                            </p>
-                        </div>
-                    </Card>
-                </div>
-
-                {isLicensed && (
-                    <div className="p-6 rounded-2xl bg-amber-500/5 border border-amber-500/10 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500">
-                                <Search className="w-6 h-6" />
+            <div className="grid grid-cols-1 gap-4">
+                {counties.map((county, i) => (
+                    <motion.div
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.1 }}
+                        key={i}
+                    >
+                        <Card className="p-4 bg-white/[0.02] border-white/10 hover:bg-white/[0.05] hover:border-amber-500/20 transition-all cursor-default group">
+                            <div className="flex items-center justify-between gap-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-lg bg-white/5">
+                                        <Building2 className="w-4 h-4 text-slate-500 group-hover:text-amber-500 transition-colors" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-white">{county.name}</p>
+                                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{county.inventory} inventory</p>
+                                    </div>
+                                </div>
+                                
+                                <div className="text-right">
+                                    <div className="flex items-center justify-end gap-2 text-sm font-black text-white">
+                                        {county.price}
+                                        {county.trend === 'up' ? (
+                                            <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
+                                        ) : (
+                                            <TrendingDown className="w-3.5 h-3.5 text-red-500" />
+                                        )}
+                                    </div>
+                                    <p className={`text-[10px] font-black uppercase tracking-widest ${
+                                        county.trend === 'up' ? 'text-emerald-500/80' : 'text-red-500/80'
+                                    }`}>
+                                        {county.change} M/M
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h4 className="text-white font-medium">Deep Dive: {stateCode} Strategy</h4>
-                                <p className="text-xs text-slate-500">We have proprietary market data for {stateCode} ready for your analysis.</p>
-                            </div>
-                        </div>
-                        <button className="px-6 py-2 rounded-full border border-amber-500/30 text-amber-500 text-xs font-bold uppercase tracking-widest hover:bg-amber-500 hover:text-black transition-all">
-                            Request Full Pulse Report
-                        </button>
-                    </div>
-                )}
+                        </Card>
+                    </motion.div>
+                ))}
             </div>
+
+            <Card className="p-4 bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 backdrop-blur-sm">
+                <div className="flex items-center gap-3 mb-2">
+                    <Calendar className="w-3.5 h-3.5 text-amber-500" />
+                    <span className="text-[10px] font-black text-amber-500/80 uppercase tracking-widest">Market Forecast</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed font-medium italic">
+                    "Inventory levels are tightening across the corridor. Well-priced listings in King County are seeing 12% faster turnover than last month."
+                </p>
+            </Card>
         </div>
     );
 }
