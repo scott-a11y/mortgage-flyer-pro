@@ -154,6 +154,23 @@ export const regionTemplates = {
       insight: "Strong alternative for buyers seeking value near Portland with significant growth in new developments and lifestyle amenities.",
     },
   ],
+  denaeServiceAreas: [
+    {
+      name: "Portland Metro",
+      cities: "Northeast, North, & Southeast Portland",
+      insight: "Portland's core neighborhoods maintain strong resilience. Walkable districts with unique business cores continue to drive premium value.",
+    },
+    {
+      name: "Close-in Eastside",
+      cities: "Buckman, Kerns, Laurelhurst",
+      insight: "Historic charm meets urban convenience. High demand for well-preserved period homes in established neighborhood settings.",
+    },
+    {
+      name: "Clark County",
+      cities: "Vancouver, Camas, Ridgefield",
+      insight: "Strong alternative for buyers seeking value near Portland with significant growth in new developments and lifestyle amenities.",
+    },
+  ],
 } as const;
 
 // Template storage key
