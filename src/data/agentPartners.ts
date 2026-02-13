@@ -105,10 +105,10 @@ export const agentPartners: AgentPartner[] = [
         colorTheme: brokerageThemes[7], // Sotheby's
     },
     {
-        id: "danne-wilson",
-        name: "Danné Wilson",
+        id: "denae-wilson",
+        name: "Denae Wilson",
         realtor: {
-            name: "Danné Wilson",
+            name: "Denae Wilson",
             title: "Real Estate Broker",
             phone: "(971) 517-2953",
             email: "dlwilson@gtrealty.com",
