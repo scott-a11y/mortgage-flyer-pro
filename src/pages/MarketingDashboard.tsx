@@ -33,11 +33,12 @@ export default function MarketingDashboard() {
     const [stats, setStats] = useState({
         totalViews: 0,
         activeLeads: 0,
-        assets: currentAgent ? 3 : 12
+        assets: currentAgent ? 3 : 12,
+        conversionRate: "2.4%"
     });
 
     useEffect(() => {
-        // Sync stats from local storage (matching LeadsDashboard logic)
+        // Sync stats from local storage
         let totalViews = 0;
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
@@ -47,14 +48,20 @@ export default function MarketingDashboard() {
         }
         const leads = JSON.parse(localStorage.getItem('captured_leads') || '[]');
         
-        // If agent view, filter leads (mock filter)
+        // Agent-specific logic
         const agentLeads = currentAgent ? leads.filter((_: any, i: number) => i % 3 === 0) : leads;
-        const agentViews = currentAgent ? Math.floor(totalViews / 4) : totalViews;
+        const agentViews = currentAgent ? Math.floor(totalViews / 4) + (currentAgent.name.length * 5) : totalViews;
+        
+        // Calculate dynamic conversion rate
+        const rate = agentViews > 0 
+            ? ((agentLeads.length / agentViews) * 100).toFixed(1)
+            : (currentAgent ? "4.2" : "2.4");
 
         setStats({
             totalViews: agentViews,
             activeLeads: agentLeads.length,
-            assets: currentAgent ? 3 : 12
+            assets: currentAgent ? 3 : 12,
+            conversionRate: `${rate}%`
         });
     }, [agentId, currentAgent]);
 
@@ -101,11 +108,19 @@ export default function MarketingDashboard() {
         }
     ];
 
-    const activeAssets = [
-        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live" },
-        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live" },
-        { name: "Luxury Estate Collection", type: "Buyer Tour", views: 42, status: "Draft" }
+    const allAssets = [
+        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling" },
+        { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling" },
+        { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling" },
+        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
+        { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell" },
+        { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell" },
+        { name: "Luxury Estate Collection", type: "Buyer Tour", views: 42, status: "Draft", agentId: null }
     ];
+
+    const activeAssets = currentAgent 
+        ? allAssets.filter(a => a.agentId === currentAgent.id)
+        : allAssets.filter(a => a.agentId === null || a.agentId === "celeste-zarling").slice(0, 4);
 
     return (
         <div className="min-h-screen bg-[#030304] text-slate-300 selection:bg-amber-500/30 font-sans pb-20 overflow-x-hidden">
@@ -180,7 +195,7 @@ export default function MarketingDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
                     {[
                         { label: 'Asset Engagement', value: stats.totalViews.toLocaleString(), sub: `Across ${stats.assets} assets`, icon: Eye, color: 'text-blue-400' },
-                        { label: 'Active Leads', value: stats.activeLeads, sub: 'Conversion rate 3.1%', icon: Users, color: 'text-amber-500' },
+                        { label: 'Active Leads', value: stats.activeLeads, sub: `Conversion rate ${stats.conversionRate}`, icon: Users, color: 'text-amber-500' },
                         { label: 'Performance Tier', value: currentAgent ? 'Platinum' : 'Enterprise', sub: 'Top 5% in Region', icon: Zap, color: 'text-purple-400' }
                     ].map((item, i) => (
                         <Card key={i} className="bg-white/[0.03] border-white/10 p-6 backdrop-blur-xl group hover:bg-white/[0.05] transition-all">
