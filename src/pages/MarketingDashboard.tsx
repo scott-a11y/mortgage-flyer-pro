@@ -30,40 +30,58 @@ export default function MarketingDashboard() {
     const { agentId } = useParams();
     const currentAgent = agentPartners.find(a => a.id === agentId);
     
+    const allAssets = [
+        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling" },
+        { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling" },
+        { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling" },
+        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
+        { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell" },
+        { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell" },
+        { name: "Seattle Skyline Suite", type: "Listing Flyer", views: 312, status: "Live", agentId: "marcus-chen" },
+        { name: "Queen Anne Collection", type: "Listing Flyer", views: 184, status: "Live", agentId: "marcus-chen" },
+        { name: "Downtown Luxury Loft", type: "Buyer Tour", views: 92, status: "Live", agentId: "marcus-chen" },
+        { name: "Global Luxury Collection", type: "Buyer Tour", views: 512, status: "Live", agentId: null }
+    ];
+
+    const activeAssets = currentAgent 
+        ? allAssets.filter(a => a.agentId === currentAgent.id)
+        : allAssets.filter(a => a.agentId === null || a.agentId === "celeste-zarling").slice(0, 4);
+
     const [stats, setStats] = useState({
         totalViews: 0,
         activeLeads: 0,
-        assets: currentAgent ? 3 : 12,
-        conversionRate: "2.4%"
+        assets: activeAssets.length,
+        conversionRate: "0.0%"
     });
 
     useEffect(() => {
-        // Sync stats from local storage
-        let totalViews = 0;
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key?.startsWith('lead_views_')) {
-                totalViews += parseInt(localStorage.getItem(key) || '0');
-            }
-        }
-        const leads = JSON.parse(localStorage.getItem('captured_leads') || '[]');
+        // 1. Calculate Views from Active Assets
+        const assetViews = activeAssets.reduce((sum, asset) => sum + asset.views, 0);
         
-        // Agent-specific logic
-        const agentLeads = currentAgent ? leads.filter((_: any, i: number) => i % 3 === 0) : leads;
-        const agentViews = currentAgent ? Math.floor(totalViews / 4) + (currentAgent.name.length * 5) : totalViews;
-        
-        // Calculate dynamic conversion rate
-        const rate = agentViews > 0 
-            ? ((agentLeads.length / agentViews) * 100).toFixed(1)
-            : (currentAgent ? "4.2" : "2.4");
+        // 2. Mock individual lead counts for variance
+        const mockLeadsMap: Record<string, number> = {
+            'celeste-zarling': 12,
+            'adrian-mitchell': 8,
+            'marcus-chen': 15,
+            'default': 42
+        };
+
+        const activeLeads = currentAgent 
+            ? mockLeadsMap[currentAgent.id] || 5 
+            : mockLeadsMap['default'];
+
+        // 3. Dynamic Conversion Rate
+        const rate = assetViews > 0 
+            ? ((activeLeads / assetViews) * 100).toFixed(1)
+            : "0.0";
 
         setStats({
-            totalViews: agentViews,
-            activeLeads: agentLeads.length,
-            assets: currentAgent ? 3 : 12,
+            totalViews: assetViews,
+            activeLeads: activeLeads,
+            assets: activeAssets.length,
             conversionRate: `${rate}%`
         });
-    }, [agentId, currentAgent]);
+    }, [agentId, currentAgent, activeAssets]);
 
     const tools = [
         {
@@ -107,20 +125,6 @@ export default function MarketingDashboard() {
             features: ["Conversion Stats", "Contact Sync", "Alerts"]
         }
     ];
-
-    const allAssets = [
-        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling" },
-        { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling" },
-        { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling" },
-        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
-        { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell" },
-        { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell" },
-        { name: "Luxury Estate Collection", type: "Buyer Tour", views: 42, status: "Draft", agentId: null }
-    ];
-
-    const activeAssets = currentAgent 
-        ? allAssets.filter(a => a.agentId === currentAgent.id)
-        : allAssets.filter(a => a.agentId === null || a.agentId === "celeste-zarling").slice(0, 4);
 
     return (
         <div className="min-h-screen bg-[#030304] text-slate-300 selection:bg-amber-500/30 font-sans pb-20 overflow-x-hidden">
