@@ -1,9 +1,378 @@
+import { useEffect } from "react";
+
 export default function AdrianSOP() {
+    useEffect(() => {
+        // Override the page title
+        document.title = "Mortgage Flyer Pro — Buyer Agent SOP | Adrian Mitchell";
+        return () => {
+            document.title = "IA Loans Flyer Builder | Co-Branded Mortgage Rate Flyer Generator";
+        };
+    }, []);
+
     return (
-        <iframe 
-            src="/adrian-sop.html" 
-            style={{ width: '100%', height: '100vh', border: 'none' }}
-            title="Adrian Mitchell SOP"
+        <div
+            dangerouslySetInnerHTML={{
+                __html: `
+<style>
+    .sop-root * { margin: 0; padding: 0; box-sizing: border-box; }
+    .sop-root {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #0a0a0b;
+        color: #c8c8d0;
+        line-height: 1.7;
+        padding: 0;
+        min-height: 100vh;
+    }
+    .sop-root .sop-container {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+    }
+    .sop-root .sop-header {
+        text-align: center;
+        padding: 60px 20px;
+        background: linear-gradient(180deg, #111113 0%, #0a0a0b 100%);
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        margin-bottom: 48px;
+    }
+    .sop-root .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 100px;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: #D4AF37;
+        margin-bottom: 20px;
+    }
+    .sop-root .sop-header h1 {
+        font-size: 36px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -0.03em;
+        margin-bottom: 8px;
+    }
+    .sop-root .sop-header h1 span {
+        background: linear-gradient(135deg, #D4AF37, #f0d060);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .sop-root .sop-header p {
+        font-size: 15px;
+        color: #888;
+        font-weight: 500;
+    }
+    .sop-root .sop-header .subtitle {
+        font-size: 13px;
+        color: #666;
+        margin-top: 4px;
+    }
+    .sop-root h2 {
+        font-size: 22px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -0.02em;
+        margin: 48px 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .sop-root h3 {
+        font-size: 16px;
+        font-weight: 800;
+        color: #e0e0e8;
+        margin: 28px 0 12px;
+    }
+    .sop-root h4 { font-size: 14px; font-weight: 700; color: #ccc; margin: 20px 0 8px; }
+    .sop-root p { margin-bottom: 14px; font-size: 14px; }
+    .sop-root strong { color: #e8e8f0; font-weight: 700; }
+    .sop-root em { color: #aaa; }
+    .sop-root .links-grid { display: grid; gap: 8px; margin: 16px 0 24px; }
+    .sop-root .link-card {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 14px 18px; background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.06); border-radius: 12px;
+        text-decoration: none; transition: all 0.2s;
+    }
+    .sop-root .link-card:hover { background: rgba(255,255,255,0.06); border-color: rgba(212,175,55,0.3); }
+    .sop-root .link-card .label { font-size: 13px; font-weight: 700; color: #fff; }
+    .sop-root .link-card .url { font-size: 11px; color: #D4AF37; font-weight: 600; }
+    .sop-root ul, .sop-root ol { padding-left: 24px; margin: 12px 0; }
+    .sop-root li { font-size: 14px; margin-bottom: 8px; color: #b0b0b8; }
+    .sop-root li strong { color: #e0e0e8; }
+    .sop-root .template-block {
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 12px; padding: 20px 24px; margin: 16px 0;
+        font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.8;
+        color: #c0c0c8; white-space: pre-wrap; position: relative;
+    }
+    .sop-root .template-block::before {
+        content: '📋 COPY-PASTE TEMPLATE'; display: block; font-size: 9px;
+        font-weight: 800; letter-spacing: 0.15em; color: #666;
+        margin-bottom: 12px; padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .sop-root .template-label { font-size: 14px; font-weight: 800; color: #e0e0e8; margin: 28px 0 8px; }
+    .sop-root .step-card {
+        display: flex; gap: 16px; padding: 16px 0;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .sop-root .step-num {
+        flex-shrink: 0; width: 28px; height: 28px; display: flex;
+        align-items: center; justify-content: center;
+        background: linear-gradient(135deg, #D4AF37, #b8962e);
+        border-radius: 8px; font-size: 12px; font-weight: 900; color: #000;
+    }
+    .sop-root .step-content { flex: 1; }
+    .sop-root .step-content p { font-size: 14px; margin: 0; }
+    .sop-root .info-box { padding: 16px 20px; border-radius: 12px; margin: 16px 0; font-size: 14px; }
+    .sop-root .info-box.tip {
+        background: rgba(147,51,234,0.08); border: 1px solid rgba(147,51,234,0.2); color: #c4a5e8;
+    }
+    .sop-root .info-box.tip::before {
+        content: '💡 PRO TIP'; display: block; font-size: 10px; font-weight: 800;
+        letter-spacing: 0.15em; color: #a78bfa; margin-bottom: 8px;
+    }
+    .sop-root .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+    .sop-root .do-card, .sop-root .dont-card { padding: 20px; border-radius: 12px; font-size: 13px; }
+    .sop-root .do-card { background: rgba(34,197,94,0.05); border: 1px solid rgba(34,197,94,0.15); }
+    .sop-root .do-card h4 { color: #4ade80; margin-top: 0; }
+    .sop-root .dont-card { background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.15); }
+    .sop-root .dont-card h4 { color: #f87171; margin-top: 0; }
+    .sop-root .power-move {
+        padding: 16px 20px; background: rgba(251,191,36,0.05);
+        border: 1px solid rgba(251,191,36,0.12); border-radius: 12px; margin: 12px 0;
+    }
+    .sop-root .power-move strong { color: #fbbf24; }
+    .sop-root .power-move em { color: #d4d4d8; font-style: italic; }
+    .sop-root .faq-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .sop-root .faq-q { font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .sop-root .faq-a { font-size: 13px; color: #999; }
+    .sop-root .sop-footer {
+        margin-top: 60px; padding: 32px; background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; text-align: center;
+    }
+    .sop-root .sop-footer h3 { color: #fff; margin: 0 0 16px; font-size: 16px; }
+    .sop-root .sop-footer p { font-size: 13px; color: #888; margin: 4px 0; }
+    .sop-root .sop-footer a { color: #D4AF37; text-decoration: none; }
+    .sop-root .meta { text-align: center; font-size: 11px; color: #444; margin-top: 32px; }
+    @media (max-width: 600px) {
+        .sop-root .sop-header h1 { font-size: 28px; }
+        .sop-root .do-dont { grid-template-columns: 1fr; }
+        .sop-root .sop-container { padding: 20px 16px 60px; }
+    }
+</style>
+<div class="sop-root">
+<div class="sop-header">
+    <div class="header-badge">🏡 Buyer Agent Playbook</div>
+    <h1>Mortgage Flyer Pro — <span>Your SOP</span></h1>
+    <p><strong>Adrian Mitchell</strong> | Works Real Estate</p>
+    <p class="subtitle">Oregon REALTOR®</p>
+</div>
+<div class="sop-container">
+    <p>Hey Adrian! This is your step-by-step guide to using the Mortgage Flyer Pro platform. Since you work primarily with <strong>buyers</strong>, this SOP is focused on the tools that help you:</p>
+    <ul>
+        <li>Share <strong>live mortgage rates</strong> with your buyer clients</li>
+        <li>Create <strong>premium property tour experiences</strong> to close deals faster</li>
+        <li>Capture and track <strong>buyer leads</strong> from your flyers</li>
+        <li>Look like the most tech-forward agent in Portland</li>
+    </ul>
+    <h2>🔗 Your Links (Bookmark These)</h2>
+    <div class="links-grid">
+        <a href="https://mortgage-flyer-pro.vercel.app/dashboard/adrian-mitchell" class="link-card" target="_blank"><span class="label">Your Dashboard</span><span class="url">→ Open Dashboard</span></a>
+        <a href="https://mortgage-flyer-pro.vercel.app/buyer-agent" class="link-card" target="_blank"><span class="label">Buyer Experience Studio</span><span class="url">→ Open Studio</span></a>
+        <a href="https://mortgage-flyer-pro.vercel.app/rate-engine" class="link-card" target="_blank"><span class="label">Rate Engine</span><span class="url">→ Open Rate Engine</span></a>
+        <a href="https://mortgage-flyer-pro.vercel.app/leads" class="link-card" target="_blank"><span class="label">Leads Dashboard</span><span class="url">→ View Leads</span></a>
+    </div>
+    <h2>1. 🏠 Your Dashboard — Home Base</h2>
+    <p>When you open your dashboard, you'll see:</p>
+    <ul>
+        <li><strong>Your name, photo, and Works Real Estate branding</strong> at the top</li>
+        <li><strong>Performance stats</strong> — asset views, active leads, conversion rate</li>
+        <li><strong>Product Suite</strong> — quick-launch buttons for each tool</li>
+        <li><strong>Active Assets</strong> — all your live flyers and tours</li>
+    </ul>
+    <h3>What to do first:</h3>
+    <div class="step-card"><div class="step-num">1</div><div class="step-content"><p>Open your dashboard link above</p></div></div>
+    <div class="step-card"><div class="step-num">2</div><div class="step-content"><p>Familiarize yourself with the 4 product tiles: <strong>Listing Studio</strong> (create property flyers), <strong>Buyer's Experience</strong> (⭐ your bread &amp; butter), <strong>Rate Watch</strong> (live mortgage rate tracker), <strong>Leads Dashboard</strong> (see who's clicking)</p></div></div>
+    <h2>2. 📊 Sharing Live Rate Flyers with Buyers</h2>
+    <p>This is the #1 tool for a buyer's agent. Your buyers are always asking: <em>"What are rates right now?"</em> — now you have a live, co-branded answer.</p>
+    <h3>How it works:</h3>
+    <div class="step-card"><div class="step-num">1</div><div class="step-content"><p>I (Scott) create a co-branded rate flyer with your contact info and headshot</p></div></div>
+    <div class="step-card"><div class="step-num">2</div><div class="step-content"><p>You receive a <strong>permanent link</strong> that always shows current rates</p></div></div>
+    <div class="step-card"><div class="step-num">3</div><div class="step-content"><p>You share that link with your buyer clients</p></div></div>
+    <div class="step-card"><div class="step-num">4</div><div class="step-content"><p>Clients see live rates + your face + your contact info</p></div></div>
+    <div class="step-card"><div class="step-num">5</div><div class="step-content"><p>Clients can scan a QR code to start a pre-approval</p></div></div>
+    <h3>Where to share it:</h3>
+    <ul>
+        <li>📱 <strong>Text message</strong> — After a showing, text the link along with your feedback</li>
+        <li>📧 <strong>Email</strong> — Include in your drip campaigns and newsletters</li>
+        <li>📲 <strong>Instagram Bio</strong> — Add the link to your Linktree or bio</li>
+        <li>🏡 <strong>Open houses</strong> — Display the QR code on your sign-in sheet</li>
+        <li>✍️ <strong>Email signature</strong> — Add a "View Current Rates" link</li>
+        <li>📋 <strong>Buyer consultations</strong> — Pull it up on your phone during meetings</li>
+    </ul>
+    <h2>3. ✨ The Buyer Experience Studio — Your Secret Weapon</h2>
+    <p>This is where you differentiate yourself from every other buyer's agent. After you tour a property with your client, use this tool to create a <strong>personalized property experience page</strong> that you send to your buyer.</p>
+    <h3>What it does:</h3>
+    <ul>
+        <li>Pulls in listing data (address, photos, specs, MLS#)</li>
+        <li>Lets you write <strong>"The Agent's Take"</strong> — your personal perspective on why this home fits <em>this specific buyer</em></li>
+        <li>Add <strong>Tour Insights</strong> — specific observations (kitchen lighting, street noise level, etc.)</li>
+        <li>Add <strong>Local Gems</strong> — your favorite nearby restaurants, parks, coffee shops</li>
+        <li>Personalize it with <strong>buyer's name</strong> and <strong>financing strategy</strong></li>
+        <li>AI-powered <strong>Ghost Detailer</strong> can help you write compelling descriptions</li>
+    </ul>
+    <h3>Step-by-step:</h3>
+    <div class="step-card"><div class="step-num">1</div><div class="step-content"><p><strong>Open the Buyer Experience Studio</strong> from your dashboard</p></div></div>
+    <div class="step-card"><div class="step-num">2</div><div class="step-content"><p><strong>Select/confirm the listing</strong> you toured</p></div></div>
+    <div class="step-card"><div class="step-num">3</div><div class="step-content"><p><strong>Write your Agent's Take</strong> — Be personal. Example: <em>"Sarah &amp; Mike, this home checks all the boxes we talked about — the quiet cul-de-sac for the kids, the updated kitchen you wanted, and the 3-car garage for Mike's workshop."</em></p></div></div>
+    <div class="step-card"><div class="step-num">4</div><div class="step-content"><p><strong>Add Tour Insights</strong> — Click "Add Insight" for each observation (Kitchen, Primary, Outdoors, Arrival, General)</p></div></div>
+    <div class="step-card"><div class="step-num">5</div><div class="step-content"><p><strong>Add Local Gems</strong> — Your insider knowledge: coffee shops, parks, schools</p></div></div>
+    <div class="step-card"><div class="step-num">6</div><div class="step-content"><p><strong>Set the Financing Strategy</strong> — Wealth Builder (30yr Fixed), Cash Flow Maximizer (ARM), or Low Down Payment (FHA/VA)</p></div></div>
+    <div class="step-card"><div class="step-num">7</div><div class="step-content"><p><strong>Click "Preview Live"</strong> to see what the buyer will see</p></div></div>
+    <div class="step-card"><div class="step-num">8</div><div class="step-content"><p><strong>Click "Share Experience"</strong> to copy the link</p></div></div>
+    <div class="info-box tip">Send this within <strong>2 hours</strong> of the showing while the experience is fresh. It shows buyers you're invested in their search and gives them a professional recap to share with their spouse, co-buyer, or family.</div>
+    <h2>4. 🏗️ Property Listing Flyers</h2>
+    <p>Even as a buyer's agent, listing flyers are useful for:</p>
+    <ul>
+        <li><strong>Coming Soon</strong> properties you're previewing</li>
+        <li><strong>Sharing listings</strong> you found for your buyers</li>
+        <li><strong>Open house</strong> materials</li>
+        <li><strong>Social media</strong> posts about properties you're excited about</li>
+    </ul>
+    <h3>How to create one:</h3>
+    <div class="step-card"><div class="step-num">1</div><div class="step-content"><p>Click <strong>"Listing Studio"</strong> from your dashboard</p></div></div>
+    <div class="step-card"><div class="step-num">2</div><div class="step-content"><p>Enter property details (address, price, beds/baths, etc.)</p></div></div>
+    <div class="step-card"><div class="step-num">3</div><div class="step-content"><p>Upload property photos</p></div></div>
+    <div class="step-card"><div class="step-num">4</div><div class="step-content"><p>Choose a layout template (Luxury, Modern, Traditional, Property Listing)</p></div></div>
+    <div class="step-card"><div class="step-num">5</div><div class="step-content"><p>Your info is already pre-loaded (Works Real Estate branding)</p></div></div>
+    <div class="step-card"><div class="step-num">6</div><div class="step-content"><p>Export as PDF, social media graphic, or share a live link</p></div></div>
+    <h2>5. 📈 Tracking Buyer Leads</h2>
+    <p>Every time a buyer interacts with your flyers, we capture that activity. The Leads Dashboard shows you:</p>
+    <ul>
+        <li><strong>Who's viewing</strong> your flyers</li>
+        <li><strong>Lead contact info</strong> from form submissions</li>
+        <li><strong>Engagement metrics</strong> — which properties are getting the most attention</li>
+        <li><strong>Real-time alerts</strong> when new leads come in</li>
+    </ul>
+    <h3>What to do with leads:</h3>
+    <div class="step-card"><div class="step-num">1</div><div class="step-content"><p>Check your Leads Dashboard <strong>daily</strong> (or set up notifications)</p></div></div>
+    <div class="step-card"><div class="step-num">2</div><div class="step-content"><p>Respond to new leads <strong>within 5 minutes</strong> for best conversion</p></div></div>
+    <div class="step-card"><div class="step-num">3</div><div class="step-content"><p>Use the rate flyer link as your follow-up — it keeps the conversation warm</p></div></div>
+    <h2>6. 📝 Copy-Paste Templates for Buyers</h2>
+    <p class="template-label">After a Showing — Text Message:</p>
+    <div class="template-block">Hi [Buyer Name]! 
+
+Thanks for touring [Property Address] today! I put together a quick recap of everything we talked about, including my notes on the property and some neighborhood gems:
+
+[BUYER EXPERIENCE LINK]
+
+Also, here are today's live mortgage rates so you can run the numbers: [RATE FLYER LINK]
+
+Let me know your thoughts — I can get more details from the listing agent if you're interested! 🏡
+
+Adrian Mitchell
+(971) 712-4291
+Works Real Estate</div>
+    <p class="template-label">Buyer Consultation — Setup Email:</p>
+    <div class="template-block">Subject: Your Home Search Dashboard — Live Rates &amp; Tools
+
+Hi [Buyer Name],
+
+Thanks for choosing me to help with your home search! I want to share a couple of tools that will make this process smoother:
+
+📊 Live Mortgage Rates (always current):
+[RATE FLYER LINK]
+
+This link always shows the latest rates — bookmark it and check back anytime. No app needed, works on your phone.
+
+I'll also be sending personalized property recaps after each showing with my professional take and neighborhood insights.
+
+Let's find your perfect home!
+
+Best,
+Adrian Mitchell
+Oregon REALTOR®
+Works Real Estate
+(971) 712-4291
+adrian.mitchell@worksrealestate.co</div>
+    <p class="template-label">Social Media Post:</p>
+    <div class="template-block">📊 Today's Mortgage Rates for Portland Metro
+
+Rates are moving — check out today's numbers and see what your buying power looks like!
+
+🔗 Live rates (always current): [RATE FLYER LINK]
+
+Thinking about buying? DM me and let's talk strategy.
+
+#PortlandRealEstate #MortgageRates #HomeBuying #PDXHomes #BuyingAHome #AdrianMitchell</div>
+    <p class="template-label">After Open House — Follow-Up:</p>
+    <div class="template-block">Hi [Buyer Name],
+
+Great meeting you at the open house at [Address] today!
+
+I thought you might find these live mortgage rates helpful as you think about next steps: [RATE FLYER LINK]
+
+If you'd like to see more homes in this area or price range, I'd love to set up some showings. I have access to a few off-market opportunities that might interest you.
+
+Adrian Mitchell
+(971) 712-4291
+Works Real Estate</div>
+    <h2>7. 🎯 Best Practices for Buyer Agents</h2>
+    <div class="do-dont">
+        <div class="do-card">
+            <h4>✅ DO</h4>
+            <ul>
+                <li>Share the rate link at <strong>every buyer touchpoint</strong></li>
+                <li>Send a Buyer Experience recap <strong>within 2 hours</strong> of every showing</li>
+                <li>Add the rate link to your <strong>email signature</strong></li>
+                <li>Use the <strong>QR code</strong> at open houses</li>
+                <li>Mention rates are <strong>live</strong> — not a stale screenshot</li>
+                <li><strong>Personalize</strong> the Agent's Take</li>
+                <li>Track your <strong>leads daily</strong></li>
+            </ul>
+        </div>
+        <div class="dont-card">
+            <h4>❌ DON'T</h4>
+            <ul>
+                <li>Screenshot rates and send as an image</li>
+                <li>Promise specific rates — say <em>"as of today"</em></li>
+                <li>Send generic Buyer Experience pages</li>
+                <li>Ignore the Leads Dashboard</li>
+            </ul>
+        </div>
+    </div>
+    <h3>🔥 Power Moves</h3>
+    <div class="power-move"><strong>1. The "Rate Drop" Text</strong> — When rates go down, text all your active buyers:<br><em>"Hey [Name], rates just dropped! Check it out: [LINK]. Want to revisit any of the homes we looked at?"</em></div>
+    <div class="power-move"><strong>2. The "Showing Recap"</strong> — After every showing, send the Buyer Experience page. No other agent in Portland is doing this.</div>
+    <div class="power-move"><strong>3. The "Pre-Approval Push"</strong> — When a buyer is on the fence:<br><em>"Let's at least get you pre-approved so when we find the right one, we can move fast. Here are today's rates: [LINK]"</em></div>
+    <div class="power-move"><strong>4. The "Market Update"</strong> — Weekly Instagram story or post with your rate link. Position yourself as the rate-savvy agent.</div>
+    <h2>8. ❓ FAQ</h2>
+    <div class="faq-item"><div class="faq-q">Q: Do I need a login?</div><div class="faq-a">For your personalized dashboard, just use your bookmarked URL. The rate flyers and buyer experience pages are all accessible without login.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: How do I update my photo or contact info?</div><div class="faq-a">Send me (Scott) the updated info and I'll update it in the system. Your headshot, phone, email, and brokerage info are all configurable.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Do the rates update automatically?</div><div class="faq-a">Yes! Rates refresh every time someone opens the flyer. Clients always see the latest numbers.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Can I customize the colors?</div><div class="faq-a">Already done! Your flyers use the Works Real Estate color theme (black/white/gold).</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Does the link expire?</div><div class="faq-a">No — your links are permanent. Share once, valid forever.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Can I see how many people viewed my flyer?</div><div class="faq-a">Yes! Your dashboard shows view counts for each asset, and the Leads Dashboard shows detailed engagement.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: What about buyers in Washington?</div><div class="faq-a">We're licensed in OR, WA, and ID. The platform works for all three states.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Can I create flyers for listings that aren't mine?</div><div class="faq-a">Absolutely — as a buyer's agent, you can create flyers for any listing you want to share with your buyers.</div></div>
+    <div class="sop-footer">
+        <h3>📞 Need Help?</h3>
+        <p><strong>Scott Little</strong> — Your Mortgage Broker Partner</p>
+        <p>📱 <a href="tel:3606061106">(360) 606-1106</a></p>
+        <p>📧 <a href="mailto:scott@ialoans.com">scott@ialoans.com</a></p>
+        <p>🌐 <a href="https://iamortgage.org" target="_blank">iamortgage.org</a></p>
+    </div>
+    <div class="meta"><p>Last Updated: February 14, 2026 · Version 1.0 — Buyer Agent Edition</p></div>
+</div>
+</div>
+`
+            }}
         />
     );
 }
