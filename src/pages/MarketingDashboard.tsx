@@ -23,18 +23,33 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import RegionalPulse from "@/components/flyer/RegionalPulse";
-import { agentPartners } from "@/data/agentPartners";
+import { agentPartners as mockAgentPartners } from "@/data/agentPartners";
+import * as agentService from "@/lib/services/agentService";
+import * as flyerService from "@/lib/services/flyerService";
+import { AgentPartner } from "@/lib/services/agentService";
+import { FlyerTemplate } from "@/lib/services/flyerService";
 
 export default function MarketingDashboard() {
     const navigate = useNavigate();
     const { agentId } = useParams();
-    const currentAgent = agentPartners.find(a => a.id === agentId);
+    const [agents, setAgents] = useState<AgentPartner[]>(mockAgentPartners);
+    const [dbFlyers, setDbFlyers] = useState<FlyerTemplate[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const currentAgent = agents.find(a => a.id === agentId);
     
     const allAssets = [
+        ...dbFlyers.map(f => ({
+            name: f.name,
+            type: "Listing Flyer",
+            views: 0, // In standard impl, would fetch from analytics service
+            status: f.is_published ? "Live" : "Draft",
+            agentId: (f.data as any).agentId || null
+        })),
         { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling" },
         { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling" },
         { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling" },
-        { name: "Portland Metro - Denae Wilson", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
+        { name: "Portland Metro - Adrian Mitchell", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
         { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell" },
         { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell" },
         { name: "Seattle Skyline Suite", type: "Listing Flyer", views: 312, status: "Live", agentId: "marcus-chen" },
@@ -53,6 +68,28 @@ export default function MarketingDashboard() {
         assets: activeAssets.length,
         conversionRate: "0.0%"
     });
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            setIsLoading(true);
+            
+            // Fetch Agents from DB
+            const { data: dbAgents } = await agentService.getAllAgents();
+            if (dbAgents && dbAgents.length > 0) {
+                setAgents(dbAgents);
+            }
+
+            // Fetch Flyers from DB
+            const { data: flyers } = await flyerService.getAllFlyers();
+            if (flyers) {
+                setDbFlyers(flyers);
+            }
+
+            setIsLoading(false);
+        };
+
+        loadDashboardData();
+    }, []);
 
     useEffect(() => {
         // 1. Calculate Views from Active Assets
@@ -300,7 +337,7 @@ export default function MarketingDashboard() {
                                     <div className="h-px flex-1 bg-white/5" />
                                 </h2>
                                 <div className="space-y-3">
-                                    {agentPartners.slice(0, 3).map((partner, i) => (
+                                    {agents.slice(0, 3).map((partner, i) => (
                                         <Card 
                                             key={i} 
                                             onClick={() => navigate(`/dashboard/${partner.id}`)}

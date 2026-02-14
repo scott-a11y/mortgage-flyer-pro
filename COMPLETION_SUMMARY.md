@@ -111,6 +111,23 @@ Exit code: 0 ✅
 
 ---
 
+### 5. AI Service Integration (Gemini & Comet) ✅
+
+**Key Features Implemented:**
+1. ✅ **Gemini AI Ghost Detailer**: Integrated the Google Gemini 1.5 Flash model into the `BuyerAgentToolkit`. It converts property data and buyer names into premium, persuasive agent perspectives.
+2. ✅ **AI Blueprint Analysis**: Enhanced the `blueprint-analyzer` to detect walls, doors, windows, and room labels from images.
+3. ✅ **Geometric Correlation**: Implemented a "Point-in-Polygon" algorithm to match AI room labels with geometric walls.
+4. ✅ **Opening Snapping**: Added vector projection logic to snap AI-detected doors and windows to the nearest generated wall segments.
+
+**Files Created/Modified:**
+- `src/lib/services/aiService.ts` (New Gemini service)
+- `src/pages/BuyerAgentToolkit.tsx` (Service integration)
+- `lib/wall-designer/blueprint-analyzer.ts` (Vision prompt enhancement)
+- `app/buildings/[id]/wall-designer/_components/smart-wall-utils.tsx` (Geometric algorithms)
+- `app/buildings/[id]/wall-designer/_components/SplitEditor/utils.ts` (Vector projection)
+
+---
+
 ## 🚀 Next Steps: Deployment
 
 ### Option 1: Deploy to Vercel (Recommended)

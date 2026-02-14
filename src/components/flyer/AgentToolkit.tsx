@@ -232,7 +232,7 @@ ${data.broker.phone}`);
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="email" className="text-[10px] uppercase tracking-widest text-slate-500">Email Address</Label>
-                                        <Input id="email" name="email" type="email" required defaultValue={editingPartner ? editingPartner.realtor.email : ""} className="bg-black/50 border-cyan-500/10" placeholder="adrian@pdxworks.com" />
+                                        <Input id="email" name="email" type="email" required defaultValue={editingPartner ? editingPartner.realtor.email : ""} className="bg-black/50 border-cyan-500/10" placeholder="agent@worksrealestate.co" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="phone" className="text-[10px] uppercase tracking-widest text-slate-500">Phone Number</Label>

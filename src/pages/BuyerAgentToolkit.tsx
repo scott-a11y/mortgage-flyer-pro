@@ -19,8 +19,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { BuyerExperience, TourInsight } from "@/types/property";
+import { BuyerExperience, TourInsight, formatCurrency } from "@/types/property";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
+import { generateGhostDetail } from "@/lib/services/aiService";
 
 export default function BuyerAgentToolkit() {
     const navigate = useNavigate();
@@ -154,20 +155,37 @@ export default function BuyerAgentToolkit() {
                                     size="sm" 
                                     variant="ghost" 
                                     className="text-[10px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 gap-2"
-                                    onClick={() => {
-                                        const prompt = `Draft a high-fidelity, emotionally resonant agent perspective for a ${experience.listing.specs.bedrooms}BR home in ${experience.listing.specs.city} for buyers named ${experience.buyerName}. Focus on the open-concept flow and the lifestyle of the neighborhood.`;
-                                        toast.info("AI Ghost Detailer Engaged", {
-                                            description: "Synthesizing property data into a premium perspective..."
-                                        });
-                                        setTimeout(() => {
+                                    onClick={async () => {
+                                        try {
+                                            toast.info("AI Ghost Detailer Engaged", {
+                                                description: "Synthesizing property data into a premium perspective..."
+                                            });
+                                            
+                                            const aiPerspective = await generateGhostDetail({
+                                                propertyData: {
+                                                    city: experience.listing.specs.city,
+                                                    bedrooms: experience.listing.specs.bedrooms,
+                                                    bathrooms: experience.listing.specs.bathrooms,
+                                                    price: formatCurrency(experience.listing.specs.listPrice),
+                                                    description: experience.listing.features.headline
+                                                },
+                                                buyerName: experience.buyerName || "there",
+                                                agentName: "Scott" // Default for now
+                                            });
+
                                             setExperience({
                                                 ...experience,
-                                                agentTake: `This ${experience.listing.specs.bedrooms}-bedroom sanctuary in ${experience.listing.specs.city} is more than a listing; it's a lifestyle upgrade. The flow from the kitchen to the social spaces is exactly what you need for those weekend gatherings. ${experience.buyerName}, I can already see you enjoying the morning light in that breakfast nook while the neighborhood wakes up.`
+                                                agentTake: aiPerspective
                                             });
+                                            
                                             toast.success("Perspective Optimized", {
                                                 description: "The Ghost Detailer has refined your take."
                                             });
-                                        }, 1500);
+                                        } catch (error) {
+                                            toast.error("AI Generation Failed", {
+                                                description: error instanceof Error ? error.message : "Something went wrong"
+                                            });
+                                        }
                                     }}
                                 >
                                     <Sparkles className="w-3 h-3" />
