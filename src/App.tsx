@@ -15,6 +15,7 @@ import PropertyFlyerBuilder from "@/components/flyer/PropertyFlyerBuilder";
 import { FlyerBuilder } from "@/components/flyer/FlyerBuilder";
 import BuyerAgentToolkit from "./pages/BuyerAgentToolkit";
 import BuyerExperienceTour from "./pages/BuyerExperienceTour";
+import AdrianSOP from "./pages/AdrianSOP";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="/tour-live" element={<BuyerExperienceTour />} />
               <Route path="/flyer/:slug" element={<LiveFlyer />} />
               <Route path="/live/:slug" element={<LiveFlyer />} />
+              <Route path="/adrian-sop" element={<AdrianSOP />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
