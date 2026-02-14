@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw, MessageCircle, ExternalLink, Bell, BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +18,7 @@ interface Lead {
 }
 
 export default function LeadsDashboard() {
+    const navigate = useNavigate();
     const [leads, setLeads] = useState<Lead[]>([]);
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -132,12 +133,10 @@ Best regards`;
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                        <Link to="/">
-                            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white gap-2">
+                        <Button onClick={() => navigate(-1)} variant="ghost" size="sm" className="text-slate-400 hover:text-white gap-2">
                                 <ArrowLeft className="w-4 h-4" />
-                                Back to Builder
-                            </Button>
-                        </Link>
+                                Back to Dashboard
+                        </Button>
                         <div>
                             <h1 className="text-2xl font-black flex items-center gap-2">
                                 Lead Dashboard

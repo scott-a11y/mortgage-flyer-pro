@@ -94,11 +94,11 @@ export default function BuyerAgentToolkit() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                     <div className="space-y-4">
                         <button 
-                            onClick={() => navigate("/")}
+                            onClick={() => navigate(-1)}
                             className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors mb-4"
                         >
                             <ArrowLeft className="w-3 h-3" />
-                            Back to Command Center
+                            Back to Dashboard
                         </button>
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20">
                             <Sparkles className="w-3.5 h-3.5 text-purple-500" />
