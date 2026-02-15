@@ -332,10 +332,20 @@ export default function MarketingDashboard() {
                         
                         {!agentId && (
                             <div className="pt-8 space-y-6">
-                                <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-4">
-                                    Partner Network
-                                    <div className="h-px flex-1 bg-white/5" />
-                                </h2>
+                                <div className="flex items-center justify-between">
+                                    <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] flex items-center gap-4">
+                                        Partner Network
+                                        <div className="h-px flex-1 bg-white/5" />
+                                    </h2>
+                                    <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        onClick={() => navigate('/agents')}
+                                        className="text-[10px] font-bold text-amber-500/60 hover:text-amber-500 uppercase tracking-wider h-6 px-2"
+                                    >
+                                        Manage All →
+                                    </Button>
+                                </div>
                                 <div className="space-y-3">
                                     {agents.slice(0, 3).map((partner, i) => (
                                         <Card 

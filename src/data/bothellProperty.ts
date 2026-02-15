@@ -54,7 +54,7 @@ export const bothellProperty: PropertyListing = {
         endTime: "4:00 PM"
     },
     images: {
-        hero: "/bothell-hero.png",
+        hero: "/bothell-hero.jpg",
         secondary: [
             "/bothell-kitchen.png",
             "/bothell-bath.png",
