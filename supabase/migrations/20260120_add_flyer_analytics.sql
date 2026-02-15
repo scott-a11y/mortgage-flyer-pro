@@ -1,6 +1,6 @@
 -- Create flyer analytics table for tracking page views
 CREATE TABLE IF NOT EXISTS flyer_analytics (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   flyer_slug TEXT NOT NULL,
   referrer TEXT,
