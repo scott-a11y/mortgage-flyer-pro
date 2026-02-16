@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { FlyerPreview } from "./FlyerPreview";
 import { EditorTabs } from "./EditorTabs";
 import { TemplateManager } from "./TemplateManager";
@@ -65,6 +66,7 @@ export function FlyerBuilder() {
 
   return (
     <div className="h-screen w-screen bg-[#030304] text-slate-300 flex flex-col overflow-hidden font-sans selection:bg-cyan-500/30">
+      <Helmet><title>Rate Watch | Mortgage Flyer Pro</title></Helmet>
       {/* 1. GLOBAL TASKBAR (Materia Style) */}
       <header className="glass-header z-50 flex items-center justify-between px-4 shrink-0">
         <div className="flex items-center gap-4">

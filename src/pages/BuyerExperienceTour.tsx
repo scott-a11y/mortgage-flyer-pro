@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
@@ -118,6 +119,7 @@ export default function BuyerExperienceTour() {
 
     return (
         <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30 pb-28 overflow-x-hidden">
+            <Helmet><title>Buyer Tour | Mortgage Flyer Pro</title></Helmet>
             {/* Header Hero */}
             <div className="relative h-[45vh] lg:h-[60vh] overflow-hidden">
                 <img 

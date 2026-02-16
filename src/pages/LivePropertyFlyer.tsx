@@ -42,19 +42,34 @@ export default function LivePropertyFlyer() {
     }, []);
 
     const handleShare = async () => {
+        const url = window.location.href;
         if (navigator.share) {
             try {
                 await navigator.share({
                     title: property.features.headline,
                     text: `Check out this beautiful property at ${property.specs.address}`,
-                    url: window.location.href,
+                    url,
                 });
-            } catch (err) {
-                console.log("Share failed:", err);
+                toast.success("Shared successfully!");
+            } catch (err: any) {
+                // User cancelled or share failed — fall back to clipboard
+                if (err?.name !== 'AbortError') {
+                    console.log("Share failed, copying to clipboard");
+                }
+                try {
+                    await navigator.clipboard.writeText(url);
+                    toast.success("Link copied to clipboard!");
+                } catch {
+                    toast.info(`Share this link: ${url}`);
+                }
             }
         } else {
-            await navigator.clipboard.writeText(window.location.href);
-            toast.success("Link copied to clipboard!");
+            try {
+                await navigator.clipboard.writeText(url);
+                toast.success("Link copied to clipboard!");
+            } catch {
+                toast.info(`Share this link: ${url}`);
+            }
         }
     };
 

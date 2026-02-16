@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate, useParams } from "react-router-dom";
 import {
     FileText,
@@ -26,6 +27,7 @@ import RegionalPulse from "@/components/flyer/RegionalPulse";
 import { agentPartners as mockAgentPartners } from "@/data/agentPartners";
 import * as agentService from "@/lib/services/agentService";
 import * as flyerService from "@/lib/services/flyerService";
+import { supabase } from "@/integrations/supabase/client";
 import { AgentPartner } from "@/lib/services/agentService";
 import { FlyerTemplate } from "@/lib/services/flyerService";
 
@@ -92,32 +94,38 @@ export default function MarketingDashboard() {
     }, []);
 
     useEffect(() => {
-        // 1. Calculate Views from Active Assets
-        const assetViews = activeAssets.reduce((sum, asset) => sum + asset.views, 0);
-        
-        // 2. Mock individual lead counts for variance
-        const mockLeadsMap: Record<string, number> = {
-            'celeste-zarling': 12,
-            'adrian-mitchell': 8,
-            'marcus-chen': 15,
-            'default': 42
+        const loadLeadCount = async () => {
+            // 1. Calculate Views from Active Assets
+            const assetViews = activeAssets.reduce((sum, asset) => sum + asset.views, 0);
+
+            // 2. Fetch actual lead count from Supabase
+            let activeLeads = 0;
+            try {
+                const { count, error } = await supabase
+                    .from('leads')
+                    .select('*', { count: 'exact', head: true });
+                if (!error && count !== null) {
+                    activeLeads = count;
+                }
+            } catch {
+                // If table doesn't exist or query fails, default to 0
+                activeLeads = 0;
+            }
+
+            // 3. Dynamic Conversion Rate
+            const rate = assetViews > 0
+                ? ((activeLeads / assetViews) * 100).toFixed(1)
+                : "0.0";
+
+            setStats({
+                totalViews: assetViews,
+                activeLeads: activeLeads,
+                assets: activeAssets.length,
+                conversionRate: `${rate}%`
+            });
         };
 
-        const activeLeads = currentAgent 
-            ? mockLeadsMap[currentAgent.id] || 5 
-            : mockLeadsMap['default'];
-
-        // 3. Dynamic Conversion Rate
-        const rate = assetViews > 0 
-            ? ((activeLeads / assetViews) * 100).toFixed(1)
-            : "0.0";
-
-        setStats({
-            totalViews: assetViews,
-            activeLeads: activeLeads,
-            assets: activeAssets.length,
-            conversionRate: `${rate}%`
-        });
+        loadLeadCount();
     }, [agentId, currentAgent, activeAssets]);
 
     const tools = [
@@ -165,6 +173,7 @@ export default function MarketingDashboard() {
 
     return (
         <div className="min-h-screen bg-[#030304] text-slate-300 selection:bg-amber-500/30 font-sans pb-20 overflow-x-hidden">
+            <Helmet><title>Command Center | Mortgage Flyer Pro</title></Helmet>
             {/* Background Atmosphere */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-amber-500/10 rounded-full blur-[120px] opacity-40" />

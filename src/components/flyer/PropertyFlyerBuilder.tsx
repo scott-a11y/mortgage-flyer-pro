@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { PropertyListingLayout } from "./layouts/PropertyListingLayout";
 import { InstagramStoryBanner, FacebookBanner, LinkedInBanner } from "./PropertySocialBanners";
 import { MortgageCalculator } from "./MortgageCalculator";
@@ -120,6 +121,28 @@ export default function PropertyFlyerBuilder({
         }
     }, []);
 
+    // Payment calculation — restore from localStorage if available (Bug 3 fix)
+    const [interestRate, setInterestRate] = useState(() => {
+        try {
+            const saved = localStorage.getItem('property_preview_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.interestRate !== undefined) return parsed.interestRate;
+            }
+        } catch {}
+        return property.financing?.interestRate || 6.5;
+    });
+    const [downPayment, setDownPayment] = useState(() => {
+        try {
+            const saved = localStorage.getItem('property_preview_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.downPayment !== undefined) return parsed.downPayment;
+            }
+        } catch {}
+        return property.financing?.downPaymentPercent || 20;
+    });
+
     // Auto-Save to LocalStorage for Live Preview Bridge + Path Repair
     useEffect(() => {
         // Auto-repair old .png paths if they exist in state
@@ -142,14 +165,12 @@ export default function PropertyFlyerBuilder({
 
         const syncData = {
             property,
-            flyerData: { ...flyerData, colorTheme: selectedTheme }
+            flyerData: { ...flyerData, colorTheme: selectedTheme },
+            interestRate,
+            downPayment
         };
         localStorage.setItem('property_preview_data', JSON.stringify(syncData));
-    }, [property, flyerData, selectedTheme]);
-
-    // Payment calculation
-    const [interestRate, setInterestRate] = useState(property.financing?.interestRate || 6.5);
-    const [downPayment, setDownPayment] = useState(property.financing?.downPaymentPercent || 20);
+    }, [property, flyerData, selectedTheme, interestRate, downPayment]);
 
     // Refs for each format
     const containerRef = useRef<HTMLDivElement>(null);
@@ -434,6 +455,7 @@ export default function PropertyFlyerBuilder({
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <Helmet><title>Listing Studio | Mortgage Flyer Pro</title></Helmet>
             {/* ═══════════════════════════════════════════════════════════════════
           HEADER - Enterprise Navigation
           ═══════════════════════════════════════════════════════════════════ */}
@@ -523,21 +545,22 @@ export default function PropertyFlyerBuilder({
                                     ];
                                     keys.forEach(k => localStorage.removeItem(k));
                                     toast.success("Resetting flyer to defaults...");
-                                    window.location.reload();
+                                    setShowResetConfirm(false);
+                                    setTimeout(() => window.location.reload(), 500);
                                 } else {
                                     setShowResetConfirm(true);
-                                    setTimeout(() => setShowResetConfirm(false), 3000);
+                                    setTimeout(() => setShowResetConfirm(false), 5000);
                                 }
                             }}
                             className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all border group ${showResetConfirm
-                                ? "bg-red-500/20 border-red-500/50 text-red-400"
+                                ? "bg-red-500/20 border-red-500/50 text-red-400 animate-pulse"
                                 : "bg-slate-800 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border-white/5"
                                 }`}
                             title="Reset all flyer settings: property details, theme, calculator inputs, and co-branding"
                         >
                             <RefreshCw className={`w-3.5 h-3.5 transition-transform ${showResetConfirm ? "animate-spin" : "group-hover:rotate-180"}`} />
                             <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-                                {showResetConfirm ? "Confirm Reset?" : "Reset Flyer"}
+                                {showResetConfirm ? "⚠ Click to Confirm" : "Reset Flyer"}
                             </span>
                         </button>
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Users, Eye, Download, Phone, Mail, Calendar, Trash2, RefreshCw, MessageCircle, ExternalLink, Bell, BellRing } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -129,6 +130,7 @@ Best regards`;
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans p-6">
+            <Helmet><title>Leads Dashboard | Mortgage Flyer Pro</title></Helmet>
             {/* Header */}
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-8">

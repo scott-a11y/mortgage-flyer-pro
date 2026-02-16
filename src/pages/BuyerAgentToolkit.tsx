@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
 import { 
     Sparkles, 
@@ -78,6 +79,20 @@ export default function BuyerAgentToolkit() {
         window.addEventListener("beforeunload", handleBeforeUnload);
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, []);
+
+    // Bug 2 fix: Auto-replace buyer name in agent's take when it changes
+    const previousBuyerName = useRef(experience.buyerName);
+    useEffect(() => {
+        const oldName = previousBuyerName.current;
+        const newName = experience.buyerName;
+        if (oldName && newName && oldName !== newName && experience.agentTake.includes(oldName)) {
+            setExperience(prev => ({
+                ...prev,
+                agentTake: prev.agentTake.split(oldName).join(newName)
+            }));
+        }
+        previousBuyerName.current = newName;
+    }, [experience.buyerName]);
 
     const addInsight = () => {
         const newInsight: TourInsight = {
@@ -188,6 +203,7 @@ export default function BuyerAgentToolkit() {
 
     return (
         <div className="min-h-screen bg-[#030304] text-slate-300 font-sans">
+            <Helmet><title>Buyer Experience Studio | Mortgage Flyer Pro</title></Helmet>
             {/* Atmosphere */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[120px] opacity-40" />
