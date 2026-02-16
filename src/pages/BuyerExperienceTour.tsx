@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
     MapPin, 
@@ -11,35 +13,111 @@ import {
     Smartphone,
     Share2,
     Calendar,
-    DollarSign
+    DollarSign,
+    ArrowLeft,
+    Edit3,
+    ThumbsUp
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { BuyerExperience } from "@/types/property";
 
+const STORAGE_KEY = "buyer-experience-draft";
+
 export default function BuyerExperienceTour() {
-    // Demo data - in a real app this would be fetched via slug
-    const experience: BuyerExperience = {
-        id: "exp_1",
-        listing: mapleValleyProperty,
-        agentTake: "This home perfectly balances modern luxury with suburban tranquility. The open-concept kitchen is truly the heart of the home, ideal for the growing family dynamics we discussed. I especially love how the natural light hits the kitchen island during breakfast time.",
-        tourInsights: [
-            { id: "1", type: "highlight", category: "kitchen", content: "South-facing windows provide incredible natural light all afternoon." },
-            { id: "2", type: "vibe", category: "arrival", content: "The street is exceptionally quiet, perfect for those morning walks or kids playing outside." },
-            { id: "3", type: "pro", category: "primary", content: "The primary suite walkthrough closet has much more storage than the photos suggest." }
-        ],
-        localGems: [
-            { name: "Lake Wilderness Park", category: "Nature", note: "Just a 5-minute bike ride away. Best sunset views in the city and great for summer swimming.", distance: "0.8 miles" },
-            { name: "Caffe Ladro", category: "Coffee", note: "My favorite local spot for a morning latte. They source their beans sustainably which I know you'll appreciate.", distance: "1.2 miles" }
-        ],
-        buyerName: "Sarah & Mike",
-        strategyType: "wealth-builder"
+    const navigate = useNavigate();
+    const [insightReactions, setInsightReactions] = useState<Record<string, boolean>>({});
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+
+    // Load from localStorage if available (persisted from editor)
+    const [experience, setExperience] = useState<BuyerExperience>(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch {}
+        return {
+            id: "exp_1",
+            listing: mapleValleyProperty,
+            agentTake: "This home perfectly balances modern luxury with suburban tranquility. The open-concept kitchen is truly the heart of the home, ideal for the growing family dynamics we discussed. I especially love how the natural light hits the kitchen island during breakfast time.",
+            tourInsights: [
+                { id: "1", type: "highlight", category: "kitchen", content: "South-facing windows provide incredible natural light all afternoon." },
+                { id: "2", type: "vibe", category: "arrival", content: "The street is exceptionally quiet, perfect for those morning walks or kids playing outside." },
+                { id: "3", type: "pro", category: "primary", content: "The primary suite walkthrough closet has much more storage than the photos suggest." }
+            ],
+            localGems: [
+                { name: "Lake Wilderness Park", category: "Nature", note: "Just a 5-minute bike ride away. Best sunset views in the city and great for summer swimming.", distance: "0.8 miles" },
+                { name: "Caffe Ladro", category: "Coffee", note: "My favorite local spot for a morning latte. They source their beans sustainably which I know you'll appreciate.", distance: "1.2 miles" }
+            ],
+            buyerName: "Sarah & Mike",
+            strategyType: "wealth-builder"
+        };
+    });
+
+    // Issue #9: Share functionality
+    const handleShare = async () => {
+        const url = window.location.href;
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `Property Tour: ${experience.listing.specs.address}`,
+                    text: `Check out this property in ${experience.listing.specs.city}`,
+                    url
+                });
+            } catch {
+                // User cancelled share
+            }
+        } else {
+            await navigator.clipboard?.writeText(url);
+            toast.success("Link Copied!", {
+                description: "Tour link has been copied to your clipboard."
+            });
+        }
+    };
+
+    // Issue #10: Insightful reactions
+    const toggleReaction = (insightId: string) => {
+        setInsightReactions(prev => ({
+            ...prev,
+            [insightId]: !prev[insightId]
+        }));
+        const wasReacted = insightReactions[insightId];
+        if (!wasReacted) {
+            toast.success("Marked as insightful!", {
+                description: "Your feedback helps agents improve their insights."
+            });
+        }
+    };
+
+    // Issue #6: Schedule tour handler
+    const handleScheduleTour = () => {
+        setShowScheduleModal(true);
+    };
+
+    // Issue #6: Call agent handler
+    const handleCallAgent = () => {
+        window.location.href = "tel:+13606061106";
+    };
+
+    // Issue #7: View rate insight
+    const handleViewRates = () => {
+        navigate("/rate-engine");
+    };
+
+    // Issue #8: Adjust math handler
+    const handleAdjustMath = () => {
+        navigate("/rate-engine");
+    };
+
+    // Issue #6: Financing link handler
+    const handleFinancing = () => {
+        navigate("/rate-engine");
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30 pb-20 overflow-x-hidden">
+        <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30 pb-28 overflow-x-hidden">
             {/* Header Hero */}
             <div className="relative h-[45vh] lg:h-[60vh] overflow-hidden">
                 <img 
@@ -50,13 +128,44 @@ export default function BuyerExperienceTour() {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/40 to-transparent" />
                 
                 <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20">
-                    <div className="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-white">Live Spotlight</span>
+                    <div className="flex items-center gap-3">
+                        {/* Issue #11: Back to editor button */}
+                        <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={() => navigate("/buyer-agent")}
+                            className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/20"
+                            aria-label="Back to editor"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <div className="px-3 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center gap-2">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white">Live Spotlight</span>
+                        </div>
                     </div>
-                    <Button size="icon" variant="ghost" className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white">
-                        <Share2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        {/* Issue #11: Edit button */}
+                        <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={() => navigate("/buyer-agent")}
+                            className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/20"
+                            aria-label="Edit tour"
+                        >
+                            <Edit3 className="w-4 h-4" />
+                        </Button>
+                        {/* Issue #9: Share button */}
+                        <Button 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={handleShare}
+                            className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/20"
+                            aria-label="Share this tour"
+                        >
+                            <Share2 className="w-4 h-4" />
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="absolute bottom-10 left-6 right-6 z-20">
@@ -150,7 +259,7 @@ export default function BuyerExperienceTour() {
                                             initial={{ opacity: 0, x: -10 }}
                                             whileInView={{ opacity: 1, x: 0 }}
                                             transition={{ delay: idx * 0.1 }}
-                                            key={idx} 
+                                            key={insight.id} 
                                             className="flex gap-4 group"
                                         >
                                             <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center border ${
@@ -171,9 +280,22 @@ export default function BuyerExperienceTour() {
                                                         {insight.content}
                                                     </p>
                                                 </div>
-                                                <button className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-slate-500 hover:text-white hover:border-purple-500/50 transition-all active:scale-90">
-                                                    <Sparkles className="w-3 h-3" />
-                                                    Insightful
+                                                {/* Issue #10: Functional insightful button */}
+                                                <button 
+                                                    onClick={() => toggleReaction(insight.id)}
+                                                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-[10px] font-bold transition-all active:scale-90 ${
+                                                        insightReactions[insight.id]
+                                                            ? "bg-purple-500/20 border-purple-500/40 text-purple-300"
+                                                            : "bg-white/5 border-white/10 text-slate-500 hover:text-white hover:border-purple-500/50"
+                                                    }`}
+                                                    aria-label={`Mark insight as ${insightReactions[insight.id] ? 'not insightful' : 'insightful'}`}
+                                                >
+                                                    {insightReactions[insight.id] ? (
+                                                        <ThumbsUp className="w-3 h-3 fill-current" />
+                                                    ) : (
+                                                        <Sparkles className="w-3 h-3" />
+                                                    )}
+                                                    {insightReactions[insight.id] ? "Insightful!" : "Insightful"}
                                                 </button>
                                             </div>
                                         </motion.div>
@@ -201,7 +323,11 @@ export default function BuyerExperienceTour() {
                         <div className="space-y-6">
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Recommended Program</p>
-                                <h3 className="text-2xl font-black text-white tracking-tight">30-Year Fixed Strategy</h3>
+                                <h3 className="text-2xl font-black text-white tracking-tight">
+                                    {experience.strategyType === "wealth-builder" ? "30-Year Fixed Strategy" :
+                                     experience.strategyType === "cash-flow" ? "ARM Cash Flow Strategy" :
+                                     "Low Down Payment Strategy"}
+                                </h3>
                             </div>
                             
                             <div className="grid grid-cols-2 gap-4">
@@ -217,7 +343,13 @@ export default function BuyerExperienceTour() {
                             
                             <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                                 <p className="text-xs text-slate-400 font-medium italic">"Based on your 20% down goal discussed on Feb 12th."</p>
-                                <Button size="sm" variant="ghost" className="text-xs text-emerald-400 hover:text-emerald-300">
+                                {/* Issue #8: Adjust Math wired up */}
+                                <Button 
+                                    size="sm" 
+                                    variant="ghost" 
+                                    className="text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
+                                    onClick={handleAdjustMath}
+                                >
                                     Adjust Math
                                 </Button>
                             </div>
@@ -241,7 +373,7 @@ export default function BuyerExperienceTour() {
                                         </div>
                                         <div>
                                             <p className="text-sm font-bold text-white uppercase tracking-tight">{gem.name}</p>
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{gem.category}</p>
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{gem.category}{gem.distance ? ` · ${gem.distance}` : ''}</p>
                                         </div>
                                     </div>
                                     <p className="text-sm text-slate-400 leading-relaxed">
@@ -253,9 +385,12 @@ export default function BuyerExperienceTour() {
                     </div>
                 </div>
 
-                {/* CTA Action Bar */}
+                {/* Issue #7: CTA Action Bar — wired up */}
                 <div className="pt-8 flex flex-col gap-4 text-center">
-                    <div className="p-6 rounded-[2rem] bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl shadow-purple-500/20 group cursor-pointer active:scale-95 transition-all">
+                    <button 
+                        onClick={handleViewRates}
+                        className="p-6 rounded-[2rem] bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl shadow-purple-500/20 group cursor-pointer active:scale-95 transition-all"
+                    >
                         <div className="flex items-center justify-between">
                             <div className="text-left">
                                 <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-80 mb-1">Secure Financing</p>
@@ -263,30 +398,109 @@ export default function BuyerExperienceTour() {
                             </div>
                             <ArrowRight className="w-8 h-8 opacity-40 group-hover:opacity-100 transition-all transform translate-x-[-10px] group-hover:translate-x-0" />
                         </div>
-                    </div>
+                    </button>
                     <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">
                         Powered by IA Loans x High-Fidelity Marketing
                     </p>
                 </div>
             </div>
 
-            {/* Float Navigation */}
+            {/* Issue #6: Functional Float Navigation */}
             <div className="fixed bottom-6 left-6 right-6 z-50">
-                <div className="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full p-2 flex items-center justify-around shadow-2xl ring-1 ring-white/10">
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <div className="bg-white/10 backdrop-blur-3xl border border-white/20 rounded-full p-2 flex items-center justify-around shadow-2xl ring-1 ring-white/10 max-w-xl mx-auto">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-white hover:bg-white/10"
+                        onClick={handleScheduleTour}
+                        aria-label="Schedule a tour"
+                    >
                         <Calendar className="w-5 h-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-white hover:bg-white/10"
+                        onClick={handleFinancing}
+                        aria-label="View financing options"
+                    >
                         <DollarSign className="w-5 h-5" />
                     </Button>
-                    <Button className="bg-white text-black font-black uppercase tracking-widest text-[10px] px-6 rounded-full h-10 shadow-lg active:scale-95 transition-all">
+                    <Button 
+                        className="bg-white text-black font-black uppercase tracking-widest text-[10px] px-6 rounded-full h-10 shadow-lg active:scale-95 transition-all"
+                        onClick={handleScheduleTour}
+                    >
                         Schedule Tour
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="text-white hover:bg-white/10"
+                        onClick={handleCallAgent}
+                        aria-label="Call agent"
+                    >
                         <Smartphone className="w-5 h-5" />
                     </Button>
                 </div>
             </div>
+
+            {/* Schedule Tour Modal */}
+            {showScheduleModal && (
+                <div 
+                    className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" 
+                    onClick={() => setShowScheduleModal(false)}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="w-full max-w-md"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Card className="bg-[#0a0a0b] border-white/10 p-8 rounded-3xl space-y-6">
+                            <div className="text-center space-y-2">
+                                <div className="w-14 h-14 mx-auto rounded-2xl bg-purple-500/20 flex items-center justify-center border border-purple-500/30 mb-4">
+                                    <Calendar className="w-7 h-7 text-purple-400" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white">Schedule a Tour</h3>
+                                <p className="text-sm text-slate-500">
+                                    Contact Scott to arrange a private showing of {experience.listing.specs.address}
+                                </p>
+                            </div>
+
+                            <div className="space-y-3">
+                                <a 
+                                    href="tel:+13606061106"
+                                    className="w-full flex items-center gap-3 p-4 border border-white/10 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-all"
+                                >
+                                    <Smartphone className="w-5 h-5 text-emerald-400" />
+                                    <div>
+                                        <p className="text-sm font-bold text-white">Call Now</p>
+                                        <p className="text-xs text-slate-500">(360) 606-1106</p>
+                                    </div>
+                                </a>
+                                <a 
+                                    href="mailto:scott@ialoans.com?subject=Tour Request: ${experience.listing.specs.address}"
+                                    className="w-full flex items-center gap-3 p-4 border border-white/10 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-all"
+                                >
+                                    <MessageSquare className="w-5 h-5 text-blue-400" />
+                                    <div>
+                                        <p className="text-sm font-bold text-white">Send Email</p>
+                                        <p className="text-xs text-slate-500">scott@ialoans.com</p>
+                                    </div>
+                                </a>
+                            </div>
+
+                            <Button 
+                                variant="outline" 
+                                className="w-full border-white/10 text-white hover:bg-white/5 rounded-xl"
+                                onClick={() => setShowScheduleModal(false)}
+                            >
+                                Close
+                            </Button>
+                        </Card>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }

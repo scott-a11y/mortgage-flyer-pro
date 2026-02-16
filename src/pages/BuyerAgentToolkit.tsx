@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
     Sparkles, 
@@ -11,7 +11,10 @@ import {
     Trash2, 
     Share2,
     Eye,
-    Layout
+    Layout,
+    RefreshCw,
+    ChevronDown,
+    X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,25 +24,60 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { BuyerExperience, TourInsight, formatCurrency } from "@/types/property";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
+import { bothellProperty } from "@/data/bothellProperty";
 import { generateGhostDetail } from "@/lib/services/aiService";
+
+const STORAGE_KEY = "buyer-experience-draft";
+
+// Available listings for the "Change Listing" modal
+const availableListings = [
+    { slug: "maple-valley", property: mapleValleyProperty },
+    { slug: "bothell", property: bothellProperty },
+];
 
 export default function BuyerAgentToolkit() {
     const navigate = useNavigate();
-    const [experience, setExperience] = useState<BuyerExperience>({
-        id: "exp_1",
-        listing: mapleValleyProperty,
-        agentTake: "This home perfectly balances modern luxury with suburban tranquility. The open-concept kitchen is truly the heart of the home, ideal for the growing family dynamics we discussed. I especially love how the natural light hits the kitchen island during breakfast time.",
-        tourInsights: [
-            { id: "1", type: "highlight", category: "kitchen", content: "South-facing windows provide incredible natural light all afternoon." },
-            { id: "2", type: "vibe", category: "arrival", content: "The street is exceptionally quiet, perfect for those morning walks or kids playing outside." }
-        ],
-        localGems: [
-            { name: "Lake Wilderness Park", category: "Nature", note: "Just a 5-minute bike ride away. Best sunset views in the city.", distance: "0.8 miles" },
-            { name: "Caffe Ladro", category: "Coffee", note: "My favorite local spot for a morning latte.", distance: "1.2 miles" }
-        ],
-        buyerName: "Sarah & Mike",
-        strategyType: "wealth-builder"
+    const [isGhostLoading, setIsGhostLoading] = useState(false);
+    const [showListingModal, setShowListingModal] = useState(false);
+
+    // Load from localStorage or use defaults
+    const [experience, setExperience] = useState<BuyerExperience>(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch {}
+        return {
+            id: "exp_1",
+            listing: mapleValleyProperty,
+            agentTake: "This home perfectly balances modern luxury with suburban tranquility. The open-concept kitchen is truly the heart of the home, ideal for the growing family dynamics we discussed. I especially love how the natural light hits the kitchen island during breakfast time.",
+            tourInsights: [
+                { id: "1", type: "highlight", category: "kitchen", content: "South-facing windows provide incredible natural light all afternoon." },
+                { id: "2", type: "vibe", category: "arrival", content: "The street is exceptionally quiet, perfect for those morning walks or kids playing outside." }
+            ],
+            localGems: [
+                { name: "Lake Wilderness Park", category: "Nature", note: "Just a 5-minute bike ride away. Best sunset views in the city.", distance: "0.8 miles" },
+                { name: "Caffe Ladro", category: "Coffee", note: "My favorite local spot for a morning latte.", distance: "1.2 miles" }
+            ],
+            buyerName: "Sarah & Mike",
+            strategyType: "wealth-builder"
+        };
     });
+
+    // Auto-save to localStorage on every change (Issue #5)
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(experience));
+        } catch {}
+    }, [experience]);
+
+    // Warn before navigating away with unsaved changes
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+        };
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+    }, []);
 
     const addInsight = () => {
         const newInsight: TourInsight = {
@@ -59,6 +97,7 @@ export default function BuyerAgentToolkit() {
             ...experience,
             tourInsights: experience.tourInsights.filter(i => i.id !== id)
         });
+        toast.success("Insight removed");
     };
 
     const updateInsight = (id: string, content: string) => {
@@ -75,10 +114,76 @@ export default function BuyerAgentToolkit() {
         });
     };
 
+    // Issue #4: Remove gem
+    const removeGem = (idx: number) => {
+        setExperience({
+            ...experience,
+            localGems: experience.localGems.filter((_: any, i: number) => i !== idx)
+        });
+        toast.success("Local gem removed");
+    };
+
     const handleShare = () => {
+        // Also save to localStorage before sharing
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(experience));
+        navigator.clipboard?.writeText(window.location.origin + "/tour-live");
         toast.success("Tour Experience Link Created!", {
             description: "The link has been copied to your clipboard."
         });
+    };
+
+    // Issue #2: Change listing handler
+    const changeListing = (property: typeof mapleValleyProperty) => {
+        setExperience({
+            ...experience,
+            listing: property
+        });
+        setShowListingModal(false);
+        toast.success(`Switched to ${property.specs.address}`);
+    };
+
+    // Issue #1: Ghost Detail with better error handling
+    const handleGhostDetail = async () => {
+        setIsGhostLoading(true);
+        try {
+            toast.info("AI Ghost Detailer Engaged", {
+                description: "Synthesizing property data into a premium perspective..."
+            });
+            
+            const aiPerspective = await generateGhostDetail({
+                propertyData: {
+                    city: experience.listing.specs.city,
+                    bedrooms: experience.listing.specs.bedrooms,
+                    bathrooms: experience.listing.specs.bathrooms,
+                    price: formatCurrency(experience.listing.specs.listPrice),
+                    description: experience.listing.features.headline
+                },
+                buyerName: experience.buyerName || "there",
+                agentName: "Scott"
+            });
+
+            setExperience({
+                ...experience,
+                agentTake: aiPerspective
+            });
+            
+            toast.success("Perspective Optimized", {
+                description: "The Ghost Detailer has refined your take."
+            });
+        } catch (error) {
+            const msg = error instanceof Error ? error.message : "Something went wrong";
+            if (msg.includes("API key")) {
+                toast.error("Gemini API Key Required", {
+                    description: "Set VITE_GEMINI_API_KEY in your environment variables to enable AI features."
+                });
+            } else {
+                toast.error("AI Generation Failed", {
+                    description: msg
+                });
+            }
+        } finally {
+            setIsGhostLoading(false);
+        }
     };
 
     return (
@@ -94,7 +199,7 @@ export default function BuyerAgentToolkit() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
                     <div className="space-y-4">
                         <button 
-                            onClick={() => navigate(-1)}
+                            onClick={() => navigate("/dashboard")}
                             className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-white transition-colors mb-4"
                         >
                             <ArrowLeft className="w-3 h-3" />
@@ -138,11 +243,61 @@ export default function BuyerAgentToolkit() {
                                         MLS #{experience.listing.specs.mlsNumber}
                                     </Badge>
                                 </div>
-                                <Button size="sm" variant="ghost" className="text-xs text-purple-400 hover:text-purple-300">
+                                {/* Issue #2: Wire up Change Listing button */}
+                                <Button 
+                                    size="sm" 
+                                    variant="ghost" 
+                                    className="text-xs text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                                    onClick={() => setShowListingModal(true)}
+                                >
                                     Change Listing
                                 </Button>
                             </div>
                         </Card>
+
+                        {/* Issue #2: Change Listing Modal */}
+                        {showListingModal && (
+                            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowListingModal(false)}>
+                                <Card 
+                                    className="w-full max-w-md bg-[#0a0a0b] border-white/10 p-6 space-y-4 rounded-2xl" 
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <div className="flex items-center justify-between">
+                                        <h3 className="text-lg font-bold text-white">Select Listing</h3>
+                                        <Button size="icon" variant="ghost" onClick={() => setShowListingModal(false)} className="h-8 w-8 rounded-lg hover:bg-white/10">
+                                            <X className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {availableListings.map((listing) => (
+                                            <button
+                                                key={listing.slug}
+                                                onClick={() => changeListing(listing.property)}
+                                                className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
+                                                    experience.listing.specs.address === listing.property.specs.address
+                                                        ? "border-purple-500/50 bg-purple-500/10"
+                                                        : "border-white/5 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]"
+                                                }`}
+                                            >
+                                                <div className="w-16 h-16 rounded-lg overflow-hidden ring-1 ring-white/10 flex-shrink-0">
+                                                    <img src={listing.property.images.hero} alt="" className="w-full h-full object-cover" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-white">{listing.property.specs.address}</p>
+                                                    <p className="text-xs text-slate-500">{listing.property.specs.city}, {listing.property.specs.state}</p>
+                                                    <p className="text-xs text-slate-400 mt-1">
+                                                        {listing.property.specs.bedrooms} bed / {listing.property.specs.bathrooms} bath / {listing.property.specs.squareFootage.toLocaleString()} sqft
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                    <p className="text-[10px] text-slate-600 text-center uppercase tracking-wider font-bold">
+                                        More listings coming soon
+                                    </p>
+                                </Card>
+                            </div>
+                        )}
 
                         {/* Section: The Agent's Take */}
                         <div className="space-y-4">
@@ -151,45 +306,20 @@ export default function BuyerAgentToolkit() {
                                     <MessageSquare className="w-5 h-5 text-purple-400" />
                                     <h2 className="text-lg font-bold text-white uppercase tracking-wider">The Agent's Take</h2>
                                 </div>
+                                {/* Issue #1: Better Ghost Detail button with loading state */}
                                 <Button 
                                     size="sm" 
                                     variant="ghost" 
                                     className="text-[10px] font-black uppercase tracking-widest text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 gap-2"
-                                    onClick={async () => {
-                                        try {
-                                            toast.info("AI Ghost Detailer Engaged", {
-                                                description: "Synthesizing property data into a premium perspective..."
-                                            });
-                                            
-                                            const aiPerspective = await generateGhostDetail({
-                                                propertyData: {
-                                                    city: experience.listing.specs.city,
-                                                    bedrooms: experience.listing.specs.bedrooms,
-                                                    bathrooms: experience.listing.specs.bathrooms,
-                                                    price: formatCurrency(experience.listing.specs.listPrice),
-                                                    description: experience.listing.features.headline
-                                                },
-                                                buyerName: experience.buyerName || "there",
-                                                agentName: "Scott" // Default for now
-                                            });
-
-                                            setExperience({
-                                                ...experience,
-                                                agentTake: aiPerspective
-                                            });
-                                            
-                                            toast.success("Perspective Optimized", {
-                                                description: "The Ghost Detailer has refined your take."
-                                            });
-                                        } catch (error) {
-                                            toast.error("AI Generation Failed", {
-                                                description: error instanceof Error ? error.message : "Something went wrong"
-                                            });
-                                        }
-                                    }}
+                                    onClick={handleGhostDetail}
+                                    disabled={isGhostLoading}
                                 >
-                                    <Sparkles className="w-3 h-3" />
-                                    Ghost Detail
+                                    {isGhostLoading ? (
+                                        <RefreshCw className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="w-3 h-3" />
+                                    )}
+                                    {isGhostLoading ? "Generating..." : "Ghost Detail"}
                                 </Button>
                             </div>
                             <Card className="p-6 bg-white/[0.03] border-white/10 backdrop-blur-xl">
@@ -209,7 +339,12 @@ export default function BuyerAgentToolkit() {
                                     <Layout className="w-5 h-5 text-blue-400" />
                                     <h2 className="text-lg font-bold text-white uppercase tracking-wider">Specific Insights</h2>
                                 </div>
-                                <Button size="sm" onClick={addInsight} className="bg-white/5 border-white/10 hover:bg-white/10 text-xs">
+                                {/* Issue #12: Better visibility for Add Insight button */}
+                                <Button 
+                                    size="sm" 
+                                    onClick={addInsight} 
+                                    className="bg-purple-500/20 border border-purple-500/30 hover:bg-purple-500/30 text-purple-300 hover:text-white text-xs font-bold"
+                                >
                                     <Plus className="w-3 h-3 mr-2" />
                                     Add Insight
                                 </Button>
@@ -250,11 +385,23 @@ export default function BuyerAgentToolkit() {
                                             placeholder="Detail something specific about the layout, condition, or feeling..."
                                             className="bg-transparent border-none p-0 focus-visible:ring-0 text-slate-300 h-auto"
                                         />
-                                        <button onClick={() => removeInsight(insight.id)} className="text-slate-600 hover:text-red-400 transition-colors">
+                                        {/* Issue #3: Proper accessible delete button */}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => removeInsight(insight.id)}
+                                            className="h-8 w-8 flex-shrink-0 text-slate-600 hover:text-red-400 hover:bg-red-500/10 transition-colors rounded-lg"
+                                            aria-label={`Delete insight: ${insight.content || 'empty'}`}
+                                        >
                                             <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        </Button>
                                     </Card>
                                 ))}
+                                {experience.tourInsights.length === 0 && (
+                                    <div className="text-center py-8 text-slate-600 text-sm">
+                                        No insights yet. Click "Add Insight" to start adding your observations.
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -274,16 +421,20 @@ export default function BuyerAgentToolkit() {
                                     />
                                 </div>
                                 <div>
+                                    {/* Issue #13: Better styled dropdown */}
                                     <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block mb-2">Financing Strategy</label>
-                                    <select 
-                                        value={experience.strategyType}
-                                        onChange={(e) => setExperience({...experience, strategyType: e.target.value as any})}
-                                        className="w-full bg-white/5 border border-white/10 rounded-md text-sm font-medium px-3 py-2 text-white outline-none focus:border-purple-500 transition-colors"
-                                    >
-                                        <option value="wealth-builder">Wealth Builder (30yr Fixed)</option>
-                                        <option value="cash-flow">Cash Flow Maximizer (ARM)</option>
-                                        <option value="low-down">Low Down Payment (FHA/VA)</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select 
+                                            value={experience.strategyType}
+                                            onChange={(e) => setExperience({...experience, strategyType: e.target.value as any})}
+                                            className="w-full appearance-none bg-white/5 border border-white/10 rounded-md text-sm font-medium px-3 py-2.5 text-white outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                                        >
+                                            <option value="wealth-builder">Wealth Builder (30yr Fixed)</option>
+                                            <option value="cash-flow">Cash Flow Maximizer (ARM)</option>
+                                            <option value="low-down">Low Down Payment (FHA/VA)</option>
+                                        </select>
+                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+                                    </div>
                                 </div>
                             </Card>
                         </div>
@@ -292,13 +443,24 @@ export default function BuyerAgentToolkit() {
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">Local Gems</h2>
-                                <button onClick={addGem} className="text-[10px] font-bold text-purple-400 hover:text-purple-300 uppercase tracking-widest transition-colors">
+                                <button onClick={addGem} className="text-[10px] font-bold text-purple-400 hover:text-purple-300 uppercase tracking-widest transition-colors flex items-center gap-1">
+                                    <Plus className="w-3 h-3" />
                                     Add Gem
                                 </button>
                             </div>
                             <div className="space-y-4">
-                                {experience.localGems.map((gem, idx) => (
-                                    <Card key={idx} className="p-4 bg-white/[0.03] border-white/10 space-y-3">
+                                {experience.localGems.map((gem: any, idx: number) => (
+                                    <Card key={idx} className="p-4 bg-white/[0.03] border-white/10 space-y-3 relative group">
+                                        {/* Issue #4: Delete button for gems */}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => removeGem(idx)}
+                                            className="absolute top-2 right-2 h-7 w-7 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                            aria-label={`Remove ${gem.name || 'gem'}`}
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                        </Button>
                                         <div className="flex items-center gap-2">
                                             {gem.category === 'Coffee' ? <Coffee className="w-3.5 h-3.5 text-amber-500" /> : <MapPin className="w-3.5 h-3.5 text-blue-400" />}
                                             <Input 
@@ -324,7 +486,18 @@ export default function BuyerAgentToolkit() {
                                         />
                                     </Card>
                                 ))}
+                                {experience.localGems.length === 0 && (
+                                    <div className="text-center py-6 text-slate-600 text-sm border border-dashed border-white/10 rounded-xl">
+                                        No gems yet. Click "Add Gem" to add nearby spots.
+                                    </div>
+                                )}
                             </div>
+                        </div>
+
+                        {/* Auto-save indicator */}
+                        <div className="flex items-center gap-2 text-[10px] text-slate-600 font-bold uppercase tracking-wider">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            Auto-saving changes
                         </div>
                     </div>
                 </div>
