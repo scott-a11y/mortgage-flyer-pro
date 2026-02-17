@@ -1,5 +1,7 @@
 import type { PropertyListing } from '@/types/property';
 
+export type MLSSource = 'rmls' | 'nwmls';
+
 export interface RMLSSearchResult {
   mlsNumber: string;
   address: string;
@@ -30,26 +32,34 @@ export interface RMLSSearchResponse {
 }
 
 /**
- * Search RMLS by MLS number
+ * Get the API base path for the selected MLS source
  */
-export async function searchByMLS(mlsNumber: string): Promise<RMLSSearchResponse> {
-  const res = await fetch(`/api/rmls/search?mls=${encodeURIComponent(mlsNumber)}`);
+function getApiBase(source: MLSSource): string {
+  return source === 'nwmls' ? '/api/bridge/search' : '/api/rmls/search';
+}
+
+/**
+ * Search by MLS number
+ */
+export async function searchByMLS(mlsNumber: string, source: MLSSource = 'rmls'): Promise<RMLSSearchResponse> {
+  const base = getApiBase(source);
+  const res = await fetch(`${base}?mls=${encodeURIComponent(mlsNumber)}`);
   return res.json();
 }
 
 /**
- * Search RMLS by address
+ * Search by address
  */
-export async function searchByAddress(address: string, city?: string): Promise<RMLSSearchResponse> {
-  let url = `/api/rmls/search?address=${encodeURIComponent(address)}`;
+export async function searchByAddress(address: string, city?: string, source: MLSSource = 'rmls'): Promise<RMLSSearchResponse> {
+  const base = getApiBase(source);
+  let url = `${base}?address=${encodeURIComponent(address)}`;
   if (city) url += `&city=${encodeURIComponent(city)}`;
   const res = await fetch(url);
   return res.json();
 }
 
 /**
- * Convert an RMLS search result into a PropertyListing object
- * that the app can use directly.
+ * Convert a search result into a PropertyListing object
  */
 export function rmlsResultToPropertyListing(result: RMLSSearchResult): PropertyListing {
   return {
@@ -90,3 +100,11 @@ export function rmlsResultToPropertyListing(result: RMLSSearchResult): PropertyL
     }
   };
 }
+
+/**
+ * MLS source display names
+ */
+export const MLS_SOURCES: { value: MLSSource; label: string; region: string }[] = [
+  { value: 'rmls', label: 'RMLS', region: 'Oregon / SW Washington' },
+  { value: 'nwmls', label: 'NWMLS (Bridge)', region: 'Washington' }
+];
