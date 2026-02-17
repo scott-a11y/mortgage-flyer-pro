@@ -80,18 +80,32 @@ export default function BuyerAgentToolkit() {
         return () => window.removeEventListener("beforeunload", handleBeforeUnload);
     }, []);
 
-    // Bug 2 fix: Auto-replace buyer name in agent's take when it changes
-    const previousBuyerName = useRef(experience.buyerName);
+    // Bug 2 fix: Debounced auto-replace buyer name in agent's take
+    // Uses a separate "last committed name" ref so intermediate keystrokes
+    // don't cascade replacements and garble the text.
+    const lastCommittedName = useRef(experience.buyerName);
+    const nameDebounceTimer = useRef<ReturnType<typeof setTimeout>>();
     useEffect(() => {
-        const oldName = previousBuyerName.current;
-        const newName = experience.buyerName;
-        if (oldName && newName && oldName !== newName && experience.agentTake.includes(oldName)) {
-            setExperience(prev => ({
-                ...prev,
-                agentTake: prev.agentTake.split(oldName).join(newName)
-            }));
-        }
-        previousBuyerName.current = newName;
+        if (nameDebounceTimer.current) clearTimeout(nameDebounceTimer.current);
+        nameDebounceTimer.current = setTimeout(() => {
+            const oldName = lastCommittedName.current;
+            const newName = experience.buyerName;
+            if (oldName && newName && oldName !== newName && experience.agentTake.includes(oldName)) {
+                setExperience(prev => ({
+                    ...prev,
+                    agentTake: prev.agentTake.split(oldName).join(newName)
+                }));
+                lastCommittedName.current = newName;
+                toast.success(`Updated Agent's Take: "${oldName}" → "${newName}"`, { duration: 2000 });
+            } else if (newName && oldName !== newName) {
+                // Name changed but wasn't found in the text — still update ref
+                // so next change uses the correct baseline
+                lastCommittedName.current = newName;
+            }
+        }, 800);
+        return () => {
+            if (nameDebounceTimer.current) clearTimeout(nameDebounceTimer.current);
+        };
     }, [experience.buyerName]);
 
     const addInsight = () => {

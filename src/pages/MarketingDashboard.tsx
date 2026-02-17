@@ -166,7 +166,7 @@ export default function MarketingDashboard() {
             icon: Users,
             color: "from-emerald-400 to-emerald-600",
             path: "/leads",
-            badge: `${stats.activeLeads} Unread`,
+            badge: stats.activeLeads > 0 ? `${stats.activeLeads} Unread` : "Active",
             features: ["Conversion Stats", "Contact Sync", "Alerts"]
         }
     ];

@@ -1,16 +1,10 @@
-import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 export default function AdrianSOP() {
-    useEffect(() => {
-        // Override the page title
-        document.title = "Mortgage Flyer Pro — Buyer Agent SOP | Adrian Mitchell";
-        return () => {
-            document.title = "IA Loans Flyer Builder | Co-Branded Mortgage Rate Flyer Generator";
-        };
-    }, []);
-
     return (
-        <div
+        <>
+            <Helmet><title>Buyer Agent SOP — Adrian Mitchell | Mortgage Flyer Pro</title></Helmet>
+            <div
             dangerouslySetInnerHTML={{
                 __html: `
 <style>
@@ -373,6 +367,7 @@ Works Real Estate</div>
 </div>
 `
             }}
-        />
+            />
+        </>
     );
 }

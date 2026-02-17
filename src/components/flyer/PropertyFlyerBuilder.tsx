@@ -35,13 +35,25 @@ import {
     Building2,
     Users,
     Printer,
-    LayoutGrid
+    LayoutGrid,
+    AlertTriangle
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { ImageUploader } from "./editors/ImageUploader";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface PropertyFlyerBuilderProps {
     property?: PropertyListing;
@@ -71,8 +83,8 @@ export default function PropertyFlyerBuilder({
     // Image position control (0 = top, 50 = center, 100 = bottom)
     const [heroImagePosition, setHeroImagePosition] = useState(40);
 
-    // Reset confirmation state
-    const [showResetConfirm, setShowResetConfirm] = useState(false);
+    // Reset confirmation state — now handled by AlertDialog
+    const [showResetDialog, setShowResetDialog] = useState(false);
 
     // Initial State Restoration from URL or LocalStorage
     useEffect(() => {
@@ -532,37 +544,63 @@ export default function PropertyFlyerBuilder({
                             Web Version
                         </a>
 
-                        <button
-                            onClick={() => {
-                                if (showResetConfirm) {
-                                    const keys = [
-                                        'property_preview_data',
-                                        'mortgage-flyer-custom-partners',
-                                        'mortgage-flyer-broker-defaults',
-                                        'mortgage-flyer-company-defaults',
-                                        'flyer_templates_local',
-                                        'flyer-templates'
-                                    ];
-                                    keys.forEach(k => localStorage.removeItem(k));
-                                    toast.success("Resetting flyer to defaults...");
-                                    setShowResetConfirm(false);
-                                    setTimeout(() => window.location.reload(), 500);
-                                } else {
-                                    setShowResetConfirm(true);
-                                    setTimeout(() => setShowResetConfirm(false), 5000);
-                                }
-                            }}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all border group ${showResetConfirm
-                                ? "bg-red-500/20 border-red-500/50 text-red-400 animate-pulse"
-                                : "bg-slate-800 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border-white/5"
-                                }`}
-                            title="Reset all flyer settings: property details, theme, calculator inputs, and co-branding"
-                        >
-                            <RefreshCw className={`w-3.5 h-3.5 transition-transform ${showResetConfirm ? "animate-spin" : "group-hover:rotate-180"}`} />
-                            <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-                                {showResetConfirm ? "⚠ Click to Confirm" : "Reset Flyer"}
-                            </span>
-                        </button>
+                        <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+                            <AlertDialogTrigger asChild>
+                                <button
+                                    className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all border group bg-slate-800 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border-white/5"
+                                    title="Reset all flyer settings: property details, theme, calculator inputs, and co-branding"
+                                >
+                                    <RefreshCw className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
+                                        Reset Flyer
+                                    </span>
+                                </button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className="bg-slate-900 border-red-500/30 text-white max-w-md">
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle className="flex items-center gap-3 text-white">
+                                        <div className="p-2 bg-red-500/20 rounded-lg">
+                                            <AlertTriangle className="w-5 h-5 text-red-400" />
+                                        </div>
+                                        Reset All Flyer Settings?
+                                    </AlertDialogTitle>
+                                    <AlertDialogDescription className="text-slate-400 text-sm leading-relaxed">
+                                        This will clear all customizations including:
+                                        <ul className="mt-2 space-y-1 text-slate-500">
+                                            <li>• Property details and financing inputs</li>
+                                            <li>• Theme and branding selections</li>
+                                            <li>• Co-branded partner configurations</li>
+                                            <li>• Saved templates and preferences</li>
+                                        </ul>
+                                        <span className="block mt-3 text-red-400/80 font-medium">This action cannot be undone.</span>
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter className="gap-3">
+                                    <AlertDialogCancel className="bg-slate-800 border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white">
+                                        Cancel
+                                    </AlertDialogCancel>
+                                    <AlertDialogAction
+                                        className="bg-red-600 hover:bg-red-500 text-white font-bold"
+                                        onClick={() => {
+                                            const keys = [
+                                                'property_preview_data',
+                                                'mortgage-flyer-custom-partners',
+                                                'mortgage-flyer-broker-defaults',
+                                                'mortgage-flyer-company-defaults',
+                                                'flyer_templates_local',
+                                                'flyer-templates'
+                                            ];
+                                            keys.forEach(k => localStorage.removeItem(k));
+                                            toast.success("Flyer reset to defaults. Reloading...");
+                                            setTimeout(() => window.location.reload(), 500);
+                                        }}
+                                    >
+                                        <RefreshCw className="w-4 h-4 mr-2" />
+                                        Reset Everything
+                                    </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
 
                         {/* Share Editor Link */}
                         <button
