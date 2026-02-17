@@ -29,8 +29,7 @@ import { BuyerExperience, TourInsight, formatCurrency, PropertyListing } from "@
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { bothellProperty } from "@/data/bothellProperty";
 import { generateGhostDetail } from "@/lib/services/aiService";
-import { searchByMLS, searchByAddress } from "@/lib/services/rmlsService";
-
+import { searchByMLS, searchByAddress, rmlsResultToPropertyListing } from "@/lib/services/rmlsService";
 const STORAGE_KEY = "buyer-experience-draft";
 const CUSTOM_LISTINGS_KEY = "custom-listings";
 
@@ -239,11 +238,7 @@ export default function BuyerAgentToolkit() {
     // Combine default + custom listings
     const allListings = [...availableListings, ...customListings];
 
-    // Issue #1: Ghost Detail with better error handling
-    const handleGhostDetail = async () => {
-        setIsGhostLoading(true);
-
-            // RMLS Search handler
+        // RMLS Search handler
     const handleRmlsSearch = async () => {
         if (!rmlsQuery.trim()) {
             toast.error('Enter an MLS number or address to search');
@@ -253,13 +248,17 @@ export default function BuyerAgentToolkit() {
         setRmlsError(null);
         setRmlsResults([]);
         try {
-            const results = rmlsSearchMode === 'mls'
-                ? await searchByMLS(rmlsQuery.trim())
-                : await searchByAddress(rmlsQuery.trim());
-            if (results.length === 0) {
-                setRmlsError('No listings found. Check your search and try again.');
-            }
-            setRmlsResults(results);
+            const response = rmlsSearchMode === 'mls'
+                    ? await searchByMLS(rmlsQuery.trim())
+                    : await searchByAddress(rmlsQuery.trim());
+                if (response.error) {
+                    setRmlsError(response.error);
+                }
+                const results = (response.results || []).map(rmlsResultToPropertyListing);
+                if (results.length === 0 && !response.error) {
+                    setRmlsError('No listings found. Check your search and try again.');
+                }
+                setRmlsResults(results);
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Search failed';
             setRmlsError(msg);
@@ -280,6 +279,10 @@ export default function BuyerAgentToolkit() {
         setRmlsResults([]);
         toast.success(`Imported: ${property.specs.address}`);
     };
+
+    // Issue #1: Ghost Detail with better error handling
+    const handleGhostDetail = async () => {
+        setIsGhostLoading(true);
         try {
             toast.info("AI Ghost Detailer Engaged", {
                 description: "Synthesizing property data into a premium perspective..."
