@@ -23,12 +23,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { BuyerExperience, TourInsight, formatCurrency } from "@/types/property";
+import { BuyerExperience, TourInsight, formatCurrency, PropertyListing } from "@/types/property";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { bothellProperty } from "@/data/bothellProperty";
 import { generateGhostDetail } from "@/lib/services/aiService";
 
 const STORAGE_KEY = "buyer-experience-draft";
+const CUSTOM_LISTINGS_KEY = "custom-listings";
 
 // Available listings for the "Change Listing" modal
 const availableListings = [
@@ -40,6 +41,18 @@ export default function BuyerAgentToolkit() {
     const navigate = useNavigate();
     const [isGhostLoading, setIsGhostLoading] = useState(false);
     const [showListingModal, setShowListingModal] = useState(false);
+    const [showAddListingForm, setShowAddListingForm] = useState(false);
+    const [customListings, setCustomListings] = useState<Array<{ slug: string; property: PropertyListing }>>(() => {
+        try {
+            const saved = localStorage.getItem(CUSTOM_LISTINGS_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch {}
+        return [];
+    });
+    const [newListingForm, setNewListingForm] = useState({
+        address: "", city: "", state: "WA", bedrooms: 3, bathrooms: 2,
+        squareFootage: 2000, listPrice: 500000, mlsNumber: "", headline: ""
+    });
 
     // Load from localStorage or use defaults
     const [experience, setExperience] = useState<BuyerExperience>(() => {
@@ -171,6 +184,52 @@ export default function BuyerAgentToolkit() {
         toast.success(`Switched to ${property.specs.address}`);
     };
 
+    // Add a custom listing
+    const addCustomListing = () => {
+        const { address, city, state, bedrooms, bathrooms, squareFootage, listPrice, mlsNumber, headline } = newListingForm;
+        if (!address || !city) {
+            toast.error("Address and City are required");
+            return;
+        }
+        const newProperty: PropertyListing = {
+            specs: {
+                address, city, state, bedrooms, bathrooms, squareFootage,
+                listPrice, mlsNumber: mlsNumber || `CUSTOM-${Date.now()}`,
+                                yearBuilt: new Date().getFullYear(), lotSize: "N/A", propertyType: "Single Family",
+                zip: "00000", garage: "N/A"
+            },
+            features: {
+                headline: headline || `${bedrooms}BR/${bathrooms}BA in ${city}`,
+                subheadline: "", bulletPoints: []
+            },
+                        images: { hero: "/placeholder.svg", secondary: [] },
+                        financing: {
+                listPrice,
+                downPaymentPercent: 20,
+                interestRate: 6.5,
+                loanTermYears: 30
+            }
+        };
+        const slug = address.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+        const updated = [...customListings, { slug, property: newProperty }];
+        setCustomListings(updated);
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        setNewListingForm({ address: "", city: "", state: "WA", bedrooms: 3, bathrooms: 2, squareFootage: 2000, listPrice: 500000, mlsNumber: "", headline: "" });
+        setShowAddListingForm(false);
+        toast.success(`Added listing: ${address}`);
+    };
+
+    // Remove a custom listing
+    const removeCustomListing = (idx: number) => {
+        const updated = customListings.filter((_, i) => i !== idx);
+        setCustomListings(updated);
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        toast.success("Custom listing removed");
+    };
+
+    // Combine default + custom listings
+    const allListings = [...availableListings, ...customListings];
+
     // Issue #1: Ghost Detail with better error handling
     const handleGhostDetail = async () => {
         setIsGhostLoading(true);
@@ -299,7 +358,7 @@ export default function BuyerAgentToolkit() {
                                         </Button>
                                     </div>
                                     <div className="space-y-3">
-                                        {availableListings.map((listing) => (
+                                        {allListings.map((listing) => (
                                             <button
                                                 key={listing.slug}
                                                 onClick={() => changeListing(listing.property)}
@@ -322,9 +381,91 @@ export default function BuyerAgentToolkit() {
                                             </button>
                                         ))}
                                     </div>
-                                    <p className="text-[10px] text-slate-600 text-center uppercase tracking-wider font-bold">
-                                        More listings coming soon
-                                    </p>
+
+                                                                    {/* Add Listing Button */}
+                                {!showAddListingForm ? (
+                                    <button
+                                        onClick={() => setShowAddListingForm(true)}
+                                        className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border border-dashed border-white/10 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all text-slate-500 hover:text-purple-400"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        <span className="text-xs font-bold uppercase tracking-widest">Add New Listing</span>
+                                    </button>
+                                ) : (
+                                    <div className="p-4 rounded-xl border border-purple-500/30 bg-purple-500/5 space-y-3">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h4 className="text-xs font-bold text-purple-400 uppercase tracking-widest">New Listing</h4>
+                                            <Button variant="ghost" size="icon" onClick={() => setShowAddListingForm(false)} className="h-6 w-6 text-slate-500 hover:text-white">
+                                                <X className="w-3 h-3" />
+                                            </Button>
+                                        </div>
+                                        <Input
+                                            placeholder="Street Address *"
+                                            value={newListingForm.address}
+                                            onChange={(e) => setNewListingForm({...newListingForm, address: e.target.value})}
+                                            className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                        />
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Input
+                                                placeholder="City *"
+                                                value={newListingForm.city}
+                                                onChange={(e) => setNewListingForm({...newListingForm, city: e.target.value})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                            <Input
+                                                placeholder="State"
+                                                value={newListingForm.state}
+                                                onChange={(e) => setNewListingForm({...newListingForm, state: e.target.value})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            <Input
+                                                type="number"
+                                                placeholder="Beds"
+                                                value={newListingForm.bedrooms}
+                                                onChange={(e) => setNewListingForm({...newListingForm, bedrooms: Number(e.target.value)})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                            <Input
+                                                type="number"
+                                                placeholder="Baths"
+                                                value={newListingForm.bathrooms}
+                                                onChange={(e) => setNewListingForm({...newListingForm, bathrooms: Number(e.target.value)})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                            <Input
+                                                type="number"
+                                                placeholder="Sq Ft"
+                                                value={newListingForm.squareFootage}
+                                                onChange={(e) => setNewListingForm({...newListingForm, squareFootage: Number(e.target.value)})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <Input
+                                                type="number"
+                                                placeholder="List Price"
+                                                value={newListingForm.listPrice}
+                                                onChange={(e) => setNewListingForm({...newListingForm, listPrice: Number(e.target.value)})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                            <Input
+                                                placeholder="MLS # (optional)"
+                                                value={newListingForm.mlsNumber}
+                                                onChange={(e) => setNewListingForm({...newListingForm, mlsNumber: e.target.value})}
+                                                className="bg-white/5 border-white/10 text-white text-sm h-9"
+                                            />
+                                        </div>
+                                        <Button
+                                            onClick={addCustomListing}
+                                            className="w-full bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-widest"
+                                        >
+                                            <Plus className="w-3 h-3 mr-2" />
+                                            Add Listing
+                                        </Button>
+                                    </div>
+                                )}
                                 </Card>
                             </div>
                         )}
