@@ -29,7 +29,7 @@ import { BuyerExperience, TourInsight, formatCurrency, PropertyListing } from "@
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { bothellProperty } from "@/data/bothellProperty";
 import { generateGhostDetail } from "@/lib/services/aiService";
-import { searchByMLS, searchByAddress, rmlsResultToPropertyListing } from "@/lib/services/rmlsService";
+import { searchByMLS, searchByAddress, rmlsResultToPropertyListing, MLS_SOURCES, type MLSSource } from "@/lib/services/rmlsService";
 const STORAGE_KEY = "buyer-experience-draft";
 const CUSTOM_LISTINGS_KEY = "custom-listings";
 
@@ -49,7 +49,7 @@ export default function BuyerAgentToolkit() {
     const [rmlsResults, setRmlsResults] = useState<PropertyListing[]>([]);
     const [rmlsLoading, setRmlsLoading] = useState(false);
     const [rmlsError, setRmlsError] = useState<string | null>(null);
-    const [modalTab, setModalTab] = useState<'listings' | 'rmls'>('listings');
+    const [mlsSource, setMlsSource] = useState<MLSSource>('rmls');     const [modalTab, setModalTab] = useState<'listings' | 'rmls'>('listings');
     const [customListings, setCustomListings] = useState<Array<{ slug: string; property: PropertyListing }>>(() => {
         try {
             const saved = localStorage.getItem(CUSTOM_LISTINGS_KEY);
@@ -249,8 +249,8 @@ export default function BuyerAgentToolkit() {
         setRmlsResults([]);
         try {
             const response = rmlsSearchMode === 'mls'
-                    ? await searchByMLS(rmlsQuery.trim())
-                    : await searchByAddress(rmlsQuery.trim());
+                    ? await searchByMLS(rmlsQuery.trim(), mlsSource)
+                    : await searchByAddress(rmlsQuery.trim(), undefined, mlsSource);
                 if (response.error) {
                     setRmlsError(response.error);
                 }
@@ -546,7 +546,7 @@ export default function BuyerAgentToolkit() {
                     {/* RMLS Search Tab */}
                     {modalTab === 'rmls' && (
                         <div className="space-y-4">
-                            {/* Search Mode Toggle */}
+                            {/* MLS Source Selector */}                                 <div className="flex gap-2 mb-3">                                     {MLS_SOURCES.map((source) => (                                         <button                                             key={source.value}                                             onClick={(e) => { e.stopPropagation(); setMlsSource(source.value); }}                                             className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${                                                 mlsSource === source.value                                                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'                                                     : 'text-slate-500 hover:text-white hover:bg-white/5'                                             }`}                                         >                                             {source.label}                                             <span className="block text-[9px] font-normal normal-case tracking-normal opacity-60">{source.region}</span>                                         </button>                                     ))}                                 </div>                                  {/* Search Mode Toggle */}
                             <div className="flex gap-2">
                                 <button
                                     onClick={() => setRmlsSearchMode('mls')}
@@ -625,8 +625,8 @@ export default function BuyerAgentToolkit() {
                             {!rmlsLoading && rmlsResults.length === 0 && !rmlsError && (
                                 <div className="text-center py-6 text-slate-600 text-sm border border-dashed border-white/10 rounded-xl">
                                     <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
-                                    <p>Search RMLS listings by MLS number or address.</p>
-                                    <p className="text-xs mt-1 text-slate-700">Requires RMLS_BEARER_TOKEN in Vercel env vars.</p>
+                                    <p>Search listings by MLS number or address.</p>
+                                    <p className="text-xs mt-1 text-slate-700">Requires RMLS_BEARER_TOKEN or BRIDGE_BEARER_TOKEN in Vercel env vars.</p>
                                 </div>
                             )}
                         </div>
