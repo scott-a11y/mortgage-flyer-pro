@@ -15,7 +15,9 @@ import {
     Layout,
     RefreshCw,
     ChevronDown,
-    X
+    X,
+        Search,
+    Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +29,7 @@ import { BuyerExperience, TourInsight, formatCurrency, PropertyListing } from "@
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { bothellProperty } from "@/data/bothellProperty";
 import { generateGhostDetail } from "@/lib/services/aiService";
+import { searchByMLS, searchByAddress } from "@/lib/services/rmlsService";
 
 const STORAGE_KEY = "buyer-experience-draft";
 const CUSTOM_LISTINGS_KEY = "custom-listings";
@@ -42,6 +45,12 @@ export default function BuyerAgentToolkit() {
     const [isGhostLoading, setIsGhostLoading] = useState(false);
     const [showListingModal, setShowListingModal] = useState(false);
     const [showAddListingForm, setShowAddListingForm] = useState(false);
+        const [rmlsSearchMode, setRmlsSearchMode] = useState<'mls' | 'address'>('mls');
+    const [rmlsQuery, setRmlsQuery] = useState('');
+    const [rmlsResults, setRmlsResults] = useState<PropertyListing[]>([]);
+    const [rmlsLoading, setRmlsLoading] = useState(false);
+    const [rmlsError, setRmlsError] = useState<string | null>(null);
+    const [modalTab, setModalTab] = useState<'listings' | 'rmls'>('listings');
     const [customListings, setCustomListings] = useState<Array<{ slug: string; property: PropertyListing }>>(() => {
         try {
             const saved = localStorage.getItem(CUSTOM_LISTINGS_KEY);
@@ -233,6 +242,44 @@ export default function BuyerAgentToolkit() {
     // Issue #1: Ghost Detail with better error handling
     const handleGhostDetail = async () => {
         setIsGhostLoading(true);
+
+            // RMLS Search handler
+    const handleRmlsSearch = async () => {
+        if (!rmlsQuery.trim()) {
+            toast.error('Enter an MLS number or address to search');
+            return;
+        }
+        setRmlsLoading(true);
+        setRmlsError(null);
+        setRmlsResults([]);
+        try {
+            const results = rmlsSearchMode === 'mls'
+                ? await searchByMLS(rmlsQuery.trim())
+                : await searchByAddress(rmlsQuery.trim());
+            if (results.length === 0) {
+                setRmlsError('No listings found. Check your search and try again.');
+            }
+            setRmlsResults(results);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Search failed';
+            setRmlsError(msg);
+        } finally {
+            setRmlsLoading(false);
+        }
+    };
+
+    // Import an RMLS result as a custom listing
+    const importRmlsListing = (property: PropertyListing) => {
+        const slug = property.specs.address.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const updated = [...customListings, { slug, property }];
+        setCustomListings(updated);
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        changeListing(property);
+        setModalTab('listings');
+        setRmlsQuery('');
+        setRmlsResults([]);
+        toast.success(`Imported: ${property.specs.address}`);
+    };
         try {
             toast.info("AI Ghost Detailer Engaged", {
                 description: "Synthesizing property data into a premium perspective..."
@@ -337,7 +384,7 @@ export default function BuyerAgentToolkit() {
                                     size="sm" 
                                     variant="ghost" 
                                     className="text-xs text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
-                                    onClick={() => setShowListingModal(true)}
+                                    onClick={() => { setModalTab('listings'); setShowListingModal(true); }}
                                 >
                                     Change Listing
                                 </Button>
@@ -357,6 +404,31 @@ export default function BuyerAgentToolkit() {
                                             <X className="w-4 h-4" />
                                         </Button>
                                     </div>
+                                                        {/* Tab Navigation */}
+                    <div className="flex gap-2 border-b border-white/10 pb-3">
+                        <button
+                            onClick={() => setModalTab('listings')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                                modalTab === 'listings'
+                                    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                            Saved Listings
+                        </button>
+                        <button
+                            onClick={() => setModalTab('rmls')}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 ${
+                                modalTab === 'rmls'
+                                    ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                            }`}
+                        >
+                            <Search className="w-3 h-3" />
+                            Import from RMLS
+                        </button>
+                    </div>
+                                                        {modalTab === 'listings' && (<>
                                     <div className="space-y-3">
                                         {allListings.map((listing) => (
                                             <button
@@ -466,6 +538,96 @@ export default function BuyerAgentToolkit() {
                                         </Button>
                                     </div>
                                 )}
+                                                                                </>)}
+
+                    {/* RMLS Search Tab */}
+                    {modalTab === 'rmls' && (
+                        <div className="space-y-4">
+                            {/* Search Mode Toggle */}
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => setRmlsSearchMode('mls')}
+                                    className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                                        rmlsSearchMode === 'mls'
+                                            ? 'bg-white/10 text-white border border-white/20'
+                                            : 'text-slate-500 hover:text-white'
+                                    }`}
+                                >
+                                    MLS Number
+                                </button>
+                                <button
+                                    onClick={() => setRmlsSearchMode('address')}
+                                    className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+                                        rmlsSearchMode === 'address'
+                                            ? 'bg-white/10 text-white border border-white/20'
+                                            : 'text-slate-500 hover:text-white'
+                                    }`}
+                                >
+                                    Address
+                                </button>
+                            </div>
+                            {/* Search Input */}
+                            <div className="flex gap-2">
+                                <Input
+                                    placeholder={rmlsSearchMode === 'mls' ? 'Enter MLS #...' : 'Enter street address...'}
+                                    value={rmlsQuery}
+                                    onChange={(e) => setRmlsQuery(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleRmlsSearch()}
+                                    className="bg-white/5 border-white/10 text-white text-sm"
+                                />
+                                <Button
+                                    onClick={handleRmlsSearch}
+                                    disabled={rmlsLoading}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-4"
+                                >
+                                    {rmlsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                                </Button>
+                            </div>
+                            {/* Error Message */}
+                            {rmlsError && (
+                                <div className="text-sm text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-lg p-3">
+                                    {rmlsError}
+                                </div>
+                            )}
+                            {/* Results */}
+                            {rmlsResults.length > 0 && (
+                                <div className="space-y-3">
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">
+                                        {rmlsResults.length} result{rmlsResults.length !== 1 ? 's' : ''} found
+                                    </p>
+                                    {rmlsResults.map((property, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => importRmlsListing(property)}
+                                            className="w-full flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:border-blue-500/30 hover:bg-blue-500/5 transition-all text-left"
+                                        >
+                                            <div className="w-16 h-16 rounded-lg overflow-hidden ring-1 ring-white/10 flex-shrink-0">
+                                                <img src={property.images.hero} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold text-white">{property.specs.address}</p>
+                                                <p className="text-xs text-slate-500">{property.specs.city}, {property.specs.state}</p>
+                                                <p className="text-xs text-slate-400 mt-1">
+                                                    {property.specs.bedrooms} bed / {property.specs.bathrooms} bath / {property.specs.squareFootage.toLocaleString()} sqft
+                                                </p>
+                                                <p className="text-xs text-emerald-400 mt-1">
+                                                    {formatCurrency(property.specs.listPrice)}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            {/* Demo Notice */}
+                            {!rmlsLoading && rmlsResults.length === 0 && !rmlsError && (
+                                <div className="text-center py-6 text-slate-600 text-sm border border-dashed border-white/10 rounded-xl">
+                                    <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
+                                    <p>Search RMLS listings by MLS number or address.</p>
+                                    <p className="text-xs mt-1 text-slate-700">Requires RMLS_BEARER_TOKEN in Vercel env vars.</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                                 </Card>
                             </div>
                         )}
