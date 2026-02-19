@@ -469,91 +469,66 @@ export default function PropertyFlyerBuilder({
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
             <Helmet><title>Listing Studio | Mortgage Flyer Pro</title></Helmet>
             {/* ═══════════════════════════════════════════════════════════════════
-          HEADER - Enterprise Navigation
+          HEADER - Clean 2-Row Navigation
           ═══════════════════════════════════════════════════════════════════ */}
-            <div className="bg-slate-800/80 border-b border-slate-700/50 px-6 py-4 backdrop-blur-xl sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Link to="/" className="flex items-center gap-4 group">
-                            <div className="p-2.5 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
-                                <Home className="w-5 h-5 text-white" />
+            <div className="bg-slate-800/80 border-b border-slate-700/50 backdrop-blur-xl sticky top-0 z-50">
+                {/* Row 1: Logo + Primary Nav */}
+                <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                        <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
+                            <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-lg shadow-amber-500/20 group-hover:scale-110 transition-transform">
+                                <Home className="w-4 h-4 text-white" />
                             </div>
                         </Link>
-                        <div>
+                        <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                                <h1 className="text-lg font-bold text-white">IA Loans Flyer Builder</h1>
-                                <span className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-full uppercase tracking-wider">
+                                <h1 className="text-sm lg:text-base font-bold text-white truncate">Listing Studio</h1>
+                                <span className="px-1.5 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold rounded-full uppercase tracking-wider flex-shrink-0">
                                     Pro
                                 </span>
                             </div>
-                            <p className="text-xs text-slate-400">
-                                Create co-branded mortgage flyers with live rates • Print & social exports
+                            <p className="text-[11px] text-slate-500 truncate hidden sm:block">
+                                {property.specs.address}, {property.specs.city}
                             </p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide max-w-[60vw] lg:max-w-none">
-                        {/* Property Quick Summary */}
-                        <div className="hidden xl:flex items-center gap-3 px-4 py-2 bg-slate-700/30 rounded-xl border border-slate-600/30">
-                            <MapPin className="w-4 h-4 text-amber-500" />
-                            <div>
-                                <div className="text-xs text-white font-medium">{property.specs.address}</div>
-                                <div className="text-[10px] text-slate-400">{property.specs.city}, {property.specs.state}</div>
-                            </div>
-                        </div>
-
-                        {/* Quick Stats */}
-                        <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 bg-slate-700/50 rounded-xl border border-slate-600/50 flex-shrink-0">
-                            <div className="text-center whitespace-nowrap">
-                                <div className="text-[9px] text-slate-500 uppercase tracking-wider">Price</div>
-                                <div className="text-sm font-bold text-amber-500">{formatCurrency(property.specs.listPrice)}</div>
-                            </div>
-                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
-                            <div className="text-center whitespace-nowrap">
-                                <div className="text-[9px] text-slate-500 uppercase tracking-wider">Monthly</div>
-                                <div className="text-sm font-bold text-white">{formatCurrency(payment.total)}</div>
-                            </div>
-                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
-                            <div className="text-center whitespace-nowrap">
-                                <div className="text-[9px] text-slate-500 uppercase tracking-wider">Rate</div>
-                                <div className="text-sm font-bold text-white">{interestRate}%</div>
-                            </div>
-                            <div className="w-px h-8 bg-slate-600 flex-shrink-0" />
-                            <div className="text-center whitespace-nowrap">
-                                <div className="text-[9px] text-slate-500 uppercase tracking-wider">Specs</div>
-                                <div className="text-sm font-bold text-white">{property.specs.bedrooms}bd/{property.specs.bathrooms}ba • {formatNumber(property.specs.squareFootage || 0)}sf</div>
-                            </div>
-                        </div>
-
-                        {/* View Web Version Link */}
+                    {/* Primary Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
                         <Link
                             to="/dashboard"
-                            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-bold rounded-xl transition-all border border-white/5 group"
+                            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-medium rounded-xl transition-all border border-white/5"
                         >
-                            <LayoutGrid className="w-4 h-4 text-amber-500" />
-                            Suite Dashboard
+                            <LayoutGrid className="w-3.5 h-3.5 text-amber-500" />
+                            <span className="hidden sm:inline">Dashboard</span>
                         </Link>
 
                         <a
                             href={`/property-live/${property.specs.address.toLowerCase().replace(/\s+/g, '-')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-600 text-white font-bold rounded-xl transition-all border border-white/5 shadow-lg group"
+                            className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600 text-white text-xs font-medium rounded-xl transition-all border border-white/5"
                         >
-                            <Eye className="w-4 h-4 text-amber-500 group-hover:scale-110 transition-transform" />
-                            Web Version
+                            <Eye className="w-3.5 h-3.5 text-amber-500" />
+                            <span className="hidden sm:inline">Web View</span>
                         </a>
+
+                        <button
+                            onClick={handleShareEditor}
+                            className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600 text-white text-xs font-medium rounded-xl transition-all border border-white/5"
+                            title="Share a collaborate link"
+                        >
+                            <Users className="w-3.5 h-3.5 text-emerald-500" />
+                            <span className="hidden md:inline">Share</span>
+                        </button>
 
                         <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
                             <AlertDialogTrigger asChild>
                                 <button
-                                    className="flex items-center gap-2 px-3 py-2 rounded-xl transition-all border group bg-slate-800 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border-white/5"
-                                    title="Reset all flyer settings: property details, theme, calculator inputs, and co-branding"
+                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all border group bg-slate-800 hover:bg-red-500/10 text-slate-500 hover:text-red-500 border-white/5"
+                                    title="Reset all flyer settings"
                                 >
                                     <RefreshCw className="w-3.5 h-3.5 transition-transform group-hover:rotate-180" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest leading-none">
-                                        Reset Flyer
-                                    </span>
                                 </button>
                             </AlertDialogTrigger>
                             <AlertDialogContent className="bg-slate-900 border-red-500/30 text-white max-w-md">
@@ -602,23 +577,41 @@ export default function PropertyFlyerBuilder({
                             </AlertDialogContent>
                         </AlertDialog>
 
-                        {/* Share Editor Link */}
-                        <button
-                            onClick={handleShareEditor}
-                            className="flex items-center gap-2 px-4 py-2.5 bg-slate-700/50 hover:bg-slate-600 text-white font-bold rounded-xl transition-all border border-white/5 shadow-lg group"
-                        >
-                            <Users className="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform" />
-                            Collaborate
-                        </button>
-
-                        {/* Export All Button */}
                         <button
                             onClick={() => setShowExport(true)}
-                            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 font-bold rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40"
+                            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 text-xs font-bold rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40"
                         >
-                            <Download className="w-4 h-4" />
-                            Export All
+                            <Download className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Export</span>
                         </button>
+                    </div>
+                </div>
+
+                {/* Row 2: Property Context Bar (subtle) */}
+                <div className="max-w-7xl mx-auto px-4 lg:px-6 pb-2.5">
+                    <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/30 rounded-lg flex-shrink-0">
+                            <MapPin className="w-3 h-3 text-amber-500" />
+                            <span className="text-[11px] text-slate-300 font-medium">{property.specs.address}</span>
+                            <span className="text-[11px] text-slate-500">{property.specs.city}, {property.specs.state}</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-700 flex-shrink-0" />
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/30 rounded-lg flex-shrink-0">
+                            <span className="text-[10px] text-slate-500 uppercase">Price</span>
+                            <span className="text-[11px] text-amber-400 font-bold">{formatCurrency(property.specs.listPrice)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/30 rounded-lg flex-shrink-0">
+                            <span className="text-[10px] text-slate-500 uppercase">Mo.</span>
+                            <span className="text-[11px] text-white font-bold">{formatCurrency(payment.total)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/30 rounded-lg flex-shrink-0">
+                            <span className="text-[10px] text-slate-500 uppercase">Rate</span>
+                            <span className="text-[11px] text-white font-bold">{interestRate}%</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-700/30 rounded-lg flex-shrink-0">
+                            <span className="text-[10px] text-slate-500 uppercase">Specs</span>
+                            <span className="text-[11px] text-white font-medium">{property.specs.bedrooms}bd/{property.specs.bathrooms}ba · {formatNumber(property.specs.squareFootage || 0)}sf</span>
+                        </div>
                     </div>
                 </div>
             </div>
