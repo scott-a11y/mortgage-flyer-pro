@@ -46,18 +46,23 @@ export default function MarketingDashboard() {
             type: "Listing Flyer",
             views: 0, // In standard impl, would fetch from analytics service
             status: f.is_published ? "Live" : "Draft",
-            agentId: (f.data as any).agentId || null
+            agentId: (f.data as any).agentId || null,
+            path: `/builder`
         })),
-        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling" },
-        { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling" },
-        { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling" },
-        { name: "Portland Metro - Adrian Mitchell", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell" },
-        { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell" },
-        { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell" },
-        { name: "Seattle Skyline Suite", type: "Listing Flyer", views: 312, status: "Live", agentId: "marcus-chen" },
-        { name: "Queen Anne Collection", type: "Listing Flyer", views: 184, status: "Live", agentId: "marcus-chen" },
-        { name: "Downtown Luxury Loft", type: "Buyer Tour", views: 92, status: "Live", agentId: "marcus-chen" },
-        { name: "Global Luxury Collection", type: "Buyer Tour", views: 512, status: "Live", agentId: null }
+        { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: 124, status: "Live", agentId: "celeste-zarling", path: "/property-live/maple-valley" },
+        { name: "Kirkland Waterfront", type: "Listing Flyer", views: 245, status: "Live", agentId: "celeste-zarling", path: "/property-live/kirkland-waterfront" },
+        { name: "Bellevue Modern", type: "Buyer Tour", views: 67, status: "Draft", agentId: "celeste-zarling", path: "/buyer-agent" },
+        { name: "U-District Condo — 5% Down", type: "Listing Flyer", views: 0, status: "Live", agentId: "celeste-zarling", path: "/property/seattle-condo-celeste-5down" },
+        { name: "U-District Condo — 10% Down", type: "Listing Flyer", views: 0, status: "Live", agentId: "celeste-zarling", path: "/property/seattle-condo-celeste-10down" },
+        { name: "Portland Metro - Adrian Mitchell", type: "Partner Live", views: 89, status: "Live", agentId: "adrian-mitchell", path: "/live/adrian-mitchell" },
+        { name: "Pearl District Loft", type: "Listing Flyer", views: 156, status: "Live", agentId: "adrian-mitchell", path: "/builder" },
+        { name: "West Hills Estate", type: "Buyer Tour", views: 42, status: "Draft", agentId: "adrian-mitchell", path: "/buyer-agent" },
+        { name: "U-District Condo — 5% Down", type: "Listing Flyer", views: 0, status: "Live", agentId: "adrian-mitchell", path: "/property/seattle-condo-5down" },
+        { name: "U-District Condo — 10% Down", type: "Listing Flyer", views: 0, status: "Live", agentId: "adrian-mitchell", path: "/property/seattle-condo-10down" },
+        { name: "Seattle Skyline Suite", type: "Listing Flyer", views: 312, status: "Live", agentId: "marcus-chen", path: "/builder" },
+        { name: "Queen Anne Collection", type: "Listing Flyer", views: 184, status: "Live", agentId: "marcus-chen", path: "/builder" },
+        { name: "Downtown Luxury Loft", type: "Buyer Tour", views: 92, status: "Live", agentId: "marcus-chen", path: "/buyer-agent" },
+        { name: "Global Luxury Collection", type: "Buyer Tour", views: 512, status: "Live", agentId: null, path: "/buyer-agent" }
     ];
 
     const activeAssets = currentAgent 
@@ -309,7 +314,7 @@ export default function MarketingDashboard() {
                         </h2>
                         <div className="grid grid-cols-1 gap-3">
                             {activeAssets.map((asset, i) => (
-                                <div key={i} className="flex items-center justify-between p-4 bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 rounded-2xl transition-all group cursor-pointer">
+                                <div key={i} onClick={() => navigate(asset.path)} className="flex items-center justify-between p-4 bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 rounded-2xl transition-all group cursor-pointer">
                                     <div className="flex items-center gap-4">
                                         <div className="p-2 rounded-lg bg-white/5">
                                             <Globe className="w-4 h-4 text-slate-500" />
