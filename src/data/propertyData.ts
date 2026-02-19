@@ -2,7 +2,7 @@ import { PropertyListing } from "@/types/property";
 import { FlyerData } from "@/types/flyer";
 import { mapleValleyProperty, celesteZarlingFlyerData } from "./mapleValleyProperty";
 import { bothellProperty, bothellFlyerData } from "./bothellProperty";
-import { seattleCondoProperty, seattleCondo5DownFlyerData, seattleCondo10DownFlyerData } from "./seattleCondoProperty";
+import { seattleCondoProperty, seattleCondo5DownFlyerData, seattleCondo10DownFlyerData, seattleCondoCeleste5DownFlyerData, seattleCondoCeleste10DownFlyerData } from "./seattleCondoProperty";
 
 export interface PropertyDataPackage {
     property: PropertyListing;
@@ -53,6 +53,16 @@ export const propertyMapping: Record<string, PropertyDataPackage> = {
     "905-ne-43rd-10down": {
         property: seattleCondo10DownProperty,
         flyerData: seattleCondo10DownFlyerData
+    },
+    // Seattle U-District Condo — 5% Down (Celeste Zarling / Century 21)
+    "seattle-condo-celeste-5down": {
+        property: seattleCondoProperty,
+        flyerData: seattleCondoCeleste5DownFlyerData
+    },
+    // Seattle U-District Condo — 10% Down (Celeste Zarling / Century 21)
+    "seattle-condo-celeste-10down": {
+        property: seattleCondo10DownProperty,
+        flyerData: seattleCondoCeleste10DownFlyerData
     }
 };
 

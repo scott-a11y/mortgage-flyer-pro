@@ -189,3 +189,54 @@ export const financing10Down = {
     estimatedInsurance: 35,        // condo HO-6
     estimatedTotalPayment: 2267,   // P&I + PMI + Tax + Insurance + HOA
 };
+
+// ═════════════════════════════════════════════════════
+//  CELESTE ZARLING — CENTURY 21 BRANDED VERSIONS
+// ═════════════════════════════════════════════════════
+
+// Century 21 Theme for this listing
+export const seattleCondoCelestTheme: ColorTheme = {
+    id: "century21-udistrict",
+    name: "Century 21 — U-District",
+    primary: "#252526",   // Obsessed Grey (Dark)
+    secondary: "#F2A900", // CENTURY 21 Gold
+    accent: "#ffffff"
+};
+
+// ─────────────────────────────────────────────────────
+//  5% DOWN FLYER — Celeste Zarling + Scott Little
+// ─────────────────────────────────────────────────────
+export const seattleCondoCeleste5DownFlyerData: FlyerData = {
+    ...seattleCondo5DownFlyerData,
+    realtor: {
+        name: "Celeste Zarling",
+        title: "Real Estate Professional",
+        phone: "(425) 420-4887",
+        email: "CZtransactions@c21nwr.com",
+        brokerage: "CENTURY 21 North Homes Realty",
+        website: "www.century21northhomes.com",
+        headshot: "/celeste-zarling-headshot.jpg",
+        headshotPosition: 50,
+        logo: ""
+    },
+    colorTheme: seattleCondoCelestTheme,
+};
+
+// ─────────────────────────────────────────────────────
+//  10% DOWN FLYER — Celeste Zarling + Scott Little
+// ─────────────────────────────────────────────────────
+export const seattleCondoCeleste10DownFlyerData: FlyerData = {
+    ...seattleCondo10DownFlyerData,
+    realtor: {
+        name: "Celeste Zarling",
+        title: "Real Estate Professional",
+        phone: "(425) 420-4887",
+        email: "CZtransactions@c21nwr.com",
+        brokerage: "CENTURY 21 North Homes Realty",
+        website: "www.century21northhomes.com",
+        headshot: "/celeste-zarling-headshot.jpg",
+        headshotPosition: 50,
+        logo: ""
+    },
+    colorTheme: seattleCondoCelestTheme,
+};
