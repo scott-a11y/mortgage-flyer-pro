@@ -228,65 +228,6 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                             </div>
                         </div>
 
-                        {/* Rental Cash Flow — only shows when rental data exists */}
-                        {property.rentalIncome && (() => {
-                            const rentMid = Math.round((property.rentalIncome.rentLow + property.rentalIncome.rentHigh) / 2);
-                            const netLow = property.rentalIncome.rentLow - paymentBreakdown.total;
-                            const netHigh = property.rentalIncome.rentHigh - paymentBreakdown.total;
-                            const isPositive = netHigh >= 0;
-                            return (
-                                <div className="rounded-lg p-3 flex-shrink-0 border" style={{
-                                    backgroundColor: isPositive ? '#f0fdf4' : '#fefce8',
-                                    borderColor: isPositive ? '#bbf7d0' : '#fde68a',
-                                }}>
-                                    <div className="flex items-center gap-1.5 mb-2">
-                                        <div className="w-3 h-3 rounded-full flex items-center justify-center text-[7px] font-black" style={{
-                                            backgroundColor: isPositive ? '#22c55e' : '#f59e0b',
-                                            color: 'white'
-                                        }}>$</div>
-                                        <h3 className="text-[8px] font-black uppercase tracking-wider" style={{
-                                            color: isPositive ? '#166534' : '#92400e'
-                                        }}>
-                                            {property.rentalIncome.label || 'Rental'} Cash Flow
-                                        </h3>
-                                    </div>
-
-                                    <div className="text-center mb-2">
-                                        <div className="text-[7px] font-bold uppercase tracking-wide" style={{
-                                            color: isPositive ? '#15803d' : '#a16207'
-                                        }}>Est. Monthly Rent</div>
-                                        <div className="text-[18px] font-black leading-none mt-0.5" style={{
-                                            color: isPositive ? '#166534' : '#92400e'
-                                        }}>
-                                            {formatCurrency(property.rentalIncome.rentLow)}–{formatCurrency(property.rentalIncome.rentHigh)}
-                                        </div>
-                                    </div>
-
-                                    <div className="border-t pt-2 space-y-1" style={{
-                                        borderColor: isPositive ? '#bbf7d0' : '#fde68a'
-                                    }}>
-                                        <div className="flex justify-between items-center text-[8px]">
-                                            <span style={{ color: isPositive ? '#15803d' : '#a16207', opacity: 0.7 }}>Gross Rent (mid)</span>
-                                            <span className="font-bold" style={{ color: isPositive ? '#166534' : '#92400e' }}>{formatCurrency(rentMid)}</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-[8px]">
-                                            <span style={{ color: isPositive ? '#15803d' : '#a16207', opacity: 0.7 }}>– Total PITI + HOA</span>
-                                            <span className="font-bold" style={{ color: isPositive ? '#166534' : '#92400e' }}>({formatCurrency(paymentBreakdown.total)})</span>
-                                        </div>
-                                        <div className="flex justify-between items-center text-[8px] pt-1 border-t" style={{
-                                            borderColor: isPositive ? '#bbf7d0' : '#fde68a'
-                                        }}>
-                                            <span className="font-black" style={{ color: isPositive ? '#166534' : '#92400e' }}>Net Cash Flow</span>
-                                            <span className="font-black text-[10px]" style={{
-                                                color: netLow >= 0 ? '#16a34a' : '#dc2626'
-                                            }}>
-                                                {formatCurrency(netLow)} to {formatCurrency(netHigh)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })()}
                         {/* Schedule */}
                         {property.openHouse && (
                             <div className="bg-gray-50 border border-gray-100 rounded-lg p-2.5 flex-shrink-0">

@@ -3,10 +3,11 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PropertyListingLayout } from "@/components/flyer/layouts/PropertyListingLayout";
 import { getPropertyBySlug } from "@/data/propertyData";
-import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone } from "lucide-react";
+import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { formatCurrency, calculateTotalMonthlyPayment } from "@/types/property";
 
 export default function LivePropertyFlyer() {
     const { slug } = useParams<{ slug: string }>();
@@ -16,6 +17,13 @@ export default function LivePropertyFlyer() {
     const slugData = getPropertyBySlug(slug);
     const [property, setProperty] = useState(slugData.property);
     const [flyerData, setFlyerData] = useState(slugData.flyerData);
+
+    // Rental income state — adjustable by the user
+    const [rentAmount, setRentAmount] = useState(
+        property.rentalIncome
+            ? Math.round((property.rentalIncome.rentLow + property.rentalIncome.rentHigh) / 2)
+            : 0
+    );
 
     useEffect(() => {
         // Try to load synced data from builder first
@@ -73,6 +81,17 @@ export default function LivePropertyFlyer() {
         }
     };
 
+    // Calculate mortgage payment for cash flow analysis
+    const financing = property.financing || {
+        listPrice: property.specs.listPrice,
+        downPaymentPercent: 5,
+        interestRate: 6.5,
+        loanTermYears: 30,
+        hoa: property.specs.hoa || 0
+    };
+    const payment = calculateTotalMonthlyPayment(financing);
+    const netCashFlow = rentAmount - payment.total;
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white font-sans">
@@ -94,7 +113,7 @@ export default function LivePropertyFlyer() {
             {/* FLOATING ACTION BAR */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center justify-between px-6 shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <Link to="/property/maple-valley">
+                    <Link to={`/property/${slug || 'maple-valley'}`}>
                         <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 gap-2 h-9">
                             <ArrowLeft className="w-4 h-4" />
                             <span className="hidden sm:inline">Back</span>
@@ -140,6 +159,156 @@ export default function LivePropertyFlyer() {
                         />
                     </div>
                 </motion.div>
+
+                {/* ═══════════════════════════════════════════════════════
+                    RENTAL CASH FLOW CALCULATOR — Interactive, below flyer
+                    Only shows when property has rentalIncome data
+                ═══════════════════════════════════════════════════════ */}
+                {property.rentalIncome && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+                        className="w-full max-w-[612px] mt-8 lg:mt-12"
+                    >
+                        <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-2xl">
+                            {/* Header */}
+                            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                                        <DollarSign className="w-4 h-4 text-emerald-400" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-white font-bold text-sm">
+                                            {property.rentalIncome.label || "Rental"} Cash Flow
+                                        </h3>
+                                        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
+                                            Investment Analysis · No Rental Cap
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
+                                    netCashFlow >= 0
+                                        ? 'bg-emerald-500/20 text-emerald-400'
+                                        : 'bg-amber-500/20 text-amber-400'
+                                }`}>
+                                    {netCashFlow >= 0 ? (
+                                        <TrendingUp className="w-3.5 h-3.5" />
+                                    ) : (
+                                        <TrendingDown className="w-3.5 h-3.5" />
+                                    )}
+                                    {netCashFlow >= 0 ? 'Cash Flow Positive' : 'Subsidized Investment'}
+                                </div>
+                            </div>
+
+                            {/* Rent Slider */}
+                            <div className="px-6 py-5">
+                                <div className="flex items-center justify-between mb-3">
+                                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                                        Estimated Monthly Rent
+                                    </label>
+                                    <div className="flex items-center gap-1">
+                                        <span className="text-2xl font-black text-white tabular-nums">
+                                            {formatCurrency(rentAmount)}
+                                        </span>
+                                        <span className="text-[10px] text-slate-500 font-bold">/mo</span>
+                                    </div>
+                                </div>
+
+                                {/* Slider */}
+                                <input
+                                    type="range"
+                                    min={Math.max(0, (property.rentalIncome.rentLow || 800) - 400)}
+                                    max={(property.rentalIncome.rentHigh || 1200) + 800}
+                                    step={25}
+                                    value={rentAmount}
+                                    onChange={(e) => setRentAmount(Number(e.target.value))}
+                                    className="w-full h-2 bg-slate-700 rounded-full appearance-none cursor-pointer accent-amber-500
+                                        [&::-webkit-slider-thumb]:appearance-none
+                                        [&::-webkit-slider-thumb]:w-5
+                                        [&::-webkit-slider-thumb]:h-5
+                                        [&::-webkit-slider-thumb]:rounded-full
+                                        [&::-webkit-slider-thumb]:bg-amber-500
+                                        [&::-webkit-slider-thumb]:shadow-lg
+                                        [&::-webkit-slider-thumb]:shadow-amber-500/30
+                                        [&::-webkit-slider-thumb]:cursor-pointer
+                                        [&::-webkit-slider-thumb]:border-2
+                                        [&::-webkit-slider-thumb]:border-white
+                                    "
+                                />
+
+                                {/* Range labels */}
+                                <div className="flex justify-between mt-1.5">
+                                    <span className="text-[10px] text-slate-600 font-medium">
+                                        {formatCurrency(Math.max(0, (property.rentalIncome.rentLow || 800) - 400))}
+                                    </span>
+                                    <span className="text-[10px] text-slate-600 font-medium">
+                                        Market range: {formatCurrency(property.rentalIncome.rentLow)}–{formatCurrency(property.rentalIncome.rentHigh)}
+                                    </span>
+                                    <span className="text-[10px] text-slate-600 font-medium">
+                                        {formatCurrency((property.rentalIncome.rentHigh || 1200) + 800)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Breakdown */}
+                            <div className="px-6 pb-5">
+                                <div className="bg-slate-800/50 rounded-xl p-4 space-y-2.5 border border-white/5">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-xs text-slate-400 font-medium">Gross Rental Income</span>
+                                        <span className="text-sm font-bold text-white tabular-nums">
+                                            +{formatCurrency(rentAmount)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-xs text-slate-400 font-medium">Principal & Interest</span>
+                                        <span className="text-sm font-bold text-white tabular-nums">
+                                            –{formatCurrency(payment.principalInterest)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-xs text-slate-400 font-medium">Property Tax</span>
+                                        <span className="text-sm font-bold text-white tabular-nums">
+                                            –{formatCurrency(payment.propertyTax)}
+                                        </span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-xs text-slate-400 font-medium">Insurance</span>
+                                        <span className="text-sm font-bold text-white tabular-nums">
+                                            –{formatCurrency(payment.insurance)}
+                                        </span>
+                                    </div>
+                                    {payment.hoa > 0 && (
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-xs text-slate-400 font-medium">HOA Dues</span>
+                                            <span className="text-sm font-bold text-white tabular-nums">
+                                                –{formatCurrency(payment.hoa)}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Net Cash Flow — the hero number */}
+                                    <div className="border-t border-white/10 pt-3 mt-1">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-sm font-black text-white uppercase tracking-wide">
+                                                Net Monthly Cash Flow
+                                            </span>
+                                            <span className={`text-xl font-black tabular-nums ${
+                                                netCashFlow >= 0 ? 'text-emerald-400' : 'text-red-400'
+                                            }`}>
+                                                {netCashFlow >= 0 ? '+' : ''}{formatCurrency(netCashFlow)}
+                                            </span>
+                                        </div>
+                                        <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                                            Based on {financing.downPaymentPercent}% down at {financing.interestRate}% rate · {financing.loanTermYears}-year fixed ·
+                                            Does not include vacancy, maintenance, or property management costs
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
             </main>
 
             {/* CONTACT FOOTER (MOBILE OPTIMIZED) */}
