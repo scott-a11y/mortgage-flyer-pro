@@ -45,12 +45,22 @@ export interface MortgageCalculation {
     hoa?: number;
 }
 
+export interface RentalIncome {
+    /** Low end of estimated monthly rent */
+    rentLow: number;
+    /** High end of estimated monthly rent */
+    rentHigh: number;
+    /** Display label, e.g. "Studio Rental" */
+    label?: string;
+}
+
 export interface PropertyListing {
     specs: PropertySpecs;
     features: PropertyFeatures;
     openHouse?: OpenHouseInfo;
     images: PropertyImages;
     financing?: MortgageCalculation;
+    rentalIncome?: RentalIncome;
 }
 
 export interface TourInsight {
