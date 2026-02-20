@@ -229,8 +229,9 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                         </div>
 
                         {/* Rental Cash Flow — compact version for print */}
-                        {property.rentalIncome && (() => {
-                            const rentMid = Math.round((property.rentalIncome.rentLow + property.rentalIncome.rentHigh) / 2);
+                        {property.rentalIncome && property.rentalIncome.length > 0 && (() => {
+                            const scenario = property.rentalIncome[0];
+                            const rentMid = Math.round((scenario.rentLow + scenario.rentHigh) / 2);
                             const netFlow = rentMid - paymentBreakdown.total;
                             const isPositive = netFlow >= 0;
                             return (
@@ -246,15 +247,22 @@ export const PropertyListingLayout = forwardRef<HTMLDivElement, PropertyListingL
                                         <h3 className="text-[7px] font-black uppercase tracking-wider" style={{
                                             color: isPositive ? '#166534' : '#92400e'
                                         }}>
-                                            {property.rentalIncome.label || 'Rental'} Cash Flow
+                                            {scenario.label || 'Rental'} Cash Flow
                                         </h3>
+                                        {property.rentalIncome.length > 1 && (
+                                            <span className="text-[5.5px] font-bold px-1 py-0.5 rounded bg-white/60" style={{
+                                                color: isPositive ? '#166534' : '#92400e'
+                                            }}>
+                                                +{property.rentalIncome.length - 1} more on web
+                                            </span>
+                                        )}
                                     </div>
 
                                     <div className="space-y-1">
                                         <div className="flex justify-between items-center text-[7.5px]">
                                             <span style={{ color: isPositive ? '#15803d' : '#a16207' }}>Est. Rent</span>
                                             <span className="font-black" style={{ color: isPositive ? '#166534' : '#92400e' }}>
-                                                {formatCurrency(property.rentalIncome.rentLow)}–{formatCurrency(property.rentalIncome.rentHigh)}/mo
+                                                {formatCurrency(scenario.rentLow)}–{formatCurrency(scenario.rentHigh)}/mo
                                             </span>
                                         </div>
                                         <div className="flex justify-between items-center text-[7.5px]">

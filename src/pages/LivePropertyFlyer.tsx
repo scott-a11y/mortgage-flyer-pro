@@ -18,12 +18,22 @@ export default function LivePropertyFlyer() {
     const [property, setProperty] = useState(slugData.property);
     const [flyerData, setFlyerData] = useState(slugData.flyerData);
 
-    // Rental income state — adjustable by the user
+    // Rental scenario state — user can switch between and adjust
+    const scenarios = property.rentalIncome || [];
+    const [scenarioIndex, setScenarioIndex] = useState(0);
+    const activeScenario = scenarios[scenarioIndex] || scenarios[0];
     const [rentAmount, setRentAmount] = useState(
-        property.rentalIncome
-            ? Math.round((property.rentalIncome.rentLow + property.rentalIncome.rentHigh) / 2)
+        activeScenario
+            ? Math.round((activeScenario.rentLow + activeScenario.rentHigh) / 2)
             : 0
     );
+
+    // When scenario changes, reset slider to that scenario's midpoint
+    const switchScenario = (idx: number) => {
+        setScenarioIndex(idx);
+        const s = scenarios[idx];
+        if (s) setRentAmount(Math.round((s.rentLow + s.rentHigh) / 2));
+    };
 
     useEffect(() => {
         // Try to load synced data from builder first
@@ -162,9 +172,9 @@ export default function LivePropertyFlyer() {
 
                 {/* ═══════════════════════════════════════════════════════
                     RENTAL CASH FLOW CALCULATOR — Interactive, below flyer
-                    Only shows when property has rentalIncome data
+                    Supports multiple scenarios (Studio, 1-Bed, Both Units)
                 ═══════════════════════════════════════════════════════ */}
-                {property.rentalIncome && (
+                {scenarios.length > 0 && activeScenario && (
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -180,7 +190,7 @@ export default function LivePropertyFlyer() {
                                     </div>
                                     <div>
                                         <h3 className="text-white font-bold text-sm">
-                                            {property.rentalIncome.label || "Rental"} Cash Flow
+                                            Rental Cash Flow Calculator
                                         </h3>
                                         <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
                                             Investment Analysis · No Rental Cap
@@ -201,11 +211,35 @@ export default function LivePropertyFlyer() {
                                 </div>
                             </div>
 
+                            {/* Scenario Tabs */}
+                            {scenarios.length > 1 && (
+                                <div className="px-6 pt-4 pb-1">
+                                    <div className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">
+                                        Choose Rental Scenario
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {scenarios.map((s, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => switchScenario(idx)}
+                                                className={`px-3 py-2 rounded-lg text-xs font-bold transition-all duration-200 ${
+                                                    scenarioIndex === idx
+                                                        ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 scale-105'
+                                                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
+                                                }`}
+                                            >
+                                                {s.label || `Scenario ${idx + 1}`}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Rent Slider */}
                             <div className="px-6 py-5">
                                 <div className="flex items-center justify-between mb-3">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                                        Estimated Monthly Rent
+                                        {activeScenario.label || 'Estimated'} — Monthly Rent
                                     </label>
                                     <div className="flex items-center gap-1">
                                         <span className="text-2xl font-black text-white tabular-nums">
@@ -218,8 +252,8 @@ export default function LivePropertyFlyer() {
                                 {/* Slider */}
                                 <input
                                     type="range"
-                                    min={Math.max(0, (property.rentalIncome.rentLow || 800) - 400)}
-                                    max={(property.rentalIncome.rentHigh || 1200) + 800}
+                                    min={Math.max(0, (activeScenario.rentLow || 800) - 400)}
+                                    max={(activeScenario.rentHigh || 1200) + 800}
                                     step={25}
                                     value={rentAmount}
                                     onChange={(e) => setRentAmount(Number(e.target.value))}
@@ -240,13 +274,13 @@ export default function LivePropertyFlyer() {
                                 {/* Range labels */}
                                 <div className="flex justify-between mt-1.5">
                                     <span className="text-[10px] text-slate-600 font-medium">
-                                        {formatCurrency(Math.max(0, (property.rentalIncome.rentLow || 800) - 400))}
+                                        {formatCurrency(Math.max(0, (activeScenario.rentLow || 800) - 400))}
                                     </span>
                                     <span className="text-[10px] text-slate-600 font-medium">
-                                        Market range: {formatCurrency(property.rentalIncome.rentLow)}–{formatCurrency(property.rentalIncome.rentHigh)}
+                                        Market range: {formatCurrency(activeScenario.rentLow)}–{formatCurrency(activeScenario.rentHigh)}
                                     </span>
                                     <span className="text-[10px] text-slate-600 font-medium">
-                                        {formatCurrency((property.rentalIncome.rentHigh || 1200) + 800)}
+                                        {formatCurrency((activeScenario.rentHigh || 1200) + 800)}
                                     </span>
                                 </div>
                             </div>

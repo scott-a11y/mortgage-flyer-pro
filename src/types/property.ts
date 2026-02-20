@@ -60,7 +60,7 @@ export interface PropertyListing {
     openHouse?: OpenHouseInfo;
     images: PropertyImages;
     financing?: MortgageCalculation;
-    rentalIncome?: RentalIncome;
+    rentalIncome?: RentalIncome[];
 }
 
 export interface TourInsight {

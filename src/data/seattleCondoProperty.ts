@@ -64,11 +64,11 @@ export const seattleCondoProperty: PropertyListing = {
         loanTermYears: 30,
         hoa: 986
     },
-    rentalIncome: {
-        rentLow: 1000,
-        rentHigh: 1200,
-        label: "Studio Rental"
-    }
+    rentalIncome: [
+        { rentLow: 1000, rentHigh: 1200, label: "Studio Rental" },
+        { rentLow: 1300, rentHigh: 1500, label: "1-Bed Rental" },
+        { rentLow: 2300, rentHigh: 2700, label: "Both Units" }
+    ]
 };
 
 // ─────────────────────────────────────────────────────
