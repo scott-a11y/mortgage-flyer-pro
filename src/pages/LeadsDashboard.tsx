@@ -135,7 +135,7 @@ Best regards`;
             <div className="max-w-6xl mx-auto">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center gap-4">
-                        <Button onClick={() => navigate(-1)} variant="ghost" size="sm" className="text-slate-400 hover:text-white gap-2">
+                        <Button onClick={() => navigate('/dashboard')} variant="ghost" size="sm" className="text-slate-400 hover:text-white gap-2">
                                 <ArrowLeft className="w-4 h-4" />
                                 Back to Dashboard
                         </Button>
