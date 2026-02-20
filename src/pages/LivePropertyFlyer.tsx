@@ -123,7 +123,7 @@ export default function LivePropertyFlyer() {
             {/* FLOATING ACTION BAR */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center justify-between px-6 shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <Link to="/dashboard">
+                    <Link to={`/property/${slug || 'maple-valley'}`}>
                         <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 gap-2 h-9">
                             <ArrowLeft className="w-4 h-4" />
                             <span className="hidden sm:inline">Back</span>
