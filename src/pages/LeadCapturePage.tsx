@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { mapleValleyProperty, celesteZarlingFlyerData } from "@/data/mapleValleyProperty";
+import { getPropertyBySlug } from "@/data/propertyData";
 import { Home, Bed, Bath, Square, Calendar, MapPin, Phone, Mail, CheckCircle2, Loader2, User, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,8 +20,11 @@ interface LeadFormData {
 export default function LeadCapturePage() {
     const { slug } = useParams<{ slug: string }>();
     const [isLoading, setIsLoading] = useState(true);
-    const [property, setProperty] = useState(mapleValleyProperty);
-    const [flyerData, setFlyerData] = useState(celesteZarlingFlyerData);
+
+    // Resolve property data from slug — this is the primary source of truth
+    const slugData = getPropertyBySlug(slug);
+    const [property, setProperty] = useState(slugData.property);
+    const [flyerData, setFlyerData] = useState(slugData.flyerData);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [formData, setFormData] = useState<LeadFormData>({
@@ -38,13 +41,18 @@ export default function LeadCapturePage() {
         localStorage.setItem(`lead_views_${slug}`, views.toString());
         console.log(`Property page views: ${views}`);
 
-        // Load synced data
+        // Check for synced overrides from builder (only if address matches)
         const savedData = localStorage.getItem('property_preview_data');
         if (savedData) {
             try {
                 const parsed = JSON.parse(savedData);
-                if (parsed.property) setProperty(parsed.property);
-                if (parsed.flyerData) setFlyerData(parsed.flyerData);
+                if (parsed.property?.specs?.address === slugData.property.specs.address) {
+                    if (parsed.property) setProperty(parsed.property);
+                    if (parsed.flyerData) setFlyerData(parsed.flyerData);
+                    console.log("Synced live data loaded from storage");
+                } else {
+                    console.log("Storage data is for a different property — using slug data");
+                }
             } catch (e) {
                 console.error("Sync data parse error:", e);
             }

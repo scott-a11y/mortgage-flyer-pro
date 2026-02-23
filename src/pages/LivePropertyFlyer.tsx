@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PropertyListingLayout } from "@/components/flyer/layouts/PropertyListingLayout";
 import { getPropertyBySlug } from "@/data/propertyData";
-import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone, TrendingUp, TrendingDown, DollarSign, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -123,7 +123,7 @@ export default function LivePropertyFlyer() {
             {/* FLOATING ACTION BAR */}
             <header className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center justify-between px-6 shadow-2xl">
                 <div className="flex items-center gap-3">
-                    <Link to={`/property/${slug || 'maple-valley'}`}>
+                    <Link to="/dashboard">
                         <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-white/5 gap-2 h-9">
                             <ArrowLeft className="w-4 h-4" />
                             <span className="hidden sm:inline">Back</span>
@@ -343,27 +343,55 @@ export default function LivePropertyFlyer() {
                         </div>
                     </motion.div>
                 )}
+                {/* ═══════════════════════════════════════════════════════
+                    "I'M INTERESTED" CTA — Links to lead capture page
+                ═══════════════════════════════════════════════════════ */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
+                    className="w-full max-w-[612px] mt-8 lg:mt-12 pb-8"
+                >
+                    <Link to={`/lead/${slug || 'maple-valley'}`}>
+                        <div className="group p-6 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-slate-950 shadow-xl shadow-amber-500/20 cursor-pointer active:scale-[0.98] transition-all hover:shadow-amber-500/40">
+                            <div className="flex items-center justify-between">
+                                <div className="text-left">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70 mb-1">Next Step</p>
+                                    <p className="text-2xl font-black tracking-tighter">I'm Interested — Tell Me More</p>
+                                    <p className="text-xs font-bold opacity-70 mt-1">Get pre-approved or schedule a tour</p>
+                                </div>
+                                <ArrowLeft className="w-8 h-8 opacity-40 group-hover:opacity-100 transition-all transform rotate-180 translate-x-[10px] group-hover:translate-x-0" />
+                            </div>
+                        </div>
+                    </Link>
+                </motion.div>
             </main>
 
             {/* CONTACT FOOTER (MOBILE OPTIMIZED) */}
             <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-white/10 p-4 pb-safe flex items-center justify-around sm:hidden backdrop-blur-xl">
-                <button className="flex flex-col items-center gap-1 group">
+                <a href={`tel:${flyerData.realtor?.phone || flyerData.broker?.phone || ''}`} className="flex flex-col items-center gap-1 group">
                     <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center group-active:bg-amber-500 group-active:text-slate-950 transition-colors shadow-lg shadow-black/40">
                         <Phone className="w-4 h-4" />
                     </div>
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Call</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 group">
+                </a>
+                <a href={`sms:${flyerData.realtor?.phone || flyerData.broker?.phone || ''}`} className="flex flex-col items-center gap-1 group">
                     <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center group-active:bg-green-500 group-active:text-white transition-colors shadow-lg shadow-black/40">
                         <MessageCircle className="w-4 h-4" />
                     </div>
                     <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Text</span>
-                </button>
-                <button onClick={handleShare} className="flex flex-col items-center gap-1 group">
+                </a>
+                <Link to={`/lead/${slug || 'maple-valley'}`} className="flex flex-col items-center gap-1 group">
                     <div className="w-10 h-10 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-500/20">
+                        <Send className="w-4 h-4" />
+                    </div>
+                    <span className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Inquire</span>
+                </Link>
+                <button onClick={handleShare} className="flex flex-col items-center gap-1 group">
+                    <div className="w-10 h-10 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center group-active:bg-white group-active:text-slate-950 transition-colors shadow-lg shadow-black/40">
                         <Share2 className="w-4 h-4" />
                     </div>
-                    <span className="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Share</span>
+                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Share</span>
                 </button>
             </div>
 

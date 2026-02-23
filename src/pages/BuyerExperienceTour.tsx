@@ -135,9 +135,9 @@ export default function BuyerExperienceTour() {
                         <Button 
                             size="icon" 
                             variant="ghost" 
-                            onClick={() => navigate("/buyer-agent")}
+                            onClick={() => navigate("/dashboard")}
                             className="bg-black/40 backdrop-blur-md border border-white/10 rounded-full text-white hover:bg-white/20"
-                            aria-label="Back to editor"
+                            aria-label="Back to dashboard"
                         >
                             <ArrowLeft className="w-4 h-4" />
                         </Button>
