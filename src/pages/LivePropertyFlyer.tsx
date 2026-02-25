@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PropertyListingLayout } from "@/components/flyer/layouts/PropertyListingLayout";
 import { getPropertyBySlug } from "@/data/propertyData";
+import { trackFlyerView } from "@/lib/services/flyerService";
 import { Loader2, ArrowLeft, Share2, Printer, MessageCircle, Phone, TrendingUp, TrendingDown, DollarSign, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -56,8 +57,13 @@ export default function LivePropertyFlyer() {
 
         // Simulate loading
         const timer = setTimeout(() => setIsLoading(false), 800);
+
+        // Track view
+        const currentSlug = slug || 'maple-valley';
+        trackFlyerView(currentSlug, document.referrer, navigator.userAgent);
+
         return () => clearTimeout(timer);
-    }, []);
+    }, [slug]);
 
     const handleShare = async () => {
         const url = window.location.href;

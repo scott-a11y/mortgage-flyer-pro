@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
 import { BuyerExperience } from "@/types/property";
+import { trackFlyerView } from "@/lib/services/flyerService";
 
 const STORAGE_KEY = "buyer-experience-draft";
 
@@ -56,6 +57,12 @@ export default function BuyerExperienceTour() {
             strategyType: "wealth-builder"
         };
     });
+
+    useEffect(() => {
+        // Track the view 
+        const slug = experience.listing.specs.address.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        trackFlyerView(`tour-${slug}`, document.referrer, navigator.userAgent);
+    }, [experience.listing.specs.address]);
 
     // Issue #9: Share functionality
     const handleShare = async () => {
