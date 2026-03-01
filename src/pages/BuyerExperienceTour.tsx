@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
-import { BuyerExperience } from "@/types/property";
+import { BuyerExperience, calculateTotalMonthlyPayment, formatCurrency } from "@/types/property";
 import { trackFlyerView } from "@/lib/services/flyerService";
 
 const STORAGE_KEY = "buyer-experience-draft";
@@ -57,6 +57,27 @@ export default function BuyerExperienceTour() {
             strategyType: "wealth-builder"
         };
     });
+
+    const [offerPrice, setOfferPrice] = useState(experience.listing.specs.listPrice);
+    const [downPaymentPercent, setDownPaymentPercent] = useState(experience.listing.financing?.downPaymentPercent || 20);
+    const interestRate = experience.listing.financing?.interestRate || 6.125;
+
+    // Recalculate payment on the fly
+    const simulatedFinancing = {
+        listPrice: offerPrice,
+        downPaymentPercent: downPaymentPercent,
+        interestRate: interestRate,
+        loanTermYears: 30,
+        hoa: experience.listing.specs.hoa || 0
+    };
+    const payment = calculateTotalMonthlyPayment(simulatedFinancing);
+    const cashToClose = offerPrice * (downPaymentPercent / 100);
+
+    const handleSoftOffer = () => {
+        toast.success("Interest sent to Agent!", {
+            description: `We've let your agent know you are exploring ${formatCurrency(offerPrice)} with ${downPaymentPercent}% down.`
+        });
+    };
 
     useEffect(() => {
         // Track the view 
@@ -315,51 +336,87 @@ export default function BuyerExperienceTour() {
                     })}
                 </div>
 
-                {/* Section: Live Strategy Matrix */}
+                {/* Section: Live Strategy Matrix -> Interactive Builder */}
                 <div className="space-y-6">
                     <div className="flex items-center gap-3">
                         <DollarSign className="w-5 h-5 text-emerald-400" />
-                        <h2 className="text-xl font-bold text-white tracking-tight">Strategy Matrix</h2>
+                        <h2 className="text-xl font-bold text-white tracking-tight">Interactive Offer Scenario</h2>
                     </div>
                     
                     <Card className="p-8 bg-gradient-to-br from-emerald-500/10 to-blue-500/5 border-white/10 backdrop-blur-3xl rounded-[2rem] relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4">
                             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 uppercase tracking-widest text-[9px] font-black">
-                                Live Analysis
+                                Live Simulator
                             </Badge>
                         </div>
                         
-                        <div className="space-y-6">
-                            <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Recommended Program</p>
+                        <div className="space-y-8">
+                            <div className="pr-16">
+                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">Build Your Offer</p>
                                 <h3 className="text-2xl font-black text-white tracking-tight">
-                                    {experience.strategyType === "wealth-builder" ? "30-Year Fixed Strategy" :
-                                     experience.strategyType === "cash-flow" ? "ARM Cash Flow Strategy" :
-                                     "Low Down Payment Strategy"}
+                                    See your real math instantly.
                                 </h3>
                             </div>
                             
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Est. Payment</p>
-                                    <p className="text-2xl font-black text-emerald-400 tracking-tighter">$4,124<span className="text-xs ml-1 opacity-60">/mo</span></p>
+                            {/* Sliders */}
+                            <div className="space-y-6">
+                                <div>
+                                    <div className="flex justify-between items-end mb-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Offer Price</label>
+                                        <p className="text-xl font-black text-white">{formatCurrency(offerPrice)}</p>
+                                    </div>
+                                    <input 
+                                        type="range" 
+                                        min={experience.listing.specs.listPrice * 0.8} 
+                                        max={experience.listing.specs.listPrice * 1.2} 
+                                        step="1000"
+                                        value={offerPrice}
+                                        onChange={(e) => setOfferPrice(Number(e.target.value))}
+                                        className="w-full h-2 bg-black/40 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                    />
+                                    <div className="flex justify-between mt-1 text-[10px] text-slate-500 font-medium">
+                                        <span>{formatCurrency(experience.listing.specs.listPrice * 0.8)}</span>
+                                        <span>{formatCurrency(experience.listing.specs.listPrice * 1.2)}</span>
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Today's Rate</p>
-                                    <p className="text-2xl font-black text-white tracking-tighter">6.125<span className="text-xs ml-1 opacity-60">%</span></p>
+
+                                <div>
+                                    <div className="flex justify-between items-end mb-2">
+                                        <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Down Payment</label>
+                                        <div className="text-right">
+                                            <p className="text-xl font-black text-white">{downPaymentPercent}%</p>
+                                            <p className="text-[10px] text-slate-400 font-bold">{formatCurrency(cashToClose)} cash required</p>
+                                        </div>
+                                    </div>
+                                    <input 
+                                        type="range" 
+                                        min="0" 
+                                        max="50" 
+                                        step="5"
+                                        value={downPaymentPercent}
+                                        onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
+                                        className="w-full h-2 bg-black/40 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                                    />
                                 </div>
                             </div>
                             
-                            <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                                <p className="text-xs text-slate-400 font-medium italic">"Based on your 20% down goal discussed on Feb 12th."</p>
-                                {/* Issue #8: Adjust Math wired up */}
+                            <div className="grid grid-cols-2 gap-4 p-4 bg-black/40 rounded-xl border border-white/5">
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Est. Payment</p>
+                                    <p className="text-2xl font-black text-emerald-400 tracking-tighter">{formatCurrency(payment.total)}<span className="text-xs ml-1 opacity-60 text-slate-400">/mo</span></p>
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Today's Rate</p>
+                                    <p className="text-2xl font-black text-white tracking-tighter">{interestRate}<span className="text-xs ml-1 opacity-60 text-slate-400">%</span></p>
+                                </div>
+                            </div>
+                            
+                            <div className="pt-4 border-t border-white/10">
                                 <Button 
-                                    size="sm" 
-                                    variant="ghost" 
-                                    className="text-xs text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                                    onClick={handleAdjustMath}
+                                    onClick={handleSoftOffer}
+                                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black h-12 uppercase tracking-widest text-xs"
                                 >
-                                    Adjust Math
+                                    Share Idea With Agent
                                 </Button>
                             </div>
                         </div>
