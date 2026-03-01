@@ -84,6 +84,9 @@ export interface BuyerExperience {
     }[];
     buyerName?: string;
     strategyType: 'cash-flow' | 'low-down' | 'wealth-builder';
+    isPreApproved?: boolean;
+    preApprovalAmount?: number;
+    hasAudioGuide?: boolean;
 }
 
 // Utility function to calculate monthly mortgage payment

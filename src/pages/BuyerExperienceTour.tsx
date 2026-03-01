@@ -17,7 +17,11 @@ import {
     DollarSign,
     ArrowLeft,
     Edit3,
-    ThumbsUp
+    ThumbsUp,
+    ShieldCheck,
+    Play,
+    Pause,
+    Activity
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -54,7 +58,10 @@ export default function BuyerExperienceTour() {
                 { name: "Caffe Ladro", category: "Coffee", note: "My favorite local spot for a morning latte. They source their beans sustainably which I know you'll appreciate.", distance: "1.2 miles" }
             ],
             buyerName: "Sarah & Mike",
-            strategyType: "wealth-builder"
+            strategyType: "wealth-builder",
+            isPreApproved: true,
+            preApprovalAmount: 750000,
+            hasAudioGuide: true
         };
     });
 
@@ -72,6 +79,47 @@ export default function BuyerExperienceTour() {
     };
     const payment = calculateTotalMonthlyPayment(simulatedFinancing);
     const cashToClose = offerPrice * (downPaymentPercent / 100);
+
+    const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+    const [audioProgress, setAudioProgress] = useState(0);
+
+    // Simulated audio player progress
+    useEffect(() => {
+        if (!isPlayingAudio) return;
+        const interval = setInterval(() => {
+            setAudioProgress(p => {
+                if (p >= 100) {
+                    setIsPlayingAudio(false);
+                    return 0;
+                }
+                return p + 2;
+            });
+        }, 100);
+        return () => clearInterval(interval);
+    }, [isPlayingAudio]);
+
+    // High Intent Tracking
+    const [hasChangedMath, setHasChangedMath] = useState(false);
+    useEffect(() => {
+        // Did they stray away from default loaded values?
+        if (offerPrice !== experience.listing.specs.listPrice || downPaymentPercent !== (experience.listing.financing?.downPaymentPercent || 20)) {
+            setHasChangedMath(true);
+        }
+    }, [offerPrice, downPaymentPercent, experience.listing.specs.listPrice, experience.listing.financing?.downPaymentPercent]);
+
+    useEffect(() => {
+        if (!hasChangedMath) return;
+        // Debounce before notifying so we don't spam while they are actively dragging the slider
+        const timer = setTimeout(() => {
+            toast("Agent Notified of Scenario Update", {
+                icon: <Activity className="w-5 h-5 text-emerald-500" />,
+                description: "We let your agent know you are running new math.",
+                duration: 4000
+            });
+            setHasChangedMath(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }, [hasChangedMath, offerPrice, downPaymentPercent]);
 
     const handleSoftOffer = () => {
         toast.success("Interest sent to Agent!", {
@@ -202,8 +250,18 @@ export default function BuyerExperienceTour() {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="space-y-2 text-center"
+                        className="space-y-4 text-center"
                     >
+                        {experience.isPreApproved && (
+                            <div className="flex justify-center mb-2">
+                                <div className="px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 flex items-center gap-2 shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                                    <span className="text-[10px] font-black text-emerald-100 uppercase tracking-widest">
+                                        Verified Buyer · Pre-Approved for {formatCurrency(experience.preApprovalAmount || experience.listing.specs.listPrice)}
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                         <h1 className="text-3xl lg:text-5xl font-black text-white tracking-tighter drop-shadow-2xl">
                             {experience.listing.specs.address}
                         </h1>
@@ -241,6 +299,30 @@ export default function BuyerExperienceTour() {
                                         <MessageSquare className="w-5 h-5 text-blue-400" />
                                         Agent's Take
                                     </h2>
+                                    
+                                    {experience.hasAudioGuide && (
+                                        <div className="bg-black/40 rounded-full p-2 flex items-center gap-4 border border-white/5 my-2">
+                                            <button 
+                                                onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                                                className="w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center transition-all flex-shrink-0 shadow-lg"
+                                            >
+                                                {isPlayingAudio ? <Pause className="w-4 h-4 text-white fill-white" /> : <Play className="w-4 h-4 text-white fill-white ml-0.5" />}
+                                            </button>
+                                            <div className="flex-1 pr-4">
+                                                <div className="flex justify-between text-[10px] text-slate-400 font-bold mb-1.5 uppercase tracking-widest">
+                                                    <span>Agent Audio Note</span>
+                                                    <span className="text-blue-400">{isPlayingAudio ? "Playing" : "0:32"}</span>
+                                                </div>
+                                                <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                                                    <div 
+                                                        className="h-full bg-blue-500 transition-all duration-100 ease-linear" 
+                                                        style={{ width: `${audioProgress}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <p className="text-slate-400 leading-relaxed font-medium">
                                         "{experience.agentTake}"
                                     </p>
