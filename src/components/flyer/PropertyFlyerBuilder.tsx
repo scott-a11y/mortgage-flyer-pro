@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { ImageUploader } from "./editors/ImageUploader";
+import { MarketingKitModal } from "./marketing/MarketingKitModal";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -577,12 +578,16 @@ export default function PropertyFlyerBuilder({
                             </AlertDialogContent>
                         </AlertDialog>
 
+                        <div className="h-6 w-px bg-white/10 mx-1 hidden md:block"></div>
+
+                        <MarketingKitModal property={property} flyerData={{ ...flyerData, colorTheme: selectedTheme }} />
+
                         <button
                             onClick={() => setShowExport(true)}
                             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-900 text-xs font-bold rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40"
                         >
                             <Download className="w-3.5 h-3.5" />
-                            <span className="hidden sm:inline">Export</span>
+                            <span className="hidden sm:inline">Export PDF</span>
                         </button>
                     </div>
                 </div>
