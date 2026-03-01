@@ -54,7 +54,9 @@ export default function BuyerAgentToolkit() {
         try {
             const saved = localStorage.getItem(CUSTOM_LISTINGS_KEY);
             if (saved) return JSON.parse(saved);
-        } catch {}
+        } catch (e) {
+            console.error('Failed to parse custom listings', e);
+        }
         return [];
     });
     const [newListingForm, setNewListingForm] = useState({
@@ -67,7 +69,9 @@ export default function BuyerAgentToolkit() {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
             if (saved) return JSON.parse(saved);
-        } catch {}
+        } catch (e) {
+            console.error('Failed to parse experience', e);
+        }
         return {
             id: "exp_1",
             listing: mapleValleyProperty,
@@ -89,7 +93,9 @@ export default function BuyerAgentToolkit() {
     useEffect(() => {
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(experience));
-        } catch {}
+        } catch (e) {
+            console.error('Failed to save experience', e);
+        }
     }, [experience]);
 
     // Warn before navigating away with unsaved changes
@@ -168,7 +174,7 @@ export default function BuyerAgentToolkit() {
     const removeGem = (idx: number) => {
         setExperience({
             ...experience,
-            localGems: experience.localGems.filter((_: any, i: number) => i !== idx)
+            localGems: experience.localGems.filter((_, i) => i !== idx)
         });
         toast.success("Local gem removed");
     };
@@ -221,7 +227,7 @@ export default function BuyerAgentToolkit() {
         const slug = address.toLowerCase().replace(/[^a-z0-9]+/g, "-");
         const updated = [...customListings, { slug, property: newProperty }];
         setCustomListings(updated);
-        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch (e) { console.error('Failed to set custom listings', e); }
         setNewListingForm({ address: "", city: "", state: "WA", bedrooms: 3, bathrooms: 2, squareFootage: 2000, listPrice: 500000, mlsNumber: "", headline: "" });
         setShowAddListingForm(false);
         toast.success(`Added listing: ${address}`);
@@ -231,7 +237,7 @@ export default function BuyerAgentToolkit() {
     const removeCustomListing = (idx: number) => {
         const updated = customListings.filter((_, i) => i !== idx);
         setCustomListings(updated);
-        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch (e) { console.error('Failed to set custom listings', e); }
         toast.success("Custom listing removed");
     };
 
@@ -272,7 +278,7 @@ export default function BuyerAgentToolkit() {
         const slug = property.specs.address.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const updated = [...customListings, { slug, property }];
         setCustomListings(updated);
-        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch {}
+        try { localStorage.setItem(CUSTOM_LISTINGS_KEY, JSON.stringify(updated)); } catch (e) { console.error('Failed to set custom listings', e); }
         changeListing(property);
         setModalTab('listings');
         setRmlsQuery('');
@@ -692,7 +698,7 @@ export default function BuyerAgentToolkit() {
                                             value={insight.category}
                                             onChange={(e) => setExperience({
                                                 ...experience,
-                                                tourInsights: experience.tourInsights.map(i => i.id === insight.id ? { ...i, category: e.target.value as any } : i)
+                                                tourInsights: experience.tourInsights.map(i => i.id === insight.id ? { ...i, category: e.target.value as TourInsight['category'] } : i)
                                             })}
                                             className="bg-white/5 border border-white/10 rounded-md text-[10px] uppercase font-bold px-2 py-1 text-slate-400 outline-none focus:border-purple-500 transition-colors"
                                         >
@@ -706,7 +712,7 @@ export default function BuyerAgentToolkit() {
                                             value={insight.type}
                                             onChange={(e) => setExperience({
                                                 ...experience,
-                                                tourInsights: experience.tourInsights.map(i => i.id === insight.id ? { ...i, type: e.target.value as any } : i)
+                                                tourInsights: experience.tourInsights.map(i => i.id === insight.id ? { ...i, type: e.target.value as TourInsight['type'] } : i)
                                             })}
                                             className="bg-white/5 border border-white/10 rounded-md text-[10px] uppercase font-bold px-2 py-1 text-slate-400 outline-none focus:border-purple-500 transition-colors"
                                         >
@@ -762,7 +768,7 @@ export default function BuyerAgentToolkit() {
                                     <div className="relative">
                                         <select 
                                             value={experience.strategyType}
-                                            onChange={(e) => setExperience({...experience, strategyType: e.target.value as any})}
+                                            onChange={(e) => setExperience({...experience, strategyType: e.target.value as BuyerExperience['strategyType']})}
                                             className="w-full appearance-none bg-white/5 border border-white/10 rounded-md text-sm font-medium px-3 py-2.5 text-white outline-none focus:border-purple-500 transition-colors cursor-pointer"
                                         >
                                             <option value="wealth-builder">Wealth Builder (30yr Fixed)</option>
@@ -785,7 +791,7 @@ export default function BuyerAgentToolkit() {
                                 </button>
                             </div>
                             <div className="space-y-4">
-                                {experience.localGems.map((gem: any, idx: number) => (
+                                {experience.localGems.map((gem: BuyerExperience['localGems'][0], idx: number) => (
                                     <Card key={idx} className="p-4 bg-white/[0.03] border-white/10 space-y-3 relative group">
                                         {/* Issue #4: Delete button for gems */}
                                         <Button

@@ -47,7 +47,7 @@ export default function MarketingDashboard() {
             type: "Listing Flyer",
             views: f.slug ? (analyticsViews[f.slug] || 0) : 0,
             status: f.is_published ? "Live" : "Draft",
-            agentId: (f.data as any).agentId || null,
+            agentId: (f.data as { agentId?: string })?.agentId || null,
             path: `/builder`
         })),
         { name: "Maple Valley Sanctuary", type: "Listing Flyer", views: analyticsViews["maple-valley"] || 0, status: "Live", agentId: "celeste-zarling", path: "/property-live/maple-valley" },
@@ -95,8 +95,10 @@ export default function MarketingDashboard() {
             try {
                 const { data: analyticsData } = await supabase.from('flyer_analytics').select('flyer_slug');
                 if (analyticsData) {
-                    const viewCounts = analyticsData.reduce((acc: Record<string, number>, row: any) => {
-                        acc[row.flyer_slug] = (acc[row.flyer_slug] || 0) + 1;
+                    const viewCounts = analyticsData.reduce((acc: Record<string, number>, row: { flyer_slug?: string }) => {
+                        if (row.flyer_slug) {
+                            acc[row.flyer_slug] = (acc[row.flyer_slug] || 0) + 1;
+                        }
                         return acc;
                     }, {});
                     

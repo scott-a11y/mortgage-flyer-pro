@@ -3,6 +3,54 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // RMLS RESO Web API proxy — keeps bearer token server-side
 const RMLS_API_BASE = 'https://resoapi.rmlsweb.com/reso/odata';
 
+interface RmlsProperty {
+  ListingId?: string;
+  ListingKey?: string;
+  StreetNumber?: string;
+  StreetName?: string;
+  StreetSuffix?: string;
+  UnitNumber?: string;
+  City?: string;
+  StateOrProvince?: string;
+  PostalCode?: string;
+  ListPrice?: number;
+  BedroomsTotal?: number;
+  BathroomsTotalInteger?: number;
+  LivingArea?: number;
+  LotSizeArea?: number;
+  YearBuilt?: number;
+  GarageSpaces?: number;
+  PropertyType?: string;
+  StandardStatus?: string;
+  PublicRemarks?: string;
+  AssociationFee?: number;
+  TaxAnnualAmount?: number;
+}
+
+interface RmlsListing {
+  mlsNumber: string | undefined;
+  address: string;
+  city: string;
+  state: string;
+  zip: string;
+  listPrice: number;
+  bedrooms: number;
+  bathrooms: number;
+  squareFootage: number;
+  lotSize: string;
+  yearBuilt: number;
+  garage: string;
+  propertyType: string;
+  status: string;
+  description: string;
+  hoa: number;
+  annualTax: number;
+}
+
+interface RmlsMedia {
+  MediaURL?: string;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET
   if (req.method !== 'GET') {
@@ -66,7 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await rmlsRes.json();
-    const listings = (data.value || []).map((p: any) => ({
+    const listings = (data.value || []).map((p: RmlsProperty) => ({
       mlsNumber: p.ListingId || p.ListingKey,
       address: [p.StreetNumber, p.StreetName, p.StreetSuffix, p.UnitNumber]
         .filter(Boolean).join(' '),
@@ -89,7 +137,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Fetch photos for each listing
     const withPhotos = await Promise.all(
-      listings.map(async (listing: any) => {
+      listings.map(async (listing: RmlsListing) => {
         try {
           const mediaUrl = `${RMLS_API_BASE}/Media?$filter=ResourceRecordKey eq '${listing.mlsNumber}' and MediaCategory eq 'Photo'&$select=MediaURL,Order&$orderby=Order&$top=6`;
           const mediaRes = await fetch(mediaUrl, {
@@ -100,20 +148,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           });
           if (mediaRes.ok) {
             const mediaData = await mediaRes.json();
-            const photos = (mediaData.value || []).map((m: any) => m.MediaURL);
+            const photos = (mediaData.value || []).map((m: RmlsMedia) => m.MediaURL);
             return {
               ...listing,
               heroImage: photos[0] || '',
               galleryImages: photos.slice(1)
             };
           }
-        } catch {}
+        } catch (e) {
+            console.error('Media fetch error:', e);
+        }
         return { ...listing, heroImage: '', galleryImages: [] };
       })
     );
 
     return res.status(200).json({ results: withPhotos });
-  } catch (err: any) {
-    return res.status(500).json({ error: 'Server error', detail: err.message });
+  } catch (err: unknown) {
+    return res.status(500).json({ error: 'Server error', detail: err instanceof Error ? err.message : String(err) });
   }
 }

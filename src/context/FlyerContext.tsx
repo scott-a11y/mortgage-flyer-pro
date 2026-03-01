@@ -33,12 +33,12 @@ export function FlyerProvider({ children }: { children: React.ReactNode }) {
         const companySaved = localStorage.getItem(COMPANY_DEFAULTS_KEY);
 
         if (saved) {
-            try { setCustomPartners(JSON.parse(saved)); } catch (e) { }
+            try { setCustomPartners(JSON.parse(saved)); } catch (e) { console.error('Error parsing custom partners:', e); }
         }
 
         if (brokerSaved || companySaved) {
             try {
-                let broker = brokerSaved ? JSON.parse(brokerSaved) : undefined;
+                const broker = brokerSaved ? JSON.parse(brokerSaved) : undefined;
                 const company = companySaved ? JSON.parse(companySaved) : undefined;
 
                 // Auto-repair old headshot paths in defaults
@@ -52,7 +52,7 @@ export function FlyerProvider({ children }: { children: React.ReactNode }) {
                     broker: broker || prev.broker,
                     company: company || prev.company,
                 }));
-            } catch (e) { }
+            } catch (e) { console.error('Error parsing defaults:', e); }
         }
     }, []);
 

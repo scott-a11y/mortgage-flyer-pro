@@ -108,11 +108,12 @@ export default function LeadsDashboard() {
                 window.open(`tel:${lead.phone}`, '_blank');
                 toast.success(`Calling ${lead.name}...`);
                 break;
-            case 'text':
+            case 'text': {
                 const textMsg = `Hi ${lead.name}! Thanks for your interest in ${property}. I'd love to schedule a showing at your convenience. When works best for you?`;
                 window.open(`sms:${lead.phone}?body=${encodeURIComponent(textMsg)}`, '_blank');
                 break;
-            case 'email':
+            }
+            case 'email': {
                 const subject = `Re: ${property} - Following Up`;
                 const body = `Hi ${lead.name},
 
@@ -125,6 +126,7 @@ Looking forward to connecting!
 Best regards`;
                 window.open(`mailto:${lead.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
                 break;
+            }
         }
     };
 

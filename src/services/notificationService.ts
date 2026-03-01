@@ -179,12 +179,12 @@ class NotificationService {
 
     getUnreadCount(): number {
         const notifications = JSON.parse(localStorage.getItem('lead_notifications') || '[]');
-        return notifications.filter((n: any) => !n.read).length;
+        return notifications.filter((n: { read?: boolean }) => !n.read).length;
     }
 
     markAllRead(): void {
         const notifications = JSON.parse(localStorage.getItem('lead_notifications') || '[]');
-        notifications.forEach((n: any) => n.read = true);
+        notifications.forEach((n: { read?: boolean }) => n.read = true);
         localStorage.setItem('lead_notifications', JSON.stringify(notifications));
     }
 }

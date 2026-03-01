@@ -14,7 +14,7 @@ export const phoneSchema = z
     .string()
     .min(10, "Phone number must be at least 10 digits")
     .regex(
-        /^[\d\s\-\(\)\+\.]+$/,
+        /^[\d\s\-()+.]+$/,
         "Phone number can only contain digits, spaces, and basic punctuation"
     );
 

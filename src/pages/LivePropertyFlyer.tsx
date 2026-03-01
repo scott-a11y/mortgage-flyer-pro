@@ -75,9 +75,9 @@ export default function LivePropertyFlyer() {
                     url,
                 });
                 toast.success("Shared successfully!");
-            } catch (err: any) {
+            } catch (err: unknown) {
                 // User cancelled or share failed — fall back to clipboard
-                if (err?.name !== 'AbortError') {
+                if (err instanceof Error && err.name !== 'AbortError') {
                     console.log("Share failed, copying to clipboard");
                 }
                 try {

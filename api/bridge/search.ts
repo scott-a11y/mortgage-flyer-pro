@@ -4,6 +4,37 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 // Uses OData format: https://api.bridgedataoutput.com/api/v2/OData/{dataset_id}/Property
 const BRIDGE_API_BASE = 'https://api.bridgedataoutput.com/api/v2/OData';
 
+interface BridgeMedia {
+  Order?: number;
+  MediaURL?: string;
+}
+
+interface BridgeProperty {
+  ListingId?: string;
+  ListingKey?: string;
+  StreetNumber?: string;
+  StreetName?: string;
+  StreetSuffix?: string;
+  UnitNumber?: string;
+  UnparsedAddress?: string;
+  City?: string;
+  StateOrProvince?: string;
+  PostalCode?: string;
+  ListPrice?: number;
+  BedroomsTotal?: number;
+  BathroomsTotalDecimal?: number;
+  LivingArea?: number;
+  LotSizeArea?: number;
+  YearBuilt?: number;
+  GarageSpaces?: number;
+  PropertyType?: string;
+  StandardStatus?: string;
+  PublicRemarks?: string;
+  AssociationFee?: number;
+  TaxAnnualAmount?: number;
+  Media?: BridgeMedia[];
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET
   if (req.method !== 'GET') {
@@ -66,9 +97,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const data = await bridgeRes.json();
-    const listings = (data.value || []).map((p: any) => {
+    const listings = (data.value || []).map((p: BridgeProperty) => {
       const addr = p.UnparsedAddress || [p.StreetNumber, p.StreetName, p.StreetSuffix, p.UnitNumber].filter(Boolean).join(' ');
-      const photos = (p.Media || []).sort((a: any, b: any) => (a.Order || 0) - (b.Order || 0)).map((m: any) => m.MediaURL).filter(Boolean);
+      const photos = (p.Media || []).sort((a: BridgeMedia, b: BridgeMedia) => (a.Order || 0) - (b.Order || 0)).map((m: BridgeMedia) => m.MediaURL).filter(Boolean);
 
       return {
         mlsNumber: p.ListingId || p.ListingKey,
@@ -94,7 +125,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     return res.status(200).json({ results: listings });
-  } catch (err: any) {
-    return res.status(500).json({ error: 'Server error', detail: err.message });
+  } catch (err: unknown) {
+    return res.status(500).json({ error: 'Server error', detail: err instanceof Error ? err.message : String(err) });
   }
 }

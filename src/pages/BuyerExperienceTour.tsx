@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
     MapPin, 
     Coffee, 
@@ -21,30 +21,80 @@ import {
     ShieldCheck,
     Play,
     Pause,
-    Activity
+    Activity,
+    ChevronLeft,
+    ChevronRight,
+    TrendingUp,
+    Star,
+    HelpCircle,
+    Layers,
+    School,
+    Shield,
+    Car,
+    Footprints,
+    Volume2
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { mapleValleyProperty } from "@/data/mapleValleyProperty";
-import { BuyerExperience, calculateTotalMonthlyPayment, formatCurrency } from "@/types/property";
+import { bothellProperty } from "@/data/bothellProperty";
+import { BuyerExperience, PropertyListing, calculateTotalMonthlyPayment, calculateMonthlyPayment, formatCurrency } from "@/types/property";
 import { trackFlyerView } from "@/lib/services/flyerService";
 
 const STORAGE_KEY = "buyer-experience-draft";
+
+// Room labels for the photo gallery
+const ROOM_LABELS = ['Exterior', 'Kitchen', 'Bathroom', 'Backyard'];
+
+// Neighborhood scores (simulated data per property address hash)
+function getNeighborhoodScores(city: string) {
+    const scores: Record<string, { walk: number; school: number; commute: number; safety: number }> = {
+        'Maple Valley': { walk: 42, school: 92, commute: 68, safety: 88 },
+        'Bothell': { walk: 65, school: 88, commute: 74, safety: 91 },
+    };
+    return scores[city] || { walk: 55, school: 78, commute: 60, safety: 82 };
+}
+
+// Equity projection helper
+function projectEquity(listPrice: number, downPct: number, rate: number, years: number[]) {
+    const appreciationRate = 0.04; // 4% annual avg for PNW
+    const loanAmount = listPrice * (1 - downPct / 100);
+    const monthlyRate = rate / 100 / 12;
+    const numPayments = 30 * 12;
+    return years.map(yr => {
+        const futureValue = listPrice * Math.pow(1 + appreciationRate, yr);
+        // Remaining balance after yr*12 payments
+        let remaining = loanAmount;
+        if (monthlyRate > 0) {
+            const monthlyPayment = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+            const months = yr * 12;
+            remaining = loanAmount * Math.pow(1 + monthlyRate, months) - monthlyPayment * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
+        } else {
+            remaining = loanAmount - (loanAmount / numPayments) * (yr * 12);
+        }
+        return {
+            year: yr,
+            homeValue: Math.round(futureValue),
+            equity: Math.round(futureValue - Math.max(0, remaining)),
+            rentCost: Math.round(listPrice * 0.004 * 12 * yr * Math.pow(1 + 0.03, yr)) // cumulative rent
+        };
+    });
+}
 
 export default function BuyerExperienceTour() {
     const navigate = useNavigate();
     const [insightReactions, setInsightReactions] = useState<Record<string, boolean>>({});
     const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [galleryIndex, setGalleryIndex] = useState(0);
+    const [showCompare, setShowCompare] = useState(false);
+    const [questionSection, setQuestionSection] = useState<string | null>(null);
+    const galleryRef = useRef<HTMLDivElement>(null);
 
     // Load from localStorage if available (persisted from editor)
     const [experience, setExperience] = useState<BuyerExperience>(() => {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (saved) return JSON.parse(saved);
-        } catch {}
-        return {
+        const defaults: BuyerExperience = {
             id: "exp_1",
             listing: mapleValleyProperty,
             agentTake: "This home perfectly balances modern luxury with suburban tranquility. The open-concept kitchen is truly the heart of the home, ideal for the growing family dynamics we discussed. I especially love how the natural light hits the kitchen island during breakfast time.",
@@ -63,6 +113,16 @@ export default function BuyerExperienceTour() {
             preApprovalAmount: 750000,
             hasAudioGuide: true
         };
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                // Merge saved data with defaults so new fields (like hasAudioGuide) always have values
+                return { ...defaults, ...JSON.parse(saved) };
+            }
+        } catch (e) {
+            console.error('Error parsing experience draft:', e);
+        }
+        return defaults;
     });
 
     const [offerPrice, setOfferPrice] = useState(experience.listing.specs.listPrice);
@@ -80,23 +140,136 @@ export default function BuyerExperienceTour() {
     const payment = calculateTotalMonthlyPayment(simulatedFinancing);
     const cashToClose = offerPrice * (downPaymentPercent / 100);
 
+    // Gallery images
+    const galleryImages = [
+        experience.listing.images.hero,
+        ...(experience.listing.images.secondary || [])
+    ].filter(Boolean) as string[];
+
+    // Neighborhood scores
+    const neighborhoodScores = getNeighborhoodScores(experience.listing.specs.city);
+
+    // Equity projections
+    const equityYears = [1, 2, 3, 5, 7, 10];
+    const equityData = projectEquity(offerPrice, downPaymentPercent, interestRate, equityYears);
+    const maxEquity = Math.max(...equityData.map(d => d.equity));
+
+    // Comparison property
+    const comparisonProperty: PropertyListing = experience.listing.specs.address.includes('214th')
+        ? bothellProperty : mapleValleyProperty;
+    const compPayment = calculateTotalMonthlyPayment({
+        listPrice: comparisonProperty.specs.listPrice,
+        downPaymentPercent: comparisonProperty.financing?.downPaymentPercent || 20,
+        interestRate: comparisonProperty.financing?.interestRate || 6.5,
+        loanTermYears: 30,
+        hoa: comparisonProperty.specs.hoa || 0
+    });
+
+    // Q&A handler
+    const handleQuestion = (section: string) => {
+        setQuestionSection(section);
+        toast.success("Question sent to your agent!", {
+            description: `Your agent has been notified you have a question about "${section}".`
+        });
+        setTimeout(() => setQuestionSection(null), 3000);
+    };
+
     const [isPlayingAudio, setIsPlayingAudio] = useState(false);
     const [audioProgress, setAudioProgress] = useState(0);
+    const [audioElapsed, setAudioElapsed] = useState(0);
+    const [audioDuration, setAudioDuration] = useState(32); // estimated seconds
+    const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
+    const audioTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    // Simulated audio player progress
-    useEffect(() => {
-        if (!isPlayingAudio) return;
-        const interval = setInterval(() => {
-            setAudioProgress(p => {
-                if (p >= 100) {
-                    setIsPlayingAudio(false);
-                    return 0;
-                }
-                return p + 2;
-            });
+    // Real audio player using Web Speech API (text-to-speech)
+    const toggleAudioPlayback = () => {
+        const synth = window.speechSynthesis;
+
+        if (isPlayingAudio) {
+            // Pause
+            synth.pause();
+            if (audioTimerRef.current) clearInterval(audioTimerRef.current);
+            setIsPlayingAudio(false);
+            return;
+        }
+
+        // If paused mid-speech, resume
+        if (synth.paused && speechRef.current) {
+            synth.resume();
+            setIsPlayingAudio(true);
+            audioTimerRef.current = setInterval(() => {
+                setAudioElapsed(prev => prev + 0.1);
+            }, 100);
+            return;
+        }
+
+        // Start fresh
+        synth.cancel();
+        const utterance = new SpeechSynthesisUtterance(experience.agentTake);
+        utterance.rate = 0.95;
+        utterance.pitch = 1.0;
+        
+        // Pick a natural-sounding voice
+        const voices = synth.getVoices();
+        const preferred = voices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) 
+            || voices.find(v => v.lang.startsWith('en-US'))
+            || voices.find(v => v.lang.startsWith('en'));
+        if (preferred) utterance.voice = preferred;
+
+        // Estimate duration based on word count (~150 words/min at 0.95 rate)
+        const wordCount = experience.agentTake.split(/\s+/).length;
+        const estDuration = Math.ceil((wordCount / 150) * 60 / 0.95);
+        setAudioDuration(estDuration);
+        setAudioElapsed(0);
+        setAudioProgress(0);
+
+        utterance.onend = () => {
+            setIsPlayingAudio(false);
+            setAudioProgress(100);
+            if (audioTimerRef.current) clearInterval(audioTimerRef.current);
+            setTimeout(() => {
+                setAudioProgress(0);
+                setAudioElapsed(0);
+            }, 2000);
+        };
+
+        utterance.onerror = () => {
+            setIsPlayingAudio(false);
+            if (audioTimerRef.current) clearInterval(audioTimerRef.current);
+        };
+
+        speechRef.current = utterance;
+        synth.speak(utterance);
+        setIsPlayingAudio(true);
+
+        // Track elapsed time for progress bar
+        audioTimerRef.current = setInterval(() => {
+            setAudioElapsed(prev => prev + 0.1);
         }, 100);
-        return () => clearInterval(interval);
-    }, [isPlayingAudio]);
+    };
+
+    // Update progress bar based on elapsed time
+    useEffect(() => {
+        if (audioDuration > 0) {
+            const pct = Math.min((audioElapsed / audioDuration) * 100, 100);
+            setAudioProgress(pct);
+        }
+    }, [audioElapsed, audioDuration]);
+
+    // Cleanup speech on unmount
+    useEffect(() => {
+        return () => {
+            window.speechSynthesis?.cancel();
+            if (audioTimerRef.current) clearInterval(audioTimerRef.current);
+        };
+    }, []);
+
+    // Format seconds to m:ss
+    const formatTime = (s: number) => {
+        const mins = Math.floor(s / 60);
+        const secs = Math.floor(s % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    };
 
     // High Intent Tracking
     const [hasChangedMath, setHasChangedMath] = useState(false);
@@ -194,7 +367,7 @@ export default function BuyerExperienceTour() {
     };
 
     return (
-        <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30 pb-28 overflow-x-hidden">
+        <div className="min-h-screen bg-[#050505] text-slate-300 font-sans selection:bg-purple-500/30 pb-52 overflow-x-hidden">
             <Helmet><title>Buyer Tour | Mortgage Flyer Pro</title></Helmet>
             {/* Header Hero */}
             <div className="relative h-[45vh] lg:h-[60vh] overflow-hidden">
@@ -273,7 +446,68 @@ export default function BuyerExperienceTour() {
                 </div>
             </div>
 
-            <div className="max-w-xl mx-auto px-6 -mt-4 relative z-30 space-y-12">
+            {/* Feature 1: Photo Gallery with Room-by-Room Walkthrough */}
+            {galleryImages.length > 1 && (
+                <div className="relative -mt-4 z-30 max-w-6xl mx-auto px-6 mb-8" ref={galleryRef}>
+                    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-xl">
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                            <AnimatePresence mode="wait">
+                                <motion.img
+                                    key={galleryIndex}
+                                    src={galleryImages[galleryIndex]}
+                                    alt={ROOM_LABELS[galleryIndex] || `Photo ${galleryIndex + 1}`}
+                                    className="w-full h-full object-cover"
+                                    initial={{ opacity: 0, scale: 1.05 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.3 }}
+                                />
+                            </AnimatePresence>
+                            {/* Navigation arrows */}
+                            <button
+                                onClick={() => setGalleryIndex(i => (i - 1 + galleryImages.length) % galleryImages.length)}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/70 transition-all"
+                            >
+                                <ChevronLeft className="w-4 h-4" />
+                            </button>
+                            <button
+                                onClick={() => setGalleryIndex(i => (i + 1) % galleryImages.length)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-black/70 transition-all"
+                            >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                            {/* Room label */}
+                            <div className="absolute bottom-3 left-3">
+                                <Badge className="bg-black/60 backdrop-blur-md text-white border-white/20 text-[10px] font-black uppercase tracking-widest">
+                                    {ROOM_LABELS[galleryIndex] || `Photo ${galleryIndex + 1}`}
+                                </Badge>
+                            </div>
+                            {/* Counter */}
+                            <div className="absolute bottom-3 right-3 text-[10px] font-bold text-white/60">
+                                {galleryIndex + 1}/{galleryImages.length}
+                            </div>
+                        </div>
+                        {/* Thumbnails */}
+                        <div className="flex gap-1 p-2 bg-black/60">
+                            {galleryImages.map((img, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => setGalleryIndex(idx)}
+                                    className={`flex-1 aspect-[16/10] rounded-lg overflow-hidden border-2 transition-all ${idx === galleryIndex ? 'border-purple-500 opacity-100' : 'border-transparent opacity-50 hover:opacity-80'}`}
+                                >
+                                    <img src={img} alt="" className="w-full h-full object-cover" />
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className="max-w-6xl mx-auto px-6 relative z-30">
+                {/* Desktop: 2-column layout, Mobile: stacked */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12">
+                    {/* LEFT COLUMN: Agent Take, Stats, Tour Insights, Offer Simulator */}
+                    <div className="lg:col-span-3 space-y-12">
                 {/* Agent Introduction Block */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -303,7 +537,7 @@ export default function BuyerExperienceTour() {
                                     {experience.hasAudioGuide && (
                                         <div className="bg-black/40 rounded-full p-2 flex items-center gap-4 border border-white/5 my-2">
                                             <button 
-                                                onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                                                onClick={toggleAudioPlayback}
                                                 className="w-10 h-10 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center transition-all flex-shrink-0 shadow-lg"
                                             >
                                                 {isPlayingAudio ? <Pause className="w-4 h-4 text-white fill-white" /> : <Play className="w-4 h-4 text-white fill-white ml-0.5" />}
@@ -311,7 +545,7 @@ export default function BuyerExperienceTour() {
                                             <div className="flex-1 pr-4">
                                                 <div className="flex justify-between text-[10px] text-slate-400 font-bold mb-1.5 uppercase tracking-widest">
                                                     <span>Agent Audio Note</span>
-                                                    <span className="text-blue-400">{isPlayingAudio ? "Playing" : "0:32"}</span>
+                                                    <span className="text-blue-400">{isPlayingAudio ? formatTime(audioElapsed) : formatTime(audioDuration)}</span>
                                                 </div>
                                                 <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                                                     <div 
@@ -493,16 +727,213 @@ export default function BuyerExperienceTour() {
                                 </div>
                             </div>
                             
-                            <div className="pt-4 border-t border-white/10">
+                            <div className="pt-4 border-t border-white/10 flex gap-2">
                                 <Button 
                                     onClick={handleSoftOffer}
-                                    className="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black h-12 uppercase tracking-widest text-xs"
+                                    className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black h-12 uppercase tracking-widest text-xs"
                                 >
                                     Share Idea With Agent
+                                </Button>
+                                <Button
+                                    onClick={() => handleQuestion('Offer Scenario')}
+                                    variant="outline"
+                                    className={`h-12 px-4 border-white/10 transition-all ${questionSection === 'Offer Scenario' ? 'bg-purple-500/20 border-purple-500/40 text-purple-300' : 'text-slate-400 hover:text-white hover:border-purple-500/30'}`}
+                                >
+                                    <HelpCircle className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>
                     </Card>
+                </div>
+
+                    </div>{/* END LEFT COLUMN */}
+
+                    {/* RIGHT COLUMN: Wealth Snapshot, Neighborhood, Compare, Local Gems */}
+                    <div className="lg:col-span-2 space-y-12">
+
+                {/* Feature 2: Wealth Building Snapshot */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <TrendingUp className="w-5 h-5 text-blue-400" />
+                            <h2 className="text-xl font-bold text-white tracking-tight">Wealth Building Snapshot</h2>
+                        </div>
+                        <Button
+                            onClick={() => handleQuestion('Wealth Building')}
+                            variant="ghost" size="icon"
+                            className={`h-8 w-8 transition-all ${questionSection === 'Wealth Building' ? 'text-purple-300 bg-purple-500/20' : 'text-slate-600 hover:text-white'}`}
+                        >
+                            <HelpCircle className="w-4 h-4" />
+                        </Button>
+                    </div>
+                    <Card className="p-6 bg-gradient-to-br from-blue-500/10 to-purple-500/5 border-white/10 backdrop-blur-2xl rounded-[2rem] space-y-6">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">Projected Equity Growth</p>
+                            <p className="text-sm text-slate-400">Based on {formatCurrency(offerPrice)} at {downPaymentPercent}% down · 4% annual appreciation</p>
+                        </div>
+                        <div className="space-y-3">
+                            {equityData.map((d) => (
+                                <div key={d.year} className="group">
+                                    <div className="flex items-center justify-between text-xs mb-1.5">
+                                        <span className="text-slate-500 font-bold">Year {d.year}</span>
+                                        <span className="text-white font-black">{formatCurrency(d.equity)}</span>
+                                    </div>
+                                    <div className="h-3 bg-black/40 rounded-full overflow-hidden relative">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            whileInView={{ width: `${(d.equity / maxEquity) * 100}%` }}
+                                            transition={{ duration: 0.6, delay: d.year * 0.05 }}
+                                            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
+                                        />
+                                    </div>
+                                    <div className="flex justify-between mt-1 text-[10px] text-slate-600">
+                                        <span>Home Value: {formatCurrency(d.homeValue)}</span>
+                                        <span className="text-amber-500/70">vs Rent: -{formatCurrency(d.rentCost)}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="p-4 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
+                            <p className="text-xs font-bold text-emerald-400 flex items-center gap-2">
+                                <TrendingUp className="w-3.5 h-3.5" />
+                                10-Year Equity: {formatCurrency(equityData[equityData.length - 1]?.equity || 0)}
+                            </p>
+                            <p className="text-[10px] text-slate-500 mt-1">
+                                Buying builds {formatCurrency(equityData[equityData.length - 1]?.equity || 0)} in equity vs. {formatCurrency(equityData[equityData.length - 1]?.rentCost || 0)} lost to rent.
+                            </p>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* Feature 3: Neighborhood Score Card */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Star className="w-5 h-5 text-amber-400" />
+                            <h2 className="text-xl font-bold text-white tracking-tight">Neighborhood Scorecard</h2>
+                        </div>
+                        <Button
+                            onClick={() => handleQuestion('Neighborhood')}
+                            variant="ghost" size="icon"
+                            className={`h-8 w-8 transition-all ${questionSection === 'Neighborhood' ? 'text-purple-300 bg-purple-500/20' : 'text-slate-600 hover:text-white'}`}
+                        >
+                            <HelpCircle className="w-4 h-4" />
+                        </Button>
+                    </div>
+                    <Card className="p-6 bg-white/[0.03] border-white/10 backdrop-blur-2xl rounded-[2rem] space-y-5">
+                        {[
+                            { icon: Footprints, label: 'Walk Score', value: neighborhoodScores.walk, color: 'from-cyan-500 to-blue-500', desc: neighborhoodScores.walk >= 70 ? 'Very Walkable' : neighborhoodScores.walk >= 50 ? 'Somewhat Walkable' : 'Car-Dependent' },
+                            { icon: School, label: 'School Rating', value: neighborhoodScores.school, color: 'from-emerald-500 to-teal-500', desc: neighborhoodScores.school >= 90 ? 'Exceptional' : neighborhoodScores.school >= 75 ? 'Above Average' : 'Average' },
+                            { icon: Car, label: 'Commute Score', value: neighborhoodScores.commute, color: 'from-amber-500 to-orange-500', desc: neighborhoodScores.commute >= 70 ? 'Easy Commute' : 'Moderate Commute' },
+                            { icon: Shield, label: 'Safety Score', value: neighborhoodScores.safety, color: 'from-purple-500 to-pink-500', desc: neighborhoodScores.safety >= 85 ? 'Very Safe' : 'Safe' }
+                        ].map((score) => (
+                            <div key={score.label} className="group">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2.5">
+                                        <score.icon className="w-4 h-4 text-slate-400" />
+                                        <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">{score.label}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] text-slate-500 font-medium">{score.desc}</span>
+                                        <span className="text-sm font-black text-white">{score.value}</span>
+                                    </div>
+                                </div>
+                                <div className="h-2 bg-black/40 rounded-full overflow-hidden">
+                                    <motion.div
+                                        initial={{ width: 0 }}
+                                        whileInView={{ width: `${score.value}%` }}
+                                        transition={{ duration: 0.8 }}
+                                        className={`h-full rounded-full bg-gradient-to-r ${score.color}`}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </Card>
+                </div>
+
+                {/* Feature 5: Comparison Mode */}
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Layers className="w-5 h-5 text-cyan-400" />
+                            <h2 className="text-xl font-bold text-white tracking-tight">Compare Properties</h2>
+                        </div>
+                        <Button
+                            onClick={() => setShowCompare(!showCompare)}
+                            variant="outline"
+                            size="sm"
+                            className={`text-xs font-bold uppercase tracking-wider transition-all ${showCompare ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300' : 'border-white/10 text-slate-500 hover:text-white'}`}
+                        >
+                            {showCompare ? 'Hide' : 'Compare'}
+                        </Button>
+                    </div>
+                    <AnimatePresence>
+                        {showCompare && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <div className="grid grid-cols-2 gap-3">
+                                    {/* Current property */}
+                                    <Card className="p-4 bg-purple-500/10 border-purple-500/30 rounded-2xl space-y-3">
+                                        <div className="aspect-[16/10] rounded-xl overflow-hidden mb-2">
+                                            <img src={experience.listing.images.hero} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                        <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 text-[8px] font-black uppercase">Current</Badge>
+                                        <p className="text-xs font-bold text-white truncate">{experience.listing.specs.address}</p>
+                                        <p className="text-[10px] text-slate-500">{experience.listing.specs.city}</p>
+                                        <div className="space-y-1.5 pt-2 border-t border-white/5">
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Price</span>
+                                                <span className="text-white font-bold">{formatCurrency(experience.listing.specs.listPrice)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Bed/Bath</span>
+                                                <span className="text-white font-bold">{experience.listing.specs.bedrooms}/{experience.listing.specs.bathrooms}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Sq Ft</span>
+                                                <span className="text-white font-bold">{experience.listing.specs.squareFootage.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Payment</span>
+                                                <span className="text-emerald-400 font-bold">{formatCurrency(payment.total)}/mo</span>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                    {/* Comparison property */}
+                                    <Card className="p-4 bg-white/[0.03] border-white/10 rounded-2xl space-y-3">
+                                        <div className="aspect-[16/10] rounded-xl overflow-hidden mb-2">
+                                            <img src={comparisonProperty.images.hero} alt="" className="w-full h-full object-cover" />
+                                        </div>
+                                        <Badge className="bg-white/10 text-slate-400 border-white/10 text-[8px] font-black uppercase">Compare</Badge>
+                                        <p className="text-xs font-bold text-white truncate">{comparisonProperty.specs.address}</p>
+                                        <p className="text-[10px] text-slate-500">{comparisonProperty.specs.city}</p>
+                                        <div className="space-y-1.5 pt-2 border-t border-white/5">
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Price</span>
+                                                <span className="text-white font-bold">{formatCurrency(comparisonProperty.specs.listPrice)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Bed/Bath</span>
+                                                <span className="text-white font-bold">{comparisonProperty.specs.bedrooms}/{comparisonProperty.specs.bathrooms}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Sq Ft</span>
+                                                <span className="text-white font-bold">{comparisonProperty.specs.squareFootage.toLocaleString()}</span>
+                                            </div>
+                                            <div className="flex justify-between text-[10px]">
+                                                <span className="text-slate-500">Payment</span>
+                                                <span className="text-emerald-400 font-bold">{formatCurrency(compPayment.total)}/mo</span>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Section: Local Vibe / Gems */}
@@ -533,8 +964,11 @@ export default function BuyerExperienceTour() {
                     </div>
                 </div>
 
-                {/* Issue #7: CTA Action Bar — wired up */}
-                <div className="pt-8 flex flex-col gap-4 text-center">
+                    </div>{/* END RIGHT COLUMN */}
+                </div>{/* END GRID */}
+
+                {/* Issue #7: CTA Action Bar — wired up (full width) */}
+                <div className="pt-8 flex flex-col gap-4 text-center max-w-2xl mx-auto">
                     <button 
                         onClick={handleViewRates}
                         className="p-6 rounded-[2rem] bg-gradient-to-br from-purple-500 to-purple-700 text-white shadow-xl shadow-purple-500/20 group cursor-pointer active:scale-95 transition-all"
@@ -589,6 +1023,32 @@ export default function BuyerExperienceTour() {
                     >
                         <Smartphone className="w-5 h-5" />
                     </Button>
+                    {/* Audio Player Button */}
+                    {experience.hasAudioGuide && (
+                        <button
+                            onClick={toggleAudioPlayback}
+                            aria-label={isPlayingAudio ? "Pause agent audio" : "Play agent audio"}
+                            className="relative w-10 h-10 rounded-full flex items-center justify-center transition-all hover:bg-white/10 group"
+                        >
+                            {/* Progress ring */}
+                            <svg className="absolute inset-0 w-10 h-10 -rotate-90" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2.5" />
+                                <circle 
+                                    cx="20" cy="20" r="17" fill="none" 
+                                    stroke={isPlayingAudio ? "#3b82f6" : "rgba(255,255,255,0.3)"}
+                                    strokeWidth="2.5" 
+                                    strokeLinecap="round"
+                                    strokeDasharray={`${2 * Math.PI * 17}`}
+                                    strokeDashoffset={`${2 * Math.PI * 17 * (1 - audioProgress / 100)}`}
+                                    className="transition-all duration-200"
+                                />
+                            </svg>
+                            {isPlayingAudio 
+                                ? <Pause className="w-4 h-4 text-blue-400 fill-blue-400 relative z-10" /> 
+                                : <Volume2 className="w-4 h-4 text-white relative z-10 group-hover:text-blue-400 transition-colors" />
+                            }
+                        </button>
+                    )}
                 </div>
             </div>
 

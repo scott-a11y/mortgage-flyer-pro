@@ -142,7 +142,9 @@ export default function PropertyFlyerBuilder({
                 const parsed = JSON.parse(saved);
                 if (parsed.interestRate !== undefined) return parsed.interestRate;
             }
-        } catch {}
+        } catch {
+            // Silently fall back to default if parsing fails
+        }
         return property.financing?.interestRate || 6.5;
     });
     const [downPayment, setDownPayment] = useState(() => {
@@ -152,14 +154,16 @@ export default function PropertyFlyerBuilder({
                 const parsed = JSON.parse(saved);
                 if (parsed.downPayment !== undefined) return parsed.downPayment;
             }
-        } catch {}
+        } catch {
+            // Silently fall back to default if parsing fails
+        }
         return property.financing?.downPaymentPercent || 20;
     });
 
     // Auto-Save to LocalStorage for Live Preview Bridge + Path Repair
     useEffect(() => {
         // Auto-repair old .png paths if they exist in state
-        let repairedFlyerData = { ...flyerData };
+        const repairedFlyerData = { ...flyerData };
         let changed = false;
 
         if (repairedFlyerData.broker.headshot?.endsWith('-headshot.jpg')) {
