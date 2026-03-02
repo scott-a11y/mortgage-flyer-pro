@@ -22,53 +22,40 @@ export function AgentExpertise({ agentName, brokerage }: AgentExpertiseProps) {
         {
             icon: <TrendingUp className="w-4 h-4" />,
             label: "Negotiation Elite",
-            desc: "Top 1% negotiator with proven track record in competitive markets."
+            desc: "Top 1% negotiator with proven track record of winning in competitive markets."
         }
     ];
 
     return (
-        <Card className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+        <Card className="p-6 bg-gradient-to-br from-gray-50 to-white border-gray-200">
             <div className="space-y-4">
-                <div className="text-center mb-6">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                        {agentName}
-                    </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {brokerage}
-                    </p>
-                    <div className="flex justify-center gap-1 mt-2">
-                        {[...Array(5)].map((_, i) => (
-                            <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        ))}
-                    </div>
+                <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-gray-900">Your Agent's Expertise</h3>
+                    <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
+                        <Star className="w-3 h-3 mr-1" />
+                        Top Producer
+                    </Badge>
                 </div>
-
+                
                 <div className="space-y-3">
                     {expertise.map((item, index) => (
                         <div key={index} className="flex gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                            <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg text-primary">
                                 {item.icon}
                             </div>
                             <div className="flex-1">
-                                <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                                    {item.label}
-                                </h4>
-                                <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                                    {item.desc}
-                                </p>
+                                <h4 className="font-medium text-gray-900 text-sm">{item.label}</h4>
+                                <p className="text-xs text-gray-600 mt-0.5">{item.desc}</p>
                             </div>
                         </div>
                     ))}
                 </div>
-
-                <div className="flex flex-wrap gap-2 mt-6 justify-center">
-                    <Badge variant="secondary" className="text-xs">
-                        <Award className="w-3 h-3 mr-1" />
-                        Top Producer 2024
-                    </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                        Licensed Expert
-                    </Badge>
+                
+                <div className="pt-3 border-t border-gray-200">
+                    <p className="text-sm text-gray-700">
+                        <span className="font-medium">{agentName}</span> with{' '}
+                        <span className="font-medium">{brokerage}</span>
+                    </p>
                 </div>
             </div>
         </Card>
