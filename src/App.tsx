@@ -36,10 +36,7 @@ const App = () => {
               <Route path="/live/:id" element={<ComingSoon pageName="Live Flyer" />} />
               <Route path="/lead-capture" element={<ComingSoon pageName="Lead Capture" />} />
               <Route path="/leads" element={<ComingSoon pageName="Leads Dashboard" />} />
-              <Route path="/buyer-toolkit" element={<ComingSoon pageName="Buyer Agent Toolkit" />} />
-              <Route path="/buyer-tour" element={<ComingSoon pageName="Buyer Experience Tour" />} />
-              <Route path="/adrian-sop" element={<ComingSoon pageName="Adrian SOP" />} />
-              <Route path="/agents" element={<ComingSoon pageName="Agent Management" />} />
+              <Route path="/buyer-toolkit" element={<ComingSoon pageName="Buyer Toolkit" />} />
               <Route path="*" element={<ComingSoon pageName="Page Not Found" />} />
             </Routes>
           </BrowserRouter>
