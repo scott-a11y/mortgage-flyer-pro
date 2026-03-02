@@ -17,7 +17,6 @@ import BuyerAgentToolkit from "./pages/BuyerAgentToolkit";
 import BuyerExperienceTour from "./pages/BuyerExperienceTour";
 import AdrianSOP from "./pages/AdrianSOP";
 import AgentManagement from "./pages/AgentManagement";
-import AICommandCenter from "@/components/AICommandCenter";
 
 const queryClient = new QueryClient();
 
@@ -38,15 +37,14 @@ const App = () => {
               <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
               <Route path="/property-live/:slug" element={<LivePropertyFlyer />} />
               <Route path="/live/:id" element={<LiveFlyer />} />
-              <Route path="/lead-capture/:id" element={<LeadCapturePage />} />
+              <Route path="/lead-capture" element={<LeadCapturePage />} />
               <Route path="/leads" element={<LeadsDashboard />} />
-              <Route path="/buyer-toolkit" element={<BuyerAgentToolkit />} />
-              <Route path="/buyer-tour" element={<BuyerExperienceTour />} />
+              <Route path="/buyer-agent-toolkit" element={<BuyerAgentToolkit />} />
+              <Route path="/buyer-experience" element={<BuyerExperienceTour />} />
               <Route path="/adrian-sop" element={<AdrianSOP />} />
-              <Route path="/agents" element={<AgentManagement />} />
+              <Route path="/agent-management" element={<AgentManagement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <AICommandCenter />
           </BrowserRouter>
         </TooltipProvider>
       </FlyerProvider>

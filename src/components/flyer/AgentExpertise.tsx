@@ -22,40 +22,41 @@ export function AgentExpertise({ agentName, brokerage }: AgentExpertiseProps) {
         {
             icon: <TrendingUp className="w-4 h-4" />,
             label: "Negotiation Elite",
-            desc: "Top 1% negotiator with proven track record of winning in competitive markets."
+            desc: "Top 1% negotiator with proven track record of securing optimal terms."
         }
     ];
 
     return (
-        <Card className="p-6 bg-gradient-to-br from-gray-50 to-white border-gray-200">
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Your Agent's Expertise</h3>
-                    <Badge className="bg-primary/10 text-primary hover:bg-primary/20">
-                        <Star className="w-3 h-3 mr-1" />
-                        Top Producer
-                    </Badge>
+        <Card className="p-6 border-2 border-primary/10 bg-gradient-to-br from-background to-primary/5">
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-primary" />
+                    <h3 className="font-semibold text-lg">Agent Expertise</h3>
                 </div>
-                
+                <Badge variant="secondary" className="flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-current" />
+                    5.0 Rating
+                </Badge>
+            </div>
+
+            <div className="space-y-4">
+                <div>
+                    <p className="font-medium text-sm">{agentName}</p>
+                    <p className="text-xs text-muted-foreground">{brokerage}</p>
+                </div>
+
                 <div className="space-y-3">
                     {expertise.map((item, index) => (
                         <div key={index} className="flex gap-3">
-                            <div className="flex-shrink-0 p-2 bg-primary/10 rounded-lg text-primary">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                                 {item.icon}
                             </div>
                             <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 text-sm">{item.label}</h4>
-                                <p className="text-xs text-gray-600 mt-0.5">{item.desc}</p>
+                                <p className="font-medium text-sm">{item.label}</p>
+                                <p className="text-xs text-muted-foreground">{item.desc}</p>
                             </div>
                         </div>
                     ))}
-                </div>
-                
-                <div className="pt-3 border-t border-gray-200">
-                    <p className="text-sm text-gray-700">
-                        <span className="font-medium">{agentName}</span> with{' '}
-                        <span className="font-medium">{brokerage}</span>
-                    </p>
                 </div>
             </div>
         </Card>
