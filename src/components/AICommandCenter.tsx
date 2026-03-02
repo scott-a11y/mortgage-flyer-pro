@@ -72,223 +72,221 @@ export default function AICommandCenter() {
         }
     }, [isOpen]);
 
-    const handleSendMessage = async () => {
-        if (!input.trim() || isProcessing) return;
-
+    const processUserCommand = async (command: string) => {
+        setIsProcessing(true);
+        
         const userMessage: ChatMessage = {
-            id: Date.now().toString(),
+            id: `user-${Date.now()}`,
             role: "user",
-            content: input,
+            content: command,
             timestamp: new Date(),
         };
-
-        setMessages((prev) => [...prev, userMessage]);
-        setInput("");
-        setIsProcessing(true);
-
+        
+        setMessages(prev => [...prev, userMessage]);
+        
         try {
-            const result = await processCommand(input, agents);
+            const result = await processCommand(command, agents);
             
             const assistantMessage: ChatMessage = {
-                id: (Date.now() + 1).toString(),
+                id: `assistant-${Date.now()}`,
                 role: "assistant",
-                content: result.response,
+                content: result.message,
                 timestamp: new Date(),
                 action: result.action,
             };
-
-            setMessages((prev) => [...prev, assistantMessage]);
-
-            if (result.action === "update_agent" || result.action === "add_agent") {
+            
+            setMessages(prev => [...prev, assistantMessage]);
+            setPulseCount(prev => prev + 1);
+            
+            // Reload agents if they were modified
+            if (result.action && ['update', 'add', 'delete'].includes(result.action)) {
                 const { data } = await agentService.getAllAgents();
                 if (data && data.length > 0) {
                     setAgents(data);
                 }
             }
-
-            setPulseCount((prev) => prev + 1);
         } catch (error) {
             const errorMessage: ChatMessage = {
-                id: (Date.now() + 1).toString(),
+                id: `error-${Date.now()}`,
                 role: "assistant",
                 content: "Sorry, I encountered an error processing that command. Please try again.",
                 timestamp: new Date(),
             };
-            setMessages((prev) => [...prev, errorMessage]);
-        } finally {
-            setIsProcessing(false);
+            setMessages(prev => [...prev, errorMessage]);
         }
+        
+        setIsProcessing(false);
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (input.trim() && !isProcessing) {
+            processUserCommand(input.trim());
+            setInput("");
+        }
+    };
+
+    const handleQuickAction = (action: string) => {
+        processUserCommand(action);
     };
 
     return (
         <>
+            {/* Floating Button */}
+            <AnimatePresence>
+                {!isOpen && (
+                    <motion.div
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        className="fixed bottom-6 right-6 z-50"
+                    >
+                        <Button
+                            onClick={() => setIsOpen(true)}
+                            className="h-14 w-14 rounded-full bg-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all relative group"
+                        >
+                            <Bot className="h-6 w-6" />
+                            {pulseCount > 0 && (
+                                <motion.div
+                                    key={pulseCount}
+                                    initial={{ scale: 0.8, opacity: 0.8 }}
+                                    animate={{ scale: 2, opacity: 0 }}
+                                    transition={{ duration: 1 }}
+                                    className="absolute inset-0 rounded-full bg-primary"
+                                />
+                            )}
+                            <div className="absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
+                                    AI Command Center
+                                </div>
+                            </div>
+                        </Button>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Chat Interface */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="fixed bottom-20 right-4 w-[400px] h-[600px] bg-background border border-border rounded-lg shadow-2xl z-50 flex flex-col"
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ type: "spring", damping: 25 }}
+                        className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-lg shadow-2xl overflow-hidden"
                     >
-                        <div className="flex items-center justify-between p-4 border-b">
-                            <div className="flex items-center gap-2">
-                                <Bot className="w-5 h-5 text-primary" />
-                                <h3 className="font-semibold">AI Command Center</h3>
-                                <Sparkles className="w-4 h-4 text-yellow-500" />
+                        {/* Header */}
+                        <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="relative">
+                                    <Bot className="h-6 w-6" />
+                                    <Sparkles className="h-3 w-3 absolute -top-1 -right-1 text-yellow-300" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold">AI Command Center</h3>
+                                    <p className="text-xs opacity-90">Natural language control</p>
+                                </div>
                             </div>
                             <Button
-                                size="icon"
                                 variant="ghost"
+                                size="sm"
                                 onClick={() => setIsOpen(false)}
+                                className="text-primary-foreground hover:text-primary-foreground/80"
                             >
-                                <X className="w-4 h-4" />
+                                <ChevronDown className="h-4 w-4" />
                             </Button>
                         </div>
 
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                        {/* Messages */}
+                        <div className="h-96 overflow-y-auto p-4 space-y-3">
                             {messages.map((message) => (
                                 <motion.div
                                     key={message.id}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    className={`flex gap-3 ${
-                                        message.role === "user" ? "justify-end" : ""
+                                    className={`flex gap-2 ${
+                                        message.role === "user" ? "flex-row-reverse" : ""
                                     }`}
                                 >
-                                    {message.role === "assistant" && (
-                                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                            <Bot className="w-4 h-4 text-primary" />
-                                        </div>
-                                    )}
                                     <div
-                                        className={`rounded-lg p-3 max-w-[80%] ${
+                                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                                             message.role === "user"
                                                 ? "bg-primary text-primary-foreground"
-                                                : "bg-muted"
+                                                : "bg-gray-100"
                                         }`}
                                     >
-                                        <p className="text-sm whitespace-pre-wrap">
-                                            {message.content}
-                                        </p>
+                                        {message.role === "user" ? (
+                                            <User className="h-4 w-4" />
+                                        ) : (
+                                            <Bot className="h-4 w-4" />
+                                        )}
+                                    </div>
+                                    <div
+                                        className={`max-w-[80%] px-3 py-2 rounded-lg ${
+                                            message.role === "user"
+                                                ? "bg-primary text-primary-foreground"
+                                                : "bg-gray-100"
+                                        }`}
+                                    >
+                                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                         {message.action && (
-                                            <div className="flex items-center gap-1 mt-2 text-xs opacity-70">
-                                                <Zap className="w-3 h-3" />
-                                                Action: {message.action}
+                                            <div className="mt-2 flex items-center gap-1">
+                                                <Zap className="h-3 w-3" />
+                                                <span className="text-xs opacity-80">
+                                                    Action: {message.action}
+                                                </span>
                                             </div>
                                         )}
                                     </div>
-                                    {message.role === "user" && (
-                                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                                            <User className="w-4 h-4 text-primary-foreground" />
-                                        </div>
-                                    )}
                                 </motion.div>
                             ))}
-                            {isProcessing && (
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    className="flex gap-3"
-                                >
-                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <Bot className="w-4 h-4 text-primary" />
-                                    </div>
-                                    <div className="bg-muted rounded-lg p-3">
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                    </div>
-                                </motion.div>
-                            )}
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className="p-2 border-t">
-                            <div className="flex gap-1 mb-2">
+                        {/* Quick Actions */}
+                        <div className="px-4 py-2 border-t border-gray-100">
+                            <div className="flex gap-2 flex-wrap">
                                 {QUICK_ACTIONS.map((action) => (
-                                    <Button
+                                    <button
                                         key={action}
-                                        variant="outline"
-                                        size="sm"
-                                        className="text-xs"
-                                        onClick={() => setInput(action)}
+                                        onClick={() => handleQuickAction(action)}
+                                        className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
+                                        disabled={isProcessing}
                                     >
                                         {action}
-                                    </Button>
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="p-4 border-t">
+                        {/* Input */}
+                        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-100">
                             <div className="flex gap-2">
                                 <input
                                     ref={inputRef}
                                     type="text"
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
-                                    onKeyPress={(e) => {
-                                        if (e.key === "Enter") {
-                                            handleSendMessage();
-                                        }
-                                    }}
                                     placeholder="Type a command..."
-                                    className="flex-1 px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                                     disabled={isProcessing}
                                 />
                                 <Button
-                                    size="icon"
-                                    onClick={handleSendMessage}
+                                    type="submit"
+                                    size="sm"
                                     disabled={!input.trim() || isProcessing}
                                 >
                                     {isProcessing ? (
-                                        <Loader2 className="w-4 h-4 animate-spin" />
+                                        <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
-                                        <Send className="w-4 h-4" />
+                                        <Send className="h-4 w-4" />
                                     )}
                                 </Button>
                             </div>
-                        </div>
+                        </form>
                     </motion.div>
                 )}
             </AnimatePresence>
-
-            <motion.button
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-4 right-4 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center z-50"
-            >
-                <AnimatePresence mode="wait">
-                    {isOpen ? (
-                        <motion.div
-                            key="close"
-                            initial={{ rotate: -90, opacity: 0 }}
-                            animate={{ rotate: 0, opacity: 1 }}
-                            exit={{ rotate: 90, opacity: 0 }}
-                        >
-                            <ChevronDown className="w-6 h-6" />
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="open"
-                            initial={{ rotate: 90, opacity: 0 }}
-                            animate={{ rotate: 0, opacity: 1 }}
-                            exit={{ rotate: -90, opacity: 0 }}
-                        >
-                            <MessageSquare className="w-6 h-6" />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-                {pulseCount > 0 && !isOpen && (
-                    <motion.div
-                        key={pulseCount}
-                        initial={{ scale: 0.8, opacity: 1 }}
-                        animate={{ scale: 2, opacity: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className="absolute inset-0 bg-primary rounded-full"
-                    />
-                )}
-            </motion.button>
         </>
     );
 }
