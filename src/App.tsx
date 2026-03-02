@@ -39,7 +39,7 @@ const App = () => {
               <Route path="/live/:id" element={<LiveFlyer />} />
               <Route path="/lead-capture" element={<LeadCapturePage />} />
               <Route path="/leads" element={<LeadsDashboard />} />
-              <Route path="/buyer-toolkit" element={<BuyerAgentToolkit />} />
+              <Route path="/buyer-agent-toolkit" element={<BuyerAgentToolkit />} />
               <Route path="/buyer-experience-tour" element={<BuyerExperienceTour />} />
               <Route path="/adrian-sop" element={<AdrianSOP />} />
               <Route path="/agent-management" element={<AgentManagement />} />
