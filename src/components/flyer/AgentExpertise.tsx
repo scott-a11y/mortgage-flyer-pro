@@ -22,42 +22,48 @@ export function AgentExpertise({ agentName, brokerage }: AgentExpertiseProps) {
         {
             icon: <TrendingUp className="w-4 h-4" />,
             label: "Negotiation Elite",
-            desc: "Top 1% negotiator with proven track record in competitive markets."
+            desc: "Top 1% negotiator with proven track record of securing winning offers."
         },
         {
             icon: <Award className="w-4 h-4" />,
-            label: "Certified Advisor",
-            desc: "Accredited Buyer's Representative with advanced market certifications."
+            label: "Certified Professional",
+            desc: "Advanced certifications in luxury homes, relocation, and investment properties."
         }
     ];
 
     return (
-        <Card className="p-6 space-y-4">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold">Agent Expertise</h3>
-                <Badge variant="secondary" className="text-xs">
-                    <Star className="w-3 h-3 mr-1" />
-                    Top Producer
-                </Badge>
-            </div>
-            
-            <div className="space-y-3">
-                {expertise.map((item, index) => (
-                    <div key={index} className="flex gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            {item.icon}
+        <Card className="p-6 bg-white/5 backdrop-blur-xl border-white/10">
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Star className="w-5 h-5 text-yellow-400" />
+                    <h3 className="text-lg font-semibold text-white">Agent Expertise</h3>
+                </div>
+                
+                <div className="space-y-3">
+                    {expertise.map((item, index) => (
+                        <div key={index} className="flex items-start gap-3">
+                            <div className="p-2 rounded-lg bg-white/10 text-white/80">
+                                {item.icon}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                                <h4 className="text-sm font-medium text-white">{item.label}</h4>
+                                <p className="text-xs text-white/70">{item.desc}</p>
+                            </div>
                         </div>
-                        <div className="flex-1">
-                            <p className="font-medium text-sm">{item.label}</p>
-                            <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    ))}
+                </div>
+
+                <div className="pt-4 border-t border-white/10">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-white">{agentName}</p>
+                            <p className="text-xs text-white/70">{brokerage}</p>
                         </div>
+                        <Badge variant="secondary" className="bg-white/10 text-white border-white/20">
+                            Expert Agent
+                        </Badge>
                     </div>
-                ))}
-            </div>
-            
-            <div className="pt-3 border-t">
-                <p className="text-sm font-medium">{agentName}</p>
-                <p className="text-xs text-muted-foreground">{brokerage}</p>
+                </div>
             </div>
         </Card>
     );
