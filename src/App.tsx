@@ -38,13 +38,13 @@ const App = () => {
               <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
               <Route path="/property-live/:slug" element={<LivePropertyFlyer />} />
               <Route path="/live/:id" element={<LiveFlyer />} />
-              <Route path="/lead-capture/:flyerId" element={<LeadCapturePage />} />
+              <Route path="/lead-capture/:id" element={<LeadCapturePage />} />
               <Route path="/leads" element={<LeadsDashboard />} />
               <Route path="/buyer-toolkit" element={<BuyerAgentToolkit />} />
-              <Route path="/buyer-experience" element={<BuyerExperienceTour />} />
+              <Route path="/buyer-experience-tour" element={<BuyerExperienceTour />} />
               <Route path="/adrian-sop" element={<AdrianSOP />} />
               <Route path="/agents" element={<AgentManagement />} />
-              <Route path="/ai" element={<AICommandCenter />} />
+              <Route path="/ai-command" element={<AICommandCenter />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
