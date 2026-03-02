@@ -22,59 +22,46 @@ export function AgentExpertise({ agentName, brokerage }: AgentExpertiseProps) {
         {
             icon: <TrendingUp className="w-4 h-4" />,
             label: "Negotiation Elite",
-            desc: "Top 1% negotiator with proven track record of winning in multiple offer situations."
+            desc: "Top 1% negotiator with proven track record of winning in competitive markets."
         },
         {
             icon: <Award className="w-4 h-4" />,
-            label: "Certified Partner",
-            desc: "Vetted and certified by District Design Build for exceptional service standards."
+            label: "Client Advocate",
+            desc: "Dedicated to protecting your interests and maximizing your investment potential."
         }
     ];
 
-    const stats = [
-        { value: "98%", label: "Success Rate" },
-        { value: "14", label: "Days Average" },
-        { value: "250+", label: "Homes Sold" },
-        { value: "5.0", label: "Client Rating", icon: <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /> }
-    ];
-
     return (
-        <Card className="p-6 bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200">
-            <div className="space-y-6">
-                <div className="text-center">
-                    <h3 className="text-lg font-semibold text-slate-900">{agentName}</h3>
-                    <p className="text-sm text-slate-600">{brokerage}</p>
-                    <div className="flex items-center justify-center gap-2 mt-2">
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                            Elite Partner
-                        </Badge>
-                        <Badge variant="secondary" className="bg-green-100 text-green-700">
-                            Top Producer
-                        </Badge>
-                    </div>
+        <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
+            <div className="space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                        Your Real Estate Expert
+                    </h3>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+                        <Star className="w-3 h-3 mr-1" />
+                        Top Producer
+                    </Badge>
                 </div>
-
-                <div className="grid grid-cols-4 gap-3">
-                    {stats.map((stat, index) => (
-                        <div key={index} className="text-center">
-                            <div className="flex items-center justify-center gap-1 text-xl font-bold text-slate-900">
-                                {stat.value}
-                                {stat.icon}
-                            </div>
-                            <div className="text-xs text-slate-600">{stat.label}</div>
-                        </div>
-                    ))}
+                
+                <div className="text-center mb-4">
+                    <p className="font-semibold text-gray-900">{agentName}</p>
+                    <p className="text-sm text-gray-600">{brokerage}</p>
                 </div>
 
                 <div className="space-y-3">
                     {expertise.map((item, index) => (
-                        <div key={index} className="flex gap-3 items-start">
-                            <div className="p-2 bg-white rounded-lg shadow-sm">
+                        <div key={index} className="flex gap-3">
+                            <div className="flex-shrink-0 text-blue-600">
                                 {item.icon}
                             </div>
-                            <div className="flex-1">
-                                <div className="font-medium text-sm text-slate-900">{item.label}</div>
-                                <div className="text-xs text-slate-600 leading-relaxed">{item.desc}</div>
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium text-gray-900">
+                                    {item.label}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                    {item.desc}
+                                </p>
                             </div>
                         </div>
                     ))}
