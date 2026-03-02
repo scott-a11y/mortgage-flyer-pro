@@ -37,6 +37,13 @@ const App = () => {
               <Route path="/lead-capture" element={<ComingSoon pageName="Lead Capture" />} />
               <Route path="/leads" element={<ComingSoon pageName="Leads Dashboard" />} />
               <Route path="/buyer-toolkit" element={<ComingSoon pageName="Buyer Toolkit" />} />
+              <Route path="/calculator" element={<ComingSoon pageName="Calculator" />} />
+              <Route path="/calendar" element={<ComingSoon pageName="Calendar" />} />
+              <Route path="/analytics" element={<ComingSoon pageName="Analytics" />} />
+              <Route path="/settings" element={<ComingSoon pageName="Settings" />} />
+              <Route path="/profile" element={<ComingSoon pageName="Profile" />} />
+              <Route path="/admin" element={<ComingSoon pageName="Admin" />} />
+              <Route path="*" element={<ComingSoon pageName="Page Not Found" />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
