@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Download, FileImage, FileText, ChevronDown, Instagram, Facebook, Mail, Linkedin, Printer, CreditCard } from "lucide-react";
+import { Download, FileImage, FileText, ChevronDown, Instagram, Facebook, Mail, Linkedin, Printer, CreditCard, Eye } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { toast } from "sonner";
@@ -226,6 +226,14 @@ export function ExportMenu({ previewRef, isExporting, setIsExporting }: ExportMe
           <Mail className="w-4 h-4 mr-2" />
           Email Signature (600×200)
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+        <div className="px-2 py-2.5 bg-emerald-500/10 rounded-md mx-2 mb-1 mt-1 border border-emerald-500/20">
+          <p className="text-[10px] text-emerald-400 font-medium leading-tight">
+            <span className="font-bold flex items-center gap-1 mb-1"><Eye className="w-3 h-3" /> Pro Tip</span>
+            PDFs are static! For text messages and mobile, click <strong className="text-white">Get Live Link</strong> instead to share an interactive mobile page.
+          </p>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

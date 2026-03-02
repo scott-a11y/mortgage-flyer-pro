@@ -770,6 +770,7 @@ export default function BuyerAgentToolkit() {
                                             value={experience.strategyType}
                                             onChange={(e) => setExperience({...experience, strategyType: e.target.value as BuyerExperience['strategyType']})}
                                             className="w-full appearance-none bg-white/5 border border-white/10 rounded-md text-sm font-medium px-3 py-2.5 text-white outline-none focus:border-purple-500 transition-colors cursor-pointer"
+                                            style={{ colorScheme: 'dark' }}
                                         >
                                             <option value="wealth-builder">Wealth Builder (30yr Fixed)</option>
                                             <option value="cash-flow">Cash Flow Maximizer (ARM)</option>

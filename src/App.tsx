@@ -30,26 +30,25 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-                <Route path="/" element={<MarketingDashboard />} />
-                <Route path="/dashboard" element={<MarketingDashboard />} />
-                <Route path="/dashboard/:agentId" element={<MarketingDashboard />} />
+              <Route path="/" element={<MarketingDashboard />} />
+              <Route path="/dashboard" element={<MarketingDashboard />} />
+              <Route path="/dashboard/:agentId" element={<MarketingDashboard />} />
               <Route path="/builder" element={<PropertyFlyerBuilder />} />
               <Route path="/rate-engine" element={<FlyerBuilder />} />
               <Route path="/property/:slug" element={<PropertyFlyerBuilder />} />
               <Route path="/property-live/:slug" element={<LivePropertyFlyer />} />
-              <Route path="/lead/:slug" element={<LeadCapturePage />} />
+              <Route path="/live/:id" element={<LiveFlyer />} />
+              <Route path="/lead-capture" element={<LeadCapturePage />} />
               <Route path="/leads" element={<LeadsDashboard />} />
-              <Route path="/buyer-agent" element={<BuyerAgentToolkit />} />
-              <Route path="/tour-live" element={<BuyerExperienceTour />} />
-              <Route path="/flyer/:slug" element={<LiveFlyer />} />
-              <Route path="/live/:slug" element={<LiveFlyer />} />
+              <Route path="/buyer-toolkit" element={<BuyerAgentToolkit />} />
+              <Route path="/buyer-tour" element={<BuyerExperienceTour />} />
               <Route path="/adrian-sop" element={<AdrianSOP />} />
               <Route path="/agents" element={<AgentManagement />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/ai" element={<AICommandCenter />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <AICommandCenter />
           </BrowserRouter>
+          <AICommandCenter />
         </TooltipProvider>
       </FlyerProvider>
     </QueryClientProvider>

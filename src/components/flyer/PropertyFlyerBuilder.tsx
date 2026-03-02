@@ -36,7 +36,8 @@ import {
     Users,
     Printer,
     LayoutGrid,
-    AlertTriangle
+    AlertTriangle,
+    Link2
 } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -44,6 +45,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { ImageUploader } from "./editors/ImageUploader";
 import { MarketingKitModal } from "./marketing/MarketingKitModal";
+import { TemplateManager } from "./TemplateManager";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -70,16 +72,75 @@ export default function PropertyFlyerBuilder({
     onSave
 }: PropertyFlyerBuilderProps) {
     const navigate = useNavigate();
-    const [property, setProperty] = useState<PropertyListing>(initialProperty);
-    const [flyerData, setFlyerData] = useState<FlyerData>(initialFlyerData);
+    const [property, setProperty] = useState<PropertyListing>(() => {
+        try {
+            const saved = localStorage.getItem('property_preview_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.property) return parsed.property;
+            }
+        } catch { /* ignore */ }
+        return initialProperty;
+    });
+    const [flyerData, setFlyerData] = useState<FlyerData>(() => {
+        try {
+            const saved = localStorage.getItem('property_preview_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.flyerData) return parsed.flyerData;
+            }
+        } catch { /* ignore */ }
+        return initialFlyerData;
+    });
     const [activeFormat, setActiveFormat] = useState<PreviewFormat>("flyer");
     const [showExport, setShowExport] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
 
+    // Import from URL Mock State
+    const [importUrl, setImportUrl] = useState("");
+    const [isImporting, setIsImporting] = useState(false);
+
+    const handleImportUrl = () => {
+        if (!importUrl) return;
+        setIsImporting(true);
+        // Simulate network delay for scraping MLS/Zillow
+        setTimeout(() => {
+            setProperty(prev => ({
+                ...prev,
+                specs: {
+                    ...prev.specs,
+                    address: "10500 NE 8th St, Unit 1400",
+                    city: "Bellevue",
+                    state: "WA",
+                    zipCode: "98004",
+                    listPrice: 1250000,
+                    bedrooms: 2,
+                    bathrooms: 2,
+                    squareFootage: 1850
+                },
+                images: {
+                    hero: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+                    secondary: prev.images.secondary
+                }
+            }));
+            
+            toast.success("Property imported successfully!");
+            setIsImporting(false);
+            setImportUrl("");
+        }, 1500);
+    };
+
     // Theme selection - defaults to CENTURY 21 or initial flyer's theme
-    const [selectedTheme, setSelectedTheme] = useState<ColorTheme>(
-        initialFlyerData.colorTheme || brokerageThemes.find(t => t.id === "century21") || brokerageThemes[0]
-    );
+    const [selectedTheme, setSelectedTheme] = useState<ColorTheme>(() => {
+        try {
+            const saved = localStorage.getItem('property_preview_data');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed.flyerData?.colorTheme) return parsed.flyerData.colorTheme;
+            }
+        } catch { /* ignore */ }
+        return initialFlyerData.colorTheme || brokerageThemes.find(t => t.id === "century21") || brokerageThemes[0];
+    });
 
     // Image position control (0 = top, 50 = center, 100 = bottom)
     const [heroImagePosition, setHeroImagePosition] = useState(40);
@@ -512,10 +573,10 @@ export default function PropertyFlyerBuilder({
                             href={`/property-live/${property.specs.address.toLowerCase().replace(/\s+/g, '-')}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-3 py-2 bg-slate-700/50 hover:bg-slate-600 text-white text-xs font-medium rounded-xl transition-all border border-white/5"
+                            className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 hover:text-emerald-300 text-xs font-bold rounded-xl transition-all border border-emerald-500/20 cursor-pointer"
                         >
-                            <Eye className="w-3.5 h-3.5 text-amber-500" />
-                            <span className="hidden sm:inline">Web View</span>
+                            <Eye className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Get Live Link</span>
                         </a>
 
                         <button
@@ -524,7 +585,7 @@ export default function PropertyFlyerBuilder({
                             title="Share a collaborate link"
                         >
                             <Users className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="hidden md:inline">Share</span>
+                            <span className="hidden md:inline">Collaborate</span>
                         </button>
 
                         <AlertDialog open={showResetDialog} onOpenChange={setShowResetDialog}>
@@ -585,6 +646,11 @@ export default function PropertyFlyerBuilder({
                         <div className="h-6 w-px bg-white/10 mx-1 hidden md:block"></div>
 
                         <MarketingKitModal property={property} flyerData={{ ...flyerData, colorTheme: selectedTheme }} />
+
+                        <TemplateManager currentData={{...flyerData, colorTheme: selectedTheme}} onLoadTemplate={(data) => {
+                            setFlyerData(data);
+                            if (data.colorTheme) setSelectedTheme(data.colorTheme);
+                        }} />
 
                         <button
                             onClick={() => setShowExport(true)}
@@ -789,6 +855,33 @@ export default function PropertyFlyerBuilder({
                                 Property Details
                                 <span className="text-[10px] text-slate-500 font-normal ml-auto">Editable</span>
                             </h3>
+
+                            {/* MLS Import Scaffold */}
+                            <div className="mb-5 p-3 outline-dashed outline-2 outline-slate-700/50 rounded-xl bg-slate-800/30">
+                                <label className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block mb-2 flex items-center gap-1.5">
+                                    <Link2 className="w-3 h-3" /> Auto-Import Listing
+                                </label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="url"
+                                        placeholder="Paste Zillow or MLS link..."
+                                        value={importUrl}
+                                        onChange={(e) => setImportUrl(e.target.value)}
+                                        className="w-full bg-slate-900 border border-slate-700/50 rounded-lg px-3 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-emerald-500/50"
+                                        disabled={isImporting}
+                                    />
+                                    <button
+                                        onClick={handleImportUrl}
+                                        disabled={!importUrl || isImporting}
+                                        className="whitespace-nowrap px-3 py-2 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:hover:bg-emerald-500 text-slate-900 text-xs font-bold rounded-lg transition-colors"
+                                    >
+                                        {isImporting ? "Importing..." : "Import"}
+                                    </button>
+                                </div>
+                                <p className="text-[9px] text-slate-500 mt-2 leading-tight">
+                                    Paste a valid URL to automatically pull high-res photos, list price, and property stats.
+                                </p>
+                            </div>
 
                             <div className="space-y-4 text-sm">
                                 {/* Address Information */}

@@ -43,8 +43,16 @@ function getApiBase(source: MLSSource): string {
  */
 export async function searchByMLS(mlsNumber: string, source: MLSSource = 'rmls'): Promise<RMLSSearchResponse> {
   const base = getApiBase(source);
-  const res = await fetch(`${base}?mls=${encodeURIComponent(mlsNumber)}`);
-  return res.json();
+  try {
+    const res = await fetch(`${base}?mls=${encodeURIComponent(mlsNumber)}`);
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await res.json();
+    }
+    return getMockRmlsResponse(mlsNumber);
+  } catch (err) {
+    return { results: [], error: err instanceof Error ? err.message : "Search failed" };
+  }
 }
 
 /**
@@ -54,8 +62,16 @@ export async function searchByAddress(address: string, city?: string, source: ML
   const base = getApiBase(source);
   let url = `${base}?address=${encodeURIComponent(address)}`;
   if (city) url += `&city=${encodeURIComponent(city)}`;
-  const res = await fetch(url);
-  return res.json();
+  try {
+    const res = await fetch(url);
+    const contentType = res.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      return await res.json();
+    }
+    return getMockRmlsResponse(address);
+  } catch (err) {
+    return { results: [], error: err instanceof Error ? err.message : "Search failed" };
+  }
 }
 
 /**
@@ -108,3 +124,39 @@ export const MLS_SOURCES: { value: MLSSource; label: string; region: string }[] 
   { value: 'rmls', label: 'RMLS', region: 'Oregon / SW Washington' },
   { value: 'nwmls', label: 'NWMLS (Bridge)', region: 'Washington' }
 ];
+
+/**
+ * Generate mock data for local development when API routes are unavailable
+ */
+function getMockRmlsResponse(query: string): RMLSSearchResponse {
+  return {
+    demo: true,
+    hint: "Local mock data. Deploy to Vercel or configure Vite proxy for real API.",
+    results: [
+      {
+        mlsNumber: `MOCK-${Math.floor(Math.random() * 1000000)}`,
+        address: query.includes("Ave") ? query : "123 Mockingbird Lane",
+        city: "Portland",
+        state: "OR",
+        zip: "97204",
+        listPrice: 850000,
+        bedrooms: 4,
+        bathrooms: 3,
+        squareFootage: 2800,
+        lotSize: "0.25 acres",
+        yearBuilt: 2015,
+        garage: "2 car",
+        propertyType: "Single Family",
+        status: "Active",
+        description: "This is a beautifully appointed mock property generated for local development. It features stunning mock-hardwood floors and a pretend chef's kitchen.",
+        hoa: 50,
+        annualTax: 8500,
+        heroImage: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+        galleryImages: [
+            "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+            "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+        ]
+      }
+    ]
+  };
+}

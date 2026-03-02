@@ -61,6 +61,7 @@ MATCHING RULES:
 - For phone updates, clean to format like (425) 555-0123
 - For intent "list_agents", no agent field needed
 - For "create_agent", allFields should contain: name, title, phone, email, brokerage
+- For "update_listing", return this intent if the user asks to change the address, price, or city
 - For general_question, set intent to "general_question"
 - If unsure, set intent to "unknown"
 
@@ -110,6 +111,13 @@ function parseCommandFallback(
         return {
             intent: "delete_agent",
             agentName: matchedAgent?.name,
+            rawInput: input,
+        };
+    }
+
+    if (lower.includes("address") || lower.includes("price") || lower.includes("listing")) {
+        return {
+            intent: "update_listing",
             rawInput: input,
         };
     }
@@ -229,6 +237,13 @@ async function executeCommand(
                 message: `✅ Updated ${agent.name}'s ${parsed.field} to "${parsed.value}"`,
                 action: "update",
                 details: { agentId: agent.id, field: parsed.field, value: parsed.value },
+            };
+        }
+
+        case "update_listing": {
+            return {
+                success: false,
+                message: "I can only update agent profiles right now. To change the listing address or property data, please use the Builder or the 'Change Listing' button.",
             };
         }
 
