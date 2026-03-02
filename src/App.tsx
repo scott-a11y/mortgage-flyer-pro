@@ -42,7 +42,7 @@ const App = () => {
               <Route path="/buyer-toolkit" element={<BuyerAgentToolkit />} />
               <Route path="/buyer-experience" element={<BuyerExperienceTour />} />
               <Route path="/adrian-sop" element={<AdrianSOP />} />
-              <Route path="/agent-management" element={<AgentManagement />} />
+              <Route path="/agents" element={<AgentManagement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
