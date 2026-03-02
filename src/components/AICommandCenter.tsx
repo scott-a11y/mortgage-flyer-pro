@@ -72,186 +72,144 @@ export default function AICommandCenter() {
         }
     }, [isOpen]);
 
-    const processUserCommand = async (command: string) => {
-        setIsProcessing(true);
-        
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!input.trim() || isProcessing) return;
+
         const userMessage: ChatMessage = {
-            id: `user-${Date.now()}`,
+            id: Date.now().toString(),
             role: "user",
-            content: command,
+            content: input.trim(),
             timestamp: new Date(),
         };
-        
-        setMessages(prev => [...prev, userMessage]);
-        
+
+        setMessages((prev) => [...prev, userMessage]);
+        setInput("");
+        setIsProcessing(true);
+
         try {
-            const result = await processCommand(command, agents);
-            
+            const result: CommandResult = await processCommand(input, agents);
+
             const assistantMessage: ChatMessage = {
-                id: `assistant-${Date.now()}`,
+                id: (Date.now() + 1).toString(),
                 role: "assistant",
                 content: result.message,
                 timestamp: new Date(),
                 action: result.action,
             };
-            
-            setMessages(prev => [...prev, assistantMessage]);
-            setPulseCount(prev => prev + 1);
-            
-            // Reload agents if they were modified
-            if (result.action && ['update', 'add', 'delete'].includes(result.action)) {
-                const { data } = await agentService.getAllAgents();
-                if (data && data.length > 0) {
-                    setAgents(data);
-                }
+
+            setMessages((prev) => [...prev, assistantMessage]);
+
+            if (result.updatedAgents) {
+                setAgents(result.updatedAgents);
+            }
+
+            if (result.action === "update" || result.action === "add" || result.action === "delete") {
+                setPulseCount((prev) => prev + 1);
             }
         } catch (error) {
             const errorMessage: ChatMessage = {
-                id: `error-${Date.now()}`,
+                id: (Date.now() + 1).toString(),
                 role: "assistant",
-                content: "Sorry, I encountered an error processing that command. Please try again.",
+                content: "I encountered an error processing that command. Please try again.",
                 timestamp: new Date(),
             };
-            setMessages(prev => [...prev, errorMessage]);
+            setMessages((prev) => [...prev, errorMessage]);
+        } finally {
+            setIsProcessing(false);
         }
-        
-        setIsProcessing(false);
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (input.trim() && !isProcessing) {
-            processUserCommand(input.trim());
-            setInput("");
-        }
-    };
-
-    const handleQuickAction = (action: string) => {
-        processUserCommand(action);
     };
 
     return (
         <>
-            {/* Floating Button */}
-            <AnimatePresence>
-                {!isOpen && (
+            <motion.button
+                onClick={() => setIsOpen(true)}
+                className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full shadow-lg flex items-center justify-center text-white hover:scale-110 transition-transform"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                <Bot className="w-6 h-6" />
+                {pulseCount > 0 && (
                     <motion.div
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="fixed bottom-6 right-6 z-50"
-                    >
-                        <Button
-                            onClick={() => setIsOpen(true)}
-                            className="h-14 w-14 rounded-full bg-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all relative group"
-                        >
-                            <Bot className="h-6 w-6" />
-                            {pulseCount > 0 && (
-                                <motion.div
-                                    key={pulseCount}
-                                    initial={{ scale: 0.8, opacity: 0.8 }}
-                                    animate={{ scale: 2, opacity: 0 }}
-                                    transition={{ duration: 1 }}
-                                    className="absolute inset-0 rounded-full bg-primary"
-                                />
-                            )}
-                            <div className="absolute -top-12 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap">
-                                    AI Command Center
-                                </div>
-                            </div>
-                        </Button>
-                    </motion.div>
+                        key={pulseCount}
+                        className="absolute inset-0 rounded-full bg-purple-400"
+                        initial={{ scale: 1, opacity: 0.5 }}
+                        animate={{ scale: 2, opacity: 0 }}
+                        transition={{ duration: 0.5 }}
+                    />
                 )}
-            </AnimatePresence>
+            </motion.button>
 
-            {/* Chat Interface */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        transition={{ type: "spring", damping: 25 }}
-                        className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-lg shadow-2xl overflow-hidden"
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed bottom-24 right-6 z-50 w-96 h-[600px] bg-white dark:bg-gray-900 rounded-lg shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div className="relative">
-                                    <Bot className="h-6 w-6" />
-                                    <Sparkles className="h-3 w-3 absolute -top-1 -right-1 text-yellow-300" />
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold">AI Command Center</h3>
-                                    <p className="text-xs opacity-90">Natural language control</p>
-                                </div>
+                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between text-white">
+                            <div className="flex items-center gap-2">
+                                <Bot className="w-5 h-5" />
+                                <h3 className="font-semibold">AI Command Center</h3>
                             </div>
-                            <Button
-                                variant="ghost"
-                                size="sm"
+                            <button
                                 onClick={() => setIsOpen(false)}
-                                className="text-primary-foreground hover:text-primary-foreground/80"
+                                className="hover:bg-white/20 rounded p-1 transition-colors"
                             >
-                                <ChevronDown className="h-4 w-4" />
-                            </Button>
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
 
                         {/* Messages */}
-                        <div className="h-96 overflow-y-auto p-4 space-y-3">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             {messages.map((message) => (
-                                <motion.div
+                                <div
                                     key={message.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
                                     className={`flex gap-2 ${
-                                        message.role === "user" ? "flex-row-reverse" : ""
+                                        message.role === "user" ? "justify-end" : "justify-start"
                                     }`}
                                 >
+                                    {message.role === "assistant" && (
+                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <Bot className="w-4 h-4 text-white" />
+                                        </div>
+                                    )}
                                     <div
-                                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                                        className={`max-w-[80%] p-3 rounded-lg ${
                                             message.role === "user"
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-gray-100"
-                                        }`}
-                                    >
-                                        {message.role === "user" ? (
-                                            <User className="h-4 w-4" />
-                                        ) : (
-                                            <Bot className="h-4 w-4" />
-                                        )}
-                                    </div>
-                                    <div
-                                        className={`max-w-[80%] px-3 py-2 rounded-lg ${
-                                            message.role === "user"
-                                                ? "bg-primary text-primary-foreground"
-                                                : "bg-gray-100"
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-gray-100 dark:bg-gray-800"
                                         }`}
                                     >
                                         <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                                         {message.action && (
-                                            <div className="mt-2 flex items-center gap-1">
-                                                <Zap className="h-3 w-3" />
-                                                <span className="text-xs opacity-80">
-                                                    Action: {message.action}
-                                                </span>
+                                            <div className="mt-2 flex items-center gap-1 text-xs opacity-70">
+                                                <Zap className="w-3 h-3" />
+                                                <span>Action: {message.action}</span>
                                             </div>
                                         )}
                                     </div>
-                                </motion.div>
+                                    {message.role === "user" && (
+                                        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <User className="w-4 h-4" />
+                                        </div>
+                                    )}
+                                </div>
                             ))}
                             <div ref={messagesEndRef} />
                         </div>
 
                         {/* Quick Actions */}
-                        <div className="px-4 py-2 border-t border-gray-100">
-                            <div className="flex gap-2 flex-wrap">
+                        <div className="px-4 py-2 border-t dark:border-gray-700">
+                            <div className="flex gap-2 overflow-x-auto">
                                 {QUICK_ACTIONS.map((action) => (
                                     <button
                                         key={action}
-                                        onClick={() => handleQuickAction(action)}
-                                        className="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded transition-colors"
-                                        disabled={isProcessing}
+                                        onClick={() => setInput(action)}
+                                        className="text-xs bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors whitespace-nowrap"
                                     >
                                         {action}
                                     </button>
@@ -260,7 +218,7 @@ export default function AICommandCenter() {
                         </div>
 
                         {/* Input */}
-                        <form onSubmit={handleSubmit} className="p-4 border-t border-gray-100">
+                        <form onSubmit={handleSubmit} className="p-4 border-t dark:border-gray-700">
                             <div className="flex gap-2">
                                 <input
                                     ref={inputRef}
@@ -268,7 +226,7 @@ export default function AICommandCenter() {
                                     value={input}
                                     onChange={(e) => setInput(e.target.value)}
                                     placeholder="Type a command..."
-                                    className="flex-1 px-3 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                                    className="flex-1 px-3 py-2 border dark:border-gray-700 rounded-lg bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-600"
                                     disabled={isProcessing}
                                 />
                                 <Button
@@ -277,9 +235,9 @@ export default function AICommandCenter() {
                                     disabled={!input.trim() || isProcessing}
                                 >
                                     {isProcessing ? (
-                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <Loader2 className="w-4 h-4 animate-spin" />
                                     ) : (
-                                        <Send className="h-4 w-4" />
+                                        <Send className="w-4 h-4" />
                                     )}
                                 </Button>
                             </div>
