@@ -22,50 +22,40 @@ export function AgentExpertise({ agentName, brokerage }: AgentExpertiseProps) {
         {
             icon: <TrendingUp className="w-4 h-4" />,
             label: "Negotiation Elite",
-            desc: "Top 1% negotiator with proven track record of winning in competitive markets."
+            desc: "Top 1% negotiator with proven track record in competitive markets."
         },
         {
             icon: <Award className="w-4 h-4" />,
-            label: "Client Advocate",
-            desc: "Dedicated to protecting your interests and maximizing your investment potential."
+            label: "Service Excellence",
+            desc: "Consistently rated 5-star by clients for exceptional service and results."
         }
     ];
 
     return (
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
-            <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                        Your Real Estate Expert
-                    </h3>
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                        <Star className="w-3 h-3 mr-1" />
-                        Top Producer
-                    </Badge>
-                </div>
-                
-                <div className="text-center mb-4">
-                    <p className="font-semibold text-gray-900">{agentName}</p>
+        <Card className="p-6 bg-gradient-to-br from-blue-50 to-white border-blue-100">
+            <div className="flex items-start justify-between mb-4">
+                <div>
+                    <h3 className="font-bold text-lg text-gray-900">{agentName}</h3>
                     <p className="text-sm text-gray-600">{brokerage}</p>
                 </div>
-
-                <div className="space-y-3">
-                    {expertise.map((item, index) => (
-                        <div key={index} className="flex gap-3">
-                            <div className="flex-shrink-0 text-blue-600">
-                                {item.icon}
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-sm font-medium text-gray-900">
-                                    {item.label}
-                                </p>
-                                <p className="text-xs text-gray-600">
-                                    {item.desc}
-                                </p>
-                            </div>
+                <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    <Star className="w-3 h-3 mr-1" />
+                    Top Producer
+                </Badge>
+            </div>
+            
+            <div className="space-y-3">
+                {expertise.map((item, index) => (
+                    <div key={index} className="flex gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            {item.icon}
                         </div>
-                    ))}
-                </div>
+                        <div className="flex-1">
+                            <p className="font-semibold text-sm text-gray-900">{item.label}</p>
+                            <p className="text-xs text-gray-600 mt-0.5">{item.desc}</p>
+                        </div>
+                    </div>
+                ))}
             </div>
         </Card>
     );
