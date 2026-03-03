@@ -37,6 +37,7 @@ const App = () => {
               <Route path="/lead-capture" element={<ComingSoon pageName="Lead Capture" />} />
               <Route path="/leads" element={<ComingSoon pageName="Leads Dashboard" />} />
               <Route path="/buyer-toolkit" element={<ComingSoon pageName="Buyer Toolkit" />} />
+              <Route path="*" element={<ComingSoon pageName="Page Not Found" />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
