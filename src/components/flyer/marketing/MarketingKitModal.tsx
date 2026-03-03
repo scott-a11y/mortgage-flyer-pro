@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PropertyListing, formatCurrency } from "@/types/property";
+import { PropertyListing, formatCurrency, calculateMonthlyPayment } from "@/types/property";
 import { FlyerData } from "@/types/flyer";
 import { Download, Copy, Instagram, Mail, CheckCircle2, ChevronRight, Loader2 } from "lucide-react";
 import html2canvas from "html2canvas";
@@ -224,23 +224,29 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                             <p className="text-lg font-medium text-white/80 mt-1">
                                                 {property.specs.address}, {property.specs.city}
                                             </p>
-                                            <div className="flex items-center gap-4 mt-6">
-                                                <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold">
-                                                    {property.specs.bedrooms} Beds
+                                            <div className="flex flex-col md:flex-row items-start md:items-end justify-between mt-auto">
+                                                <div className="flex flex-wrap items-center gap-3 mt-4 w-full md:w-auto">
+                                                    <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold whitespace-nowrap">
+                                                        {property.specs.bedrooms} Beds
+                                                    </div>
+                                                    <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold whitespace-nowrap">
+                                                        {property.specs.bathrooms} Baths
+                                                    </div>
+                                                    <div className="px-3 py-1 rounded text-sm font-bold bg-amber-500 text-black whitespace-nowrap">
+                                                    Own from ${property.financing ? calculateMonthlyPayment(
+                                                        property.specs.listPrice * (1 - (property.financing.downPaymentPercent / 100)),
+                                                        property.financing.interestRate,
+                                                        property.financing.loanTermYears
+                                                    ) : 0}/mo
+                                                    </div>
                                                 </div>
-                                                <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold">
-                                                    {property.specs.bathrooms} Baths
+                                                <div className="flex items-center gap-3 mt-4 md:mt-0 shrink-0">
+                                                    <div className="text-right hidden sm:block">
+                                                        <p className="text-sm font-bold text-white uppercase">{flyerData.realtor.name}</p>
+                                                        <p className="text-xs text-white/60">{flyerData.realtor.brokerage}</p>
+                                                    </div>
+                                                    <img src={flyerData.realtor.headshot} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/20" alt="" />
                                                 </div>
-                                                <div className="px-3 py-1 rounded text-sm font-bold bg-amber-500 text-black">
-                                                    Own from ${property.financing?.estimatedMonthlyPI || 0}/mo
-                                                </div>
-                                            </div>
-                                            <div className="absolute bottom-6 right-6 flex items-center gap-3">
-                                                <div className="text-right">
-                                                    <p className="text-sm font-bold text-white uppercase">{flyerData.realtor.name}</p>
-                                                    <p className="text-xs text-white/60">{flyerData.realtor.brokerage}</p>
-                                                </div>
-                                                <img src={flyerData.realtor.headshot} className="w-12 h-12 rounded-full object-cover border-2 border-white/20" alt="" />
                                             </div>
                                         </div>
                                     </div>
