@@ -29,17 +29,17 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
     const igStoryRef = useRef<HTMLDivElement>(null);
 
     const theme = flyerData.colorTheme;
-    const heroImg = property.images.hero;
+    const heroImg = property.images?.hero ?? '';
 
-    // Pre-calculate P&I so it is never undefined/0
-    const financing = property.financing ?? {
-        listPrice: property.specs.listPrice,
-        downPaymentPercent: 20,
-        interestRate: 6.5,
-        loanTermYears: 30,
-    };
-    const loanAmount = financing.listPrice * (1 - financing.downPaymentPercent / 100);
-    const monthlyPI = calculateMonthlyPayment(loanAmount, financing.interestRate, financing.loanTermYears);
+    // P&I — always computed from specs.listPrice so it's never 0
+    const listPrice = property.specs?.listPrice ?? 0;
+    const downPct = property.financing?.downPaymentPercent ?? 20;
+    const rate    = property.financing?.interestRate  ?? 6.5;
+    const term    = property.financing?.loanTermYears ?? 30;
+    const loanAmount = listPrice * (1 - downPct / 100);
+    const monthlyPI  = listPrice > 0
+        ? calculateMonthlyPayment(loanAmount, rate, term)
+        : 0;
 
     const handleDownloadSocial = async (ref: React.RefObject<HTMLDivElement>, filename: string) => {
         if (!ref.current) return;
@@ -212,7 +212,7 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                     </Button>
                                 </div>
                                 <div className="p-4 rounded-xl border border-white/10 bg-black/50 overflow-hidden flex justify-center">
-                                    {/* The hidden renderable container */}
+                                    {/* The hidden renderable container — 540×540 fixed */}
                                     <div 
                                         ref={igSquareRef}
                                         style={{
@@ -220,8 +220,6 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                             height: "540px",
                                             backgroundColor: theme.primary,
                                             position: "relative",
-                                            display: "flex",
-                                            flexDirection: "column",
                                             overflow: "hidden",
                                             boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)",
                                             transform: "scale(0.75)",
@@ -235,59 +233,54 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                             </div>
                                         </div>
 
-                                        {/* Hero image — exactly 281px (52% of 540) */}
-                                        <div style={{ height: "281px", width: "100%", flexShrink: 0, overflow: "hidden" }}>
+                                        {/* Hero image — 0 to 281px */}
+                                        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "281px", overflow: "hidden" }}>
                                             <img src={heroImg} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} alt="" />
                                         </div>
 
-                                        {/* Accent line */}
-                                        <div style={{ height: "3px", width: "100%", backgroundColor: theme.secondary, flexShrink: 0 }} />
+                                        {/* Accent line — at 281px */}
+                                        <div style={{ position: "absolute", top: "281px", left: 0, right: 0, height: "3px", backgroundColor: theme.secondary }} />
 
-                                        {/* Info panel — remaining height (259px) */}
-                                        <div style={{
-                                            flex: 1,
-                                            padding: "18px 24px 14px 24px",
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            overflow: "hidden",
-                                        }}>
-                                            {/* Price */}
-                                            <p style={{ margin: 0, color: "#ffffff", fontWeight: 900, fontSize: "26px", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-                                                {formatCurrency(property.specs.listPrice)}
-                                            </p>
-                                            {/* Address */}
-                                            <p style={{ margin: "4px 0 12px 0", color: "rgba(255,255,255,0.65)", fontWeight: 500, fontSize: "13px" }}>
-                                                {property.specs.address}, {property.specs.city}
-                                            </p>
+                                        {/* Price — at 296px */}
+                                        <p style={{ position: "absolute", top: "296px", left: "24px", right: "24px", margin: 0, color: "#ffffff", fontWeight: 900, fontSize: "26px", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                                            {formatCurrency(property.specs?.listPrice ?? 0)}
+                                        </p>
 
-                                            {/* Chips row */}
-                                            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
-                                                <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                    {property.specs.bedrooms} Beds
-                                                </div>
-                                                <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                    {property.specs.bathrooms} Baths
-                                                </div>
-                                                <div style={{ padding: "4px 10px", background: "#f59e0b", borderRadius: "4px", color: "#000", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                    Own from ${monthlyPI.toLocaleString()}/mo
-                                                </div>
+                                        {/* Address — at 334px */}
+                                        <p style={{ position: "absolute", top: "334px", left: "24px", right: "24px", margin: 0, color: "rgba(255,255,255,0.65)", fontWeight: 500, fontSize: "13px" }}>
+                                            {property.specs?.address}, {property.specs?.city}
+                                        </p>
+
+                                        {/* Chips row — at 360px */}
+                                        <div style={{ position: "absolute", top: "360px", left: "24px", right: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
+                                            <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
+                                                {property.specs?.bedrooms} Beds
                                             </div>
+                                            <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
+                                                {property.specs?.bathrooms} Baths
+                                            </div>
+                                            <div style={{ padding: "4px 10px", background: "#f59e0b", borderRadius: "4px", color: "#000", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
+                                                Own from ${monthlyPI.toLocaleString()}/mo
+                                            </div>
+                                        </div>
 
-                                            {/* Agent row — pushed to bottom */}
-                                            <div style={{ marginTop: "auto", paddingTop: "12px", borderTop: "1px solid rgba(255,255,255,0.1)", display: "flex", alignItems: "center", gap: "10px" }}>
-                                                <img
-                                                    src={flyerData.realtor.headshot}
-                                                    style={{ width: "34px", height: "34px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.2)", flexShrink: 0 }}
-                                                    alt=""
-                                                />
-                                                <div style={{ minWidth: 0 }}>
-                                                    <p style={{ margin: 0, color: "#ffffff", fontWeight: 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                        {flyerData.realtor.name}
-                                                    </p>
-                                                    <p style={{ margin: 0, color: "rgba(255,255,255,0.45)", fontSize: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                        {flyerData.realtor.brokerage}
-                                                    </p>
-                                                </div>
+                                        {/* Divider line — at 404px */}
+                                        <div style={{ position: "absolute", top: "404px", left: "24px", right: "24px", height: "1px", backgroundColor: "rgba(255,255,255,0.1)" }} />
+
+                                        {/* Agent row — at 416px, bottom section */}
+                                        <div style={{ position: "absolute", top: "416px", left: "24px", right: "24px", display: "flex", alignItems: "center", gap: "10px" }}>
+                                            <img
+                                                src={flyerData.realtor?.headshot}
+                                                style={{ width: "34px", height: "34px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.2)", flexShrink: 0 }}
+                                                alt=""
+                                            />
+                                            <div style={{ minWidth: 0 }}>
+                                                <p style={{ margin: 0, color: "#ffffff", fontWeight: 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                    {flyerData.realtor?.name}
+                                                </p>
+                                                <p style={{ margin: 0, color: "rgba(255,255,255,0.45)", fontSize: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                    {flyerData.realtor?.brokerage}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
