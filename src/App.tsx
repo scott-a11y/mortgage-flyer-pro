@@ -37,9 +37,7 @@ const App = () => {
               <Route path="/leads" element={<LeadsDashboard />} />
               <Route path="/buyer-agent" element={<BuyerAgentToolkit />} />
               <Route path="/tour-live" element={<BuyerExperienceTour />} />
-              <Route path="/flyer/:slug" element={<LiveFlyer />} />
               <Route path="/live/:slug" element={<LiveFlyer />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
