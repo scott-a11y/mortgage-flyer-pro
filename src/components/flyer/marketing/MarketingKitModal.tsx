@@ -224,8 +224,8 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                             <p className="text-lg font-medium text-white/80 mt-1">
                                                 {property.specs.address}, {property.specs.city}
                                             </p>
-                                            <div className="flex flex-col md:flex-row items-start md:items-end justify-between mt-auto">
-                                                <div className="flex flex-wrap items-center gap-3 mt-4 w-full md:w-auto">
+                                            <div className="flex flex-col items-start justify-between mt-auto pt-4 gap-4">
+                                                <div className="flex flex-wrap items-center gap-3 w-full">
                                                     <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold whitespace-nowrap">
                                                         {property.specs.bedrooms} Beds
                                                     </div>
@@ -240,12 +240,12 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                                     ) : 0}/mo
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center gap-3 mt-4 md:mt-0 shrink-0">
-                                                    <div className="text-right hidden sm:block">
+                                                <div className="flex items-center gap-3 shrink-0 w-full justify-start mt-2 border-t border-white/10 pt-4">
+                                                    <img src={flyerData.realtor.headshot} className="w-10 h-10 rounded-full object-cover border-2 border-white/20" alt="" />
+                                                    <div className="text-left">
                                                         <p className="text-sm font-bold text-white uppercase">{flyerData.realtor.name}</p>
                                                         <p className="text-xs text-white/60">{flyerData.realtor.brokerage}</p>
                                                     </div>
-                                                    <img src={flyerData.realtor.headshot} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border-2 border-white/20" alt="" />
                                                 </div>
                                             </div>
                                         </div>
