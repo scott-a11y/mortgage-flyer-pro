@@ -31,6 +31,16 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
     const theme = flyerData.colorTheme;
     const heroImg = property.images.hero;
 
+    // Pre-calculate P&I so it is never undefined/0
+    const financing = property.financing ?? {
+        listPrice: property.specs.listPrice,
+        downPaymentPercent: 20,
+        interestRate: 6.5,
+        loanTermYears: 30,
+    };
+    const loanAmount = financing.listPrice * (1 - financing.downPaymentPercent / 100);
+    const monthlyPI = calculateMonthlyPayment(loanAmount, financing.interestRate, financing.loanTermYears);
+
     const handleDownloadSocial = async (ref: React.RefObject<HTMLDivElement>, filename: string) => {
         if (!ref.current) return;
         setIsExporting(true);
@@ -206,46 +216,52 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                     <div 
                                         ref={igSquareRef}
                                         style={{ width: "540px", height: "540px", backgroundColor: theme.primary }}
-                                        className="relative flex flex-col justify-between overflow-hidden shadow-2xl scale-75 origin-top md:scale-100"
+                                        className="relative flex flex-col overflow-hidden shadow-2xl scale-75 origin-top md:scale-100"
                                     >
-                                        <div className="absolute top-0 right-0 p-6 z-10 text-right">
-                                            <div className="px-4 py-2 bg-white/95 backdrop-blur-md rounded-full shadow-xl">
-                                                <p className="text-lg font-black" style={{ color: theme.primary }}>JUST LISTED</p>
+                                        {/* JUST LISTED badge */}
+                                        <div className="absolute top-0 right-0 p-4 z-10 text-right">
+                                            <div className="px-3 py-1.5 bg-white/95 rounded-full shadow-xl">
+                                                <p className="text-sm font-black" style={{ color: theme.primary }}>JUST LISTED</p>
                                             </div>
                                         </div>
-                                        <div className="h-[60%] w-full">
+
+                                        {/* Hero image — 52% of card */}
+                                        <div style={{ height: "52%" }} className="w-full shrink-0">
                                             <img src={heroImg} className="w-full h-full object-cover" alt="" />
                                         </div>
-                                        <div className="flex-1 p-8 flex flex-col justify-center relative">
-                                            <div className="absolute top-0 left-8 right-8 h-1" style={{ backgroundColor: theme.secondary }} />
-                                            <p className="text-3xl font-black text-white tracking-tight leading-tight mt-2">
+
+                                        {/* Info panel — remaining 48% */}
+                                        <div style={{ height: "48%" }} className="flex flex-col px-6 py-4">
+                                            {/* Accent line */}
+                                            <div className="h-0.5 w-full mb-3" style={{ backgroundColor: theme.secondary }} />
+
+                                            {/* Price + address */}
+                                            <p className="text-2xl font-black text-white tracking-tight leading-tight">
                                                 {formatCurrency(property.specs.listPrice)}
                                             </p>
-                                            <p className="text-lg font-medium text-white/80 mt-1">
+                                            <p className="text-sm font-medium text-white/70 mt-0.5 mb-3">
                                                 {property.specs.address}, {property.specs.city}
                                             </p>
-                                            <div className="flex flex-col items-start justify-between mt-auto pt-4 gap-4">
-                                                <div className="flex flex-wrap items-center gap-3 w-full">
-                                                    <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold whitespace-nowrap">
-                                                        {property.specs.bedrooms} Beds
-                                                    </div>
-                                                    <div className="px-3 py-1 bg-white/10 border border-white/20 rounded text-sm text-white font-bold whitespace-nowrap">
-                                                        {property.specs.bathrooms} Baths
-                                                    </div>
-                                                    <div className="px-3 py-1 rounded text-sm font-bold bg-amber-500 text-black whitespace-nowrap">
-                                                    Own from ${property.financing ? calculateMonthlyPayment(
-                                                        property.specs.listPrice * (1 - (property.financing.downPaymentPercent / 100)),
-                                                        property.financing.interestRate,
-                                                        property.financing.loanTermYears
-                                                    ) : 0}/mo
-                                                    </div>
+
+                                            {/* Chips row */}
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                <div className="px-2.5 py-1 bg-white/10 border border-white/20 rounded text-xs text-white font-bold whitespace-nowrap">
+                                                    {property.specs.bedrooms} Beds
                                                 </div>
-                                                <div className="flex items-center gap-3 shrink-0 w-full justify-start mt-2 border-t border-white/10 pt-4">
-                                                    <img src={flyerData.realtor.headshot} className="w-10 h-10 rounded-full object-cover border-2 border-white/20" alt="" />
-                                                    <div className="text-left">
-                                                        <p className="text-sm font-bold text-white uppercase">{flyerData.realtor.name}</p>
-                                                        <p className="text-xs text-white/60">{flyerData.realtor.brokerage}</p>
-                                                    </div>
+                                                <div className="px-2.5 py-1 bg-white/10 border border-white/20 rounded text-xs text-white font-bold whitespace-nowrap">
+                                                    {property.specs.bathrooms} Baths
+                                                </div>
+                                                <div className="px-2.5 py-1 rounded text-xs font-bold bg-amber-500 text-black whitespace-nowrap">
+                                                    Own from ${monthlyPI.toLocaleString()}/mo
+                                                </div>
+                                            </div>
+
+                                            {/* Agent row — pinned to bottom */}
+                                            <div className="mt-auto flex items-center gap-2.5 pt-3 border-t border-white/10">
+                                                <img src={flyerData.realtor.headshot} className="w-8 h-8 rounded-full object-cover border border-white/20 shrink-0" alt="" />
+                                                <div className="min-w-0">
+                                                    <p className="text-xs font-bold text-white uppercase truncate">{flyerData.realtor.name}</p>
+                                                    <p className="text-[10px] text-white/50 truncate">{flyerData.realtor.brokerage}</p>
                                                 </div>
                                             </div>
                                         </div>
