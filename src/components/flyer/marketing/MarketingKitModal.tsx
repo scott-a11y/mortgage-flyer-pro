@@ -65,8 +65,9 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
     };
 
     const generateEmailHtml = () => {
-        const logoOrHeadshotUrl = window.location.origin + (flyerData.realtor.logo || flyerData.realtor.headshot);
-        const heroUrl = window.location.origin + heroImg;
+        const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+        const logoOrHeadshotUrl = baseUrl + (flyerData.realtor?.logo || flyerData.realtor?.headshot || '');
+        const heroUrl = baseUrl + heroImg;
         // Super minimal, table-based or inline-css based HTML for max compatibility
         return `
 <!DOCTYPE html>
@@ -83,7 +84,7 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                     <!-- Header -->
                     <tr>
                         <td align="center" style="padding: 40px 20px; text-align: center; background-color: ${theme.primary}; border-bottom: 4px solid ${theme.secondary};">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; line-height: 1.2;">Just Listed in ${property.specs.city}</h1>
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; line-height: 1.2;">Just Listed in ${property.specs?.city ?? ''}</h1>
                             <p style="margin: 10px 0 0 0; color: ${theme.secondary}; font-size: 16px; font-weight: bold; letter-spacing: 1px;">&mdash; SPECIAL FINANCING AVAILABLE &mdash;</p>
                         </td>
                     </tr>
@@ -96,22 +97,22 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                     <!-- Content -->
                     <tr>
                         <td style="padding: 40px 30px; text-align: center;">
-                            <h2 style="margin: 0; font-size: 24px; color: #1f2937;">${property.features.headline}</h2>
-                            <p style="margin: 15px 0 25px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">${property.features.subheadline}</p>
+                            <h2 style="margin: 0; font-size: 24px; color: #1f2937;">${property.features?.headline ?? ''}</h2>
+                            <p style="margin: 15px 0 25px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">${property.features?.subheadline ?? ''}</p>
                             
                             <!-- Key Stats -->
                             <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 30px;">
                                 <tr>
                                     <td align="center" style="width: 33%; border-right: 1px solid #e5e7eb;">
-                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs.bedrooms}</div>
+                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs?.bedrooms ?? 0}</div>
                                         <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Beds</div>
                                     </td>
                                     <td align="center" style="width: 33%; border-right: 1px solid #e5e7eb;">
-                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs.bathrooms}</div>
+                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs?.bathrooms ?? 0}</div>
                                         <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Baths</div>
                                     </td>
                                     <td align="center" style="width: 33%;">
-                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs.squareFootage}</div>
+                                        <div style="font-size: 22px; font-weight: bold; color: ${theme.primary};">${property.specs?.squareFootage ?? 0}</div>
                                         <div style="font-size: 12px; color: #6b7280; text-transform: uppercase;">Sq Ft</div>
                                     </td>
                                 </tr>
@@ -120,29 +121,29 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                             <!-- Pricing -->
                             <div style="background-color: #f9fafb; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
                                 <div style="font-size: 14px; color: #6b7280; text-transform: uppercase; font-weight: bold;">Offered at</div>
-                                <div style="font-size: 32px; font-weight: bold; color: #111827;">${formatCurrency(property.specs.listPrice)}</div>
-                                <div style="margin-top: 10px; font-size: 15px; color: ${theme.primary};">Own it for as low as <strong>${property.financing ? property.financing.downPaymentPercent : 5}% down</strong>!</div>
+                                <div style="font-size: 32px; font-weight: bold; color: #111827;">${formatCurrency(property.specs?.listPrice ?? 0)}</div>
+                                <div style="margin-top: 10px; font-size: 15px; color: ${theme.primary};">Own it for as low as <strong>${property.financing?.downPaymentPercent ?? 5}% down</strong>!</div>
                             </div>
                             
                             <!-- Market Insight -->
                             <div style="text-align: left; background-color: ${theme.primary}05; padding: 20px; border-left: 4px solid ${theme.secondary}; margin-bottom: 30px;">
-                                <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #374151;"><i>"${flyerData.marketCopy.marketInsight}"</i></p>
+                                <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #374151;"><i>"${flyerData.marketCopy?.marketInsight ?? ''}"</i></p>
                             </div>
 
                             <!-- CTA Button -->
-                            <a href="${window.location.origin}/property-live/${flyerData.layout || 'seattle-condo-celeste-5down'}" style="display: inline-block; background-color: ${theme.primary}; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 6px; text-transform: uppercase;">View Live Tour & Finance Math</a>
+                            <a href="${baseUrl}/property-live/${flyerData.layout || 'seattle-condo-celeste-5down'}" style="display: inline-block; background-color: ${theme.primary}; color: #ffffff; text-decoration: none; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 6px; text-transform: uppercase;">View Live Tour & Finance Math</a>
                         </td>
                     </tr>
                     <!-- Footer Info -->
                     <tr>
                         <td align="center" style="padding: 30px; background-color: #f9fafb; border-top: 1px solid #e5e7eb;">
                             <img src="${logoOrHeadshotUrl}" style="width: 80px; height: 80px; border-radius: 40px; margin-bottom: 15px; object-fit: cover;" />
-                            <div style="font-size: 16px; font-weight: bold; color: #111827;">${flyerData.realtor.name}</div>
-                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 15px;">${flyerData.realtor.brokerage}</div>
+                            <div style="font-size: 16px; font-weight: bold; color: #111827;">${flyerData.realtor?.name ?? ''}</div>
+                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 15px;">${flyerData.realtor?.brokerage ?? ''}</div>
                             <div style="font-size: 14px; color: #374151;">
-                                <a href="tel:${flyerData.realtor.phone.replace(/[^0-9+]/g, '')}" style="color: ${theme.primary}; text-decoration: none;">${flyerData.realtor.phone}</a>
+                                <a href="tel:${(flyerData.realtor?.phone ?? '').replace(/[^0-9+]/g, '')}" style="color: ${theme.primary}; text-decoration: none;">${flyerData.realtor?.phone ?? ''}</a>
                                 &nbsp;|&nbsp;
-                                <a href="mailto:${flyerData.realtor.email}" style="color: ${theme.primary}; text-decoration: none;">${flyerData.realtor.email}</a>
+                                <a href="mailto:${flyerData.realtor?.email ?? ''}" style="color: ${theme.primary}; text-decoration: none;">${flyerData.realtor?.email ?? ''}</a>
                             </div>
                         </td>
                     </tr>
@@ -159,7 +160,8 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
         try {
             await navigator.clipboard.writeText(generateEmailHtml());
             toast.success("HTML copied to clipboard!", { description: "Paste this directly into Mailchimp or your CRM source code editor." });
-        } catch {
+        } catch (error) {
+            console.error(error);
             toast.error("Failed to copy text.");
         }
     };
@@ -241,46 +243,51 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                         {/* Accent line — at 281px */}
                                         <div style={{ position: "absolute", top: "281px", left: 0, right: 0, height: "3px", backgroundColor: theme.secondary }} />
 
-                                        {/* Price — at 296px */}
-                                        <p style={{ position: "absolute", top: "296px", left: "24px", right: "24px", margin: 0, color: "#ffffff", fontWeight: 900, fontSize: "26px", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-                                            {formatCurrency(property.specs?.listPrice ?? 0)}
-                                        </p>
-
-                                        {/* Address — at 334px */}
-                                        <p style={{ position: "absolute", top: "334px", left: "24px", right: "24px", margin: 0, color: "rgba(255,255,255,0.65)", fontWeight: 500, fontSize: "13px" }}>
-                                            {property.specs?.address}, {property.specs?.city}
-                                        </p>
-
-                                        {/* Chips row — at 360px */}
-                                        <div style={{ position: "absolute", top: "360px", left: "24px", right: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
-                                            <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                {property.specs?.bedrooms} Beds
-                                            </div>
-                                            <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                {property.specs?.bathrooms} Baths
-                                            </div>
-                                            <div style={{ padding: "4px 10px", background: "#f59e0b", borderRadius: "4px", color: "#000", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
-                                                Own from ${monthlyPI.toLocaleString()}/mo
-                                            </div>
-                                        </div>
-
-                                        {/* Divider line — at 404px */}
-                                        <div style={{ position: "absolute", top: "404px", left: "24px", right: "24px", height: "1px", backgroundColor: "rgba(255,255,255,0.1)" }} />
-
-                                        {/* Agent row — at 416px, bottom section */}
-                                        <div style={{ position: "absolute", top: "416px", left: "24px", right: "24px", display: "flex", alignItems: "center", gap: "10px" }}>
-                                            <img
-                                                src={flyerData.realtor?.headshot}
-                                                style={{ width: "34px", height: "34px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.2)", flexShrink: 0 }}
-                                                alt=""
-                                            />
-                                            <div style={{ minWidth: 0 }}>
-                                                <p style={{ margin: 0, color: "#ffffff", fontWeight: 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                    {flyerData.realtor?.name}
+                                        {/* Bottom panel — completely explicit stacked area */}
+                                        <div style={{ position: "absolute", top: "284px", left: 0, right: 0, height: "256px", padding: "24px", boxSizing: "border-box", display: "flex", flexDirection: "column" }}>
+                                            {/* Price & Address */}
+                                            <div style={{ marginBottom: "auto" }}>
+                                                <p style={{ margin: 0, color: "#ffffff", fontWeight: 900, fontSize: "26px", letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                                                    {formatCurrency(property.specs?.listPrice ?? 0)}
                                                 </p>
-                                                <p style={{ margin: 0, color: "rgba(255,255,255,0.45)", fontSize: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                                                    {flyerData.realtor?.brokerage}
+                                                <p style={{ margin: "4px 0 0 0", color: "rgba(255,255,255,0.65)", fontWeight: 500, fontSize: "13px" }}>
+                                                    {property.specs?.address ?? ''}, {property.specs?.city ?? ''}
                                                 </p>
+                                            </div>
+
+                                            {/* Chips row & CTA stacked */}
+                                            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                                    <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
+                                                        {property.specs?.bedrooms ?? 0} Beds
+                                                    </div>
+                                                    <div style={{ padding: "4px 10px", background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: "4px", color: "#fff", fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap" }}>
+                                                        {property.specs?.bathrooms ?? 0} Baths
+                                                    </div>
+                                                </div>
+                                                <div style={{ alignSelf: "flex-start", padding: "6px 14px", background: "#f59e0b", borderRadius: "4px", color: "#000", fontWeight: 700, fontSize: "14px", whiteSpace: "nowrap" }}>
+                                                    Own from ${monthlyPI.toLocaleString()}/mo
+                                                </div>
+                                            </div>
+
+                                            {/* Divider line */}
+                                            <div style={{ height: "1px", width: "100%", backgroundColor: "rgba(255,255,255,0.1)", marginBottom: "12px", flexShrink: 0 }} />
+
+                                            {/* Agent row */}
+                                            <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+                                                <img
+                                                    src={flyerData.realtor?.headshot}
+                                                    style={{ width: "34px", height: "34px", borderRadius: "50%", objectFit: "cover", border: "1.5px solid rgba(255,255,255,0.2)", flexShrink: 0 }}
+                                                    alt=""
+                                                />
+                                                <div style={{ minWidth: 0 }}>
+                                                    <p style={{ margin: 0, color: "#ffffff", fontWeight: 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                        {flyerData.realtor?.name}
+                                                    </p>
+                                                    <p style={{ margin: 0, color: "rgba(255,255,255,0.45)", fontSize: "10px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                                                        {flyerData.realtor?.brokerage}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -297,10 +304,11 @@ export function MarketingKitModal({ property, flyerData }: MarketingKitModalProp
                                     <Button 
                                         size="sm" 
                                         className="bg-pink-600 hover:bg-pink-700"
-                                        onClick={() => handleDownloadSocial(igStoryRef, `IG_Story_${property.specs.address}`)}
+                                        onClick={() => handleDownloadSocial(igStoryRef, `IG_Story_${property.specs?.address ?? 'property'}`)}
                                         disabled={isExporting}
                                     >
-                                        <Download className="w-4 h-4" />
+                                        {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
+                                        Download PNG
                                     </Button>
                                 </div>
                                 <div className="p-4 rounded-xl border border-white/10 bg-black/50 overflow-hidden flex justify-center">
