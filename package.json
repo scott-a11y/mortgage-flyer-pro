@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "engines": {
-    "node": "20.x"
+    "node": ">=18.0.0"
   },
   "scripts": {
     "dev": "vite",
@@ -73,6 +73,11 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
     "zod": "^3.25.76"
+  },
+  "overrides": {
+    "fdir": {
+      "picomatch": "^4.0.2"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
