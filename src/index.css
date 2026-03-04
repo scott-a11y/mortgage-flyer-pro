@@ -112,7 +112,7 @@
     }
 
     .cyan-glow {
-        @apply shadow-[0_0_15px_rgba(0, 242, 255, 0.15)];
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.15);
     }
 
     button[data-state="active"] {
