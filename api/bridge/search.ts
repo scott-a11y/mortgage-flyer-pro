@@ -35,6 +35,19 @@ interface BridgeProperty {
   Media?: BridgeMedia[];
 }
 
+/**
+ * Sanitize a user-supplied string for safe interpolation into an OData filter.
+ * Strips everything except alphanumeric, spaces, hyphens, and periods,
+ * then escapes single quotes by doubling them (OData convention).
+ */
+function sanitizeOData(value: string): string {
+  return value
+    .replace(/[^a-zA-Z0-9\s\-\.]/g, '')
+    .replace(/'/g, "''")
+    .trim()
+    .slice(0, 200);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET
   if (req.method !== 'GET') {
@@ -53,15 +66,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const { mls, address, city } = req.query;
+  const rawMls = Array.isArray(req.query.mls) ? req.query.mls[0] : req.query.mls;
+  const rawAddress = Array.isArray(req.query.address) ? req.query.address[0] : req.query.address;
+  const rawCity = Array.isArray(req.query.city) ? req.query.city[0] : req.query.city;
 
   try {
     let filter = '';
-    if (mls) {
+    if (rawMls) {
+      const mls = sanitizeOData(String(rawMls));
       filter = `$filter=ListingId eq '${mls}'`;
-    } else if (address) {
+    } else if (rawAddress) {
+      const address = sanitizeOData(String(rawAddress));
       filter = `$filter=contains(tolower(UnparsedAddress),tolower('${address}'))`;
-      if (city) {
+      if (rawCity) {
+        const city = sanitizeOData(String(rawCity));
         filter += ` and tolower(City) eq tolower('${city}')`;
       }
     } else {

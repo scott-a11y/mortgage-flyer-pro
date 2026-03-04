@@ -51,6 +51,19 @@ interface RmlsMedia {
   MediaURL?: string;
 }
 
+/**
+ * Sanitize a user-supplied string for safe interpolation into an OData filter.
+ * Strips everything except alphanumeric, spaces, hyphens, and periods,
+ * then escapes single quotes by doubling them (OData convention).
+ */
+function sanitizeOData(value: string): string {
+  return value
+    .replace(/[^a-zA-Z0-9\s\-\.]/g, '')
+    .replace(/'/g, "''")
+    .trim()
+    .slice(0, 200);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET
   if (req.method !== 'GET') {
@@ -67,18 +80,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const { mls, address, city } = req.query;
+  const rawMls = Array.isArray(req.query.mls) ? req.query.mls[0] : req.query.mls;
+  const rawAddress = Array.isArray(req.query.address) ? req.query.address[0] : req.query.address;
+  const rawCity = Array.isArray(req.query.city) ? req.query.city[0] : req.query.city;
 
   try {
     let filter = '';
 
-    if (mls) {
-      // Search by MLS number (ListingId in RESO)
+    if (rawMls) {
+      const mls = sanitizeOData(String(rawMls));
       filter = `$filter=ListingId eq '${mls}'`;
-    } else if (address) {
-      // Search by street address (partial match)
+    } else if (rawAddress) {
+      const address = sanitizeOData(String(rawAddress));
       filter = `$filter=contains(StreetName,'${address}')`;
-      if (city) {
+      if (rawCity) {
+        const city = sanitizeOData(String(rawCity));
         filter += ` and City eq '${city}'`;
       }
     } else {
@@ -139,7 +155,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const withPhotos = await Promise.all(
       listings.map(async (listing: RmlsListing) => {
         try {
-          const mediaUrl = `${RMLS_API_BASE}/Media?$filter=ResourceRecordKey eq '${listing.mlsNumber}' and MediaCategory eq 'Photo'&$select=MediaURL,Order&$orderby=Order&$top=6`;
+          const safeKey = sanitizeOData(String(listing.mlsNumber || ''));
+          const mediaUrl = `${RMLS_API_BASE}/Media?$filter=ResourceRecordKey eq '${safeKey}' and MediaCategory eq 'Photo'&$select=MediaURL,Order&$orderby=Order&$top=6`;
           const mediaRes = await fetch(mediaUrl, {
             headers: {
               'Authorization': `Bearer ${token}`,
@@ -155,8 +172,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               galleryImages: photos.slice(1)
             };
           }
-        } catch (e) {
-            console.error('Media fetch error:', e);
+        } catch {
+          // Media fetch failed — return listing without photos
         }
         return { ...listing, heroImage: '', galleryImages: [] };
       })

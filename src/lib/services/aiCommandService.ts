@@ -1,13 +1,10 @@
 /**
  * AI Command Service - Processes natural language commands for agent/listing management.
- * Uses Google Gemini to interpret user requests and map them to service operations.
+ * Uses server-side /api/ai/generate endpoint to keep API key out of the client bundle.
  */
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import * as agentService from "./agentService";
 import { AgentPartner } from "./agentService";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY || "");
 
 export interface CommandResult {
     success: boolean;
@@ -30,6 +27,25 @@ interface ParsedCommand {
     value?: string;
     allFields?: Record<string, string>;
     rawInput: string;
+}
+
+/**
+ * Call the server-side Gemini proxy. Returns the generated text or null on failure.
+ */
+async function callAI(prompt: string): Promise<string | null> {
+    try {
+        const res = await fetch('/api/ai/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data.fallback) return null;
+        return data.text || null;
+    } catch {
+        return null;
+    }
 }
 
 /**
@@ -68,9 +84,10 @@ MATCHING RULES:
 Respond with ONLY the JSON object.`;
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text().trim();
+        const text = await callAI(prompt);
+        if (!text) {
+            return parseCommandFallback(input, agents);
+        }
 
         // Clean up any markdown formatting
         const jsonStr = text
@@ -135,7 +152,7 @@ function parseCommandFallback(
         let value: string | undefined;
 
         const phoneMatch = input.match(
-            /(?:phone|number|cell)\s*(?:to|:)?\s*([(\d)\s\-+.]+)/i
+            /(?:phone|number|cell)\s*(?:to|:)?\s*([()\d\s\-+.]+)/i
         );
         const emailMatch = input.match(
             /(?:email)\s*(?:to|:)?\s*([\w.+-]+@[\w.-]+)/i
@@ -184,7 +201,7 @@ async function executeCommand(
 ): Promise<CommandResult> {
     switch (parsed.intent) {
         case "list_agents": {
-            const names = agents.map((a) => `• ${a.name} (${a.realtor.brokerage})`).join("\n");
+            const names = agents.map((a) => `\u2022 ${a.name} (${a.realtor.brokerage})`).join("\n");
             return {
                 success: true,
                 message: `Found ${agents.length} agents:\n${names}`,
@@ -226,7 +243,7 @@ async function executeCommand(
             if (error) {
                 return {
                     success: true,
-                    message: `✅ Updated ${agent.name}'s ${parsed.field} to "${parsed.value}" (saved locally — will sync to cloud when available).`,
+                    message: `\u2705 Updated ${agent.name}'s ${parsed.field} to "${parsed.value}" (saved locally \u2014 will sync to cloud when available).`,
                     action: "update",
                     details: { agentId: agent.id, field: parsed.field, value: parsed.value },
                 };
@@ -234,7 +251,7 @@ async function executeCommand(
 
             return {
                 success: true,
-                message: `✅ Updated ${agent.name}'s ${parsed.field} to "${parsed.value}"`,
+                message: `\u2705 Updated ${agent.name}'s ${parsed.field} to "${parsed.value}"`,
                 action: "update",
                 details: { agentId: agent.id, field: parsed.field, value: parsed.value },
             };
@@ -251,7 +268,7 @@ async function executeCommand(
             if (parsed.allFields && parsed.allFields.name) {
                 const input: agentService.CreateAgentInput = {
                     name: parsed.allFields.name,
-                    title: parsed.allFields.title || "REALTOR®",
+                    title: parsed.allFields.title || "REALTOR\u00ae",
                     phone: parsed.allFields.phone || "",
                     email: parsed.allFields.email || "",
                     brokerage: parsed.allFields.brokerage || "",
@@ -262,13 +279,13 @@ async function executeCommand(
                 if (error) {
                     return {
                         success: true,
-                        message: `✅ Created agent "${parsed.allFields.name}" locally. Go to Agent Management to complete their profile.`,
+                        message: `\u2705 Created agent "${parsed.allFields.name}" locally. Go to Agent Management to complete their profile.`,
                         action: "create",
                     };
                 }
                 return {
                     success: true,
-                    message: `✅ Created agent "${data!.name}" successfully! Go to Agent Management to add a headshot and complete their profile.`,
+                    message: `\u2705 Created agent "${data!.name}" successfully! Go to Agent Management to add a headshot and complete their profile.`,
                     action: "create",
                     details: { agentId: data!.id },
                 };
@@ -293,7 +310,7 @@ async function executeCommand(
             return {
                 success: true,
                 message:
-                    "I can help you manage agents, update contact info, modify listings, and more. Try commands like:\n\n• \"Update Celeste's phone to (425) 555-1234\"\n• \"List all agents\"\n• \"Add a new agent named Jane Smith from RE/MAX\"\n• \"Change Adrian's title to Senior REALTOR®\"",
+                    "I can help you manage agents, update contact info, modify listings, and more. Try commands like:\n\n\u2022 \"Update Celeste's phone to (425) 555-1234\"\n\u2022 \"List all agents\"\n\u2022 \"Add a new agent named Jane Smith from RE/MAX\"\n\u2022 \"Change Adrian's title to Senior REALTOR\u00ae\"",
                 action: "help",
             };
         }
@@ -302,7 +319,7 @@ async function executeCommand(
             return {
                 success: false,
                 message:
-                    "I'm not sure what you'd like to do. Try commands like:\n\n• \"Update Celeste's phone to (425) 555-1234\"\n• \"List all agents\"\n• \"Add a new agent named Jane Smith\"",
+                    "I'm not sure what you'd like to do. Try commands like:\n\n\u2022 \"Update Celeste's phone to (425) 555-1234\"\n\u2022 \"List all agents\"\n\u2022 \"Add a new agent named Jane Smith\"",
             };
     }
 }

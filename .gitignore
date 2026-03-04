@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 .env
+
+# AI agent artifacts
+.agent/
+build_log.txt
+vercel_*.txt
