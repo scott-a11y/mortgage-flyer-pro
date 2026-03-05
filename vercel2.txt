@@ -1,0 +1,48 @@
+Vercel CLI 50.1.3
+Retrieving projectΓÇª
+Fetching deployments in scotts-projects-bdefe5e9
+> Deployments for scotts-projects-bdefe5e9/mortgage-flyer-pro [173ms]
+https://mortgage-flyer-1uxv0j2jl-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-ew435qo0t-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-etf9pjg4w-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-71q2oe94u-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-c2hrszul9-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-r7kwn0k16-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-767d1nrgj-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-n4zzmw0da-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-7eojxuguo-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-gvdavrev9-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-l1zawx7uq-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-ki8unamuh-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-3zi7i05r9-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-5n22v6i0d-scotts-projects-bdefe5e9.vercel.app
+
+  Age     Deployment                                                               Status      Environment     Duration     Username       
+  14h     https://mortgage-flyer-1uxv0j2jl-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  14h     https://mortgage-flyer-ew435qo0t-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  14h     https://mortgage-flyer-etf9pjg4w-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  15h     https://mortgage-flyer-71q2oe94u-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  15h     https://mortgage-flyer-c2hrszul9-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      8s           scott-4507     
+  16h     https://mortgage-flyer-r7kwn0k16-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+https://mortgage-flyer-97ia6nj0z-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-4ulqiuirf-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-8jnir81nh-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-757sbossv-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-8k37wwwo2-scotts-projects-bdefe5e9.vercel.app
+https://mortgage-flyer-qwu8s1yhd-scotts-projects-bdefe5e9.vercel.app
+  16h     https://mortgage-flyer-767d1nrgj-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      6s           scott-4507     
+  18h     https://mortgage-flyer-n4zzmw0da-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      8s           scott-4507     
+  18h     https://mortgage-flyer-7eojxuguo-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      13s          scott-4507     
+  18h     https://mortgage-flyer-gvdavrev9-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      8s           scott-4507     
+  19h     https://mortgage-flyer-l1zawx7uq-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  19h     https://mortgage-flyer-ki8unamuh-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      6s           scott-4507     
+  19h     https://mortgage-flyer-3zi7i05r9-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      6s           scott-4507     
+  19h     https://mortgage-flyer-5n22v6i0d-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      6s           scott-4507     
+  19h     https://mortgage-flyer-97ia6nj0z-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  19h     https://mortgage-flyer-4ulqiuirf-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  20h     https://mortgage-flyer-8jnir81nh-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      6s           scott-4507     
+  20h     https://mortgage-flyer-757sbossv-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      18s          scott-4507     
+  20h     https://mortgage-flyer-8k37wwwo2-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+  21h     https://mortgage-flyer-qwu8s1yhd-scotts-projects-bdefe5e9.vercel.app     ΓùÅ Error     Production      7s           scott-4507     
+
+> To display the next page, run `vercel ls --next 1772470286416`

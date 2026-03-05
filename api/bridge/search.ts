@@ -48,10 +48,55 @@ function sanitizeOData(value: string): string {
     .slice(0, 200);
 }
 
+// ---------------------------------------------------------------------------
+// Security: In-memory rate limiter (C3 fix)
+// ---------------------------------------------------------------------------
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 30;
+const ipHits = new Map<string, { count: number; resetAt: number }>();
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipHits.get(ip);
+  if (!entry || now > entry.resetAt) {
+    ipHits.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
+const ALLOWED_ORIGINS = new Set([
+  'https://mortgage-flyer-pro.vercel.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+]);
+
+function isValidOrigin(origin: string | undefined): boolean {
+  if (!origin) return false;
+  if (origin.endsWith('.vercel.app')) return true;
+  return ALLOWED_ORIGINS.has(origin);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Only allow GET
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // Origin validation in production
+  const origin = req.headers.origin as string | undefined;
+  if (process.env.NODE_ENV === 'production' && !isValidOrigin(origin)) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  if (isValidOrigin(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin!);
+  }
+
+  // Rate limit
+  const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
+  if (isRateLimited(ip)) {
+    return res.status(429).json({ error: 'Too many requests. Try again in a minute.' });
   }
 
   const token = process.env.BRIDGE_BEARER_TOKEN;

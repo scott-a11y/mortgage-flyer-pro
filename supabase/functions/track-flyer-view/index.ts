@@ -1,15 +1,26 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+const ALLOWED_ORIGINS = [
+    'https://mortgage-flyer-pro.vercel.app',
+    'http://localhost:8080',
+    'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request) {
+    const origin = req.headers.get('origin') || '';
+    const allowed = ALLOWED_ORIGINS.includes(origin) || origin.endsWith('.vercel.app');
+    return {
+        'Access-Control-Allow-Origin': allowed ? origin : ALLOWED_ORIGINS[0],
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    };
 }
+
 
 serve(async (req) => {
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
-        return new Response('ok', { headers: corsHeaders })
+        return new Response('ok', { headers: getCorsHeaders(req) })
     }
 
     try {
@@ -69,7 +80,7 @@ serve(async (req) => {
         return new Response(
             JSON.stringify({ success: true, id: analytics.id }),
             {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
                 status: 200
             }
         )
@@ -77,9 +88,9 @@ serve(async (req) => {
     } catch (error) {
         console.error('Error:', error)
         return new Response(
-            JSON.stringify({ error: error.message }),
+            JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
             {
-                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
                 status: 400
             }
         )

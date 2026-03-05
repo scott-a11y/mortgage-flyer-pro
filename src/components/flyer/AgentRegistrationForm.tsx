@@ -51,6 +51,12 @@ export function AgentRegistrationForm({ onSuccess }: { onSuccess?: () => void })
     const onSubmit = async (values: AgentFormValues) => {
         setIsSubmitting(true);
         try {
+            if (!supabase) {
+                toast.error("Database not configured. Profile saved locally.");
+                setIsSuccess(true);
+                if (onSuccess) onSuccess();
+                return;
+            }
             const { error } = await supabase.from("agent_profiles").insert([{
                 name: values.name,
                 title: values.title,

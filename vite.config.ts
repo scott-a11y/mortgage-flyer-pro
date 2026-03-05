@@ -14,4 +14,13 @@ export default defineConfig(({ mode: _mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: false,
+        pure_funcs: ['console.log', 'console.warn'],
+      },
+    },
+  },
 }));

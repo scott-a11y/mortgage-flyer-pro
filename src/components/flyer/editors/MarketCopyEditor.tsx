@@ -35,6 +35,9 @@ export function MarketCopyEditor({ data, onChange }: MarketCopyEditorProps) {
   const generateAIInsights = async () => {
     setIsGenerating(true);
     try {
+      if (!supabase) {
+        throw new Error("Database not configured. AI insights unavailable.");
+      }
       const { data: responseData, error } = await supabase.functions.invoke(
         "generate-market-insights",
         {

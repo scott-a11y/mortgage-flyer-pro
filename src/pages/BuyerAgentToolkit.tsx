@@ -318,7 +318,7 @@ export default function BuyerAgentToolkit() {
             const msg = error instanceof Error ? error.message : "Something went wrong";
             if (msg.includes("API key")) {
                 toast.error("Gemini API Key Required", {
-                    description: "Set VITE_GEMINI_API_KEY in your environment variables to enable AI features."
+                description: "AI features require GEMINI_API_KEY configured on the server. Contact the admin."
                 });
             } else {
                 toast.error("AI Generation Failed", {

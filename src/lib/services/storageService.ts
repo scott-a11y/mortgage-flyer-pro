@@ -19,6 +19,10 @@ export async function uploadFile(
     folder: string,
     fileName?: string
 ): Promise<UploadResult> {
+    if (!supabase) {
+        return { url: null, error: new Error("Storage not configured — Supabase is unavailable.") };
+    }
+
     try {
         const ext = file.name.split(".").pop()?.toLowerCase() || "png";
         const safeName = fileName
@@ -72,6 +76,10 @@ export async function uploadPropertyPhoto(
  * Delete a file from storage
  */
 export async function deleteFile(path: string): Promise<{ error: Error | null }> {
+    if (!supabase) {
+        return { error: new Error("Storage not configured — Supabase is unavailable.") };
+    }
+
     try {
         const { error } = await supabase.storage
             .from(BUCKET_NAME)

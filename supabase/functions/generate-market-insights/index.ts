@@ -1,15 +1,25 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = [
+  'https://mortgage-flyer-pro.vercel.app',
+  'http://localhost:8080',
+  'http://localhost:5173',
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('origin') || '';
+  const allowed = ALLOWED_ORIGINS.includes(origin) || origin.endsWith('.vercel.app');
+  return {
+    'Access-Control-Allow-Origin': allowed ? origin : ALLOWED_ORIGINS[0],
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
 
 const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -116,7 +126,7 @@ GOALS:
       success: true,
       insights
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   } catch (error) {
     console.error("Error generating market insights:", error);
@@ -124,7 +134,7 @@ GOALS:
       error: error instanceof Error ? error.message : "Unknown error"
     }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...getCorsHeaders(req), "Content-Type": "application/json" },
     });
   }
 });

@@ -93,6 +93,7 @@ export default function MarketingDashboard() {
 
             // Fetch Analytics from DB
             try {
+                if (!supabase) throw new Error('not configured');
                 const { data: analyticsData } = await supabase.from('flyer_analytics').select('flyer_slug');
                 if (analyticsData) {
                     const viewCounts = analyticsData.reduce((acc: Record<string, number>, row: { flyer_slug?: string }) => {
@@ -132,6 +133,7 @@ export default function MarketingDashboard() {
             // 2. Fetch actual lead count from Supabase
             let activeLeads = 0;
             try {
+                if (!supabase) throw new Error('not configured');
                 const { count, error } = await supabase
                     .from('leads')
                     .select('*', { count: 'exact', head: true });
